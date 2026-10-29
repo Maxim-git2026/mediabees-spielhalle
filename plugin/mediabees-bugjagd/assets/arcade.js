@@ -687,6 +687,12 @@
       btnStart.focus({ preventScroll: true });
     });
 
+    /* Fair wie am PC: Während einer Runde zählt nur ein Finger. Weitere gleichzeitige
+       Berührungen werden abgefangen, bevor sie das Spiel erreichen. */
+    stage.addEventListener('pointerdown', function (e) {
+      if (S.running && !S.paused && e.isPrimary === false) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
     document.addEventListener('visibilitychange', function () { if (document.hidden) pause(true); });
     window.addEventListener('blur', function () { pause(true); });
 

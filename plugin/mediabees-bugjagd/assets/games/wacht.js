@@ -105,7 +105,7 @@
 
       /* Honigwaben-Deckung aus kleinen Zellen */
       function makeBunkers() {
-        var n = W > 760 ? 4 : 3, cell = 9, cw = 7, ch = 4, bw = cw * cell;
+        var n = W > 760 ? 4 : W > 560 ? 3 : 2, cell = 9, cw = 7, ch = 4, bw = cw * cell;
         st.bunkers = [];
         for (var i = 0; i < n; i++) {
           var cx = W * (i + 1) / (n + 1), x0 = cx - bw / 2, y0 = PY - 92;
