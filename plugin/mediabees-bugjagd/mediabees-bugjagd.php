@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: MediaBees Arcade (404)
- * Description: 404-Seite mit kleiner Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) und Top-10-Rangliste pro Spiel. Übernimmt automatisch die 404-Seite, solange es keine Elementor-404-Vorlage gibt. Shortcode für eine eigene Spielhallen-Seite: [mediabees_arcade], optional spiel="polonaise" oder intro="ja".
- * Version: 2.6.0
+ * Description: Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) mit Top-10-Rangliste pro Spiel. Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
+ * Version: 2.7.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.6.0' );
+define( 'MBBJ_VERSION', '2.7.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -67,13 +67,11 @@ add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
 
 /**
  * Shortcode [mediabees_arcade]
- * intro="ja|nein"  Den 404-Kopf zeigen. Standard: nur auf der 404-Seite.
  * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer).
  */
 function mbbj_render( $atts = array() ) {
+	// "intro" wird seit 2.7.0 ignoriert (kein 404-Kopf mehr), bleibt aber erlaubt, damit alte Shortcodes nicht brechen.
 	$atts = shortcode_atts( array( 'intro' => '', 'spiel' => '' ), is_array( $atts ) ? $atts : array(), 'mediabees_arcade' );
-	$flag = strtolower( trim( (string) $atts['intro'] ) );
-	$mbbj_intro = '' === $flag ? is_404() : in_array( $flag, array( '1', 'ja', 'yes', 'true', 'an' ), true );
 	$mbbj_start = sanitize_key( (string) $atts['spiel'] );
 	if ( ! isset( mbbj_games()[ $mbbj_start ] ) ) {
 		$mbbj_start = '';

@@ -2,7 +2,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$mbbj_intro   = isset( $mbbj_intro ) ? (bool) $mbbj_intro : true;
 $mbbj_start   = isset( $mbbj_start ) ? (string) $mbbj_start : '';
 $mbbj_privacy = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '';
 if ( ! $mbbj_privacy ) {
@@ -12,40 +11,11 @@ if ( ! $mbbj_privacy ) {
 <section id="mb404" class="mb4" data-rest="<?php echo esc_url( rest_url( 'mb-bugjagd/v1/' ) ); ?>" data-home="<?php echo esc_url( home_url( '/' ) ); ?>" data-assets="<?php echo esc_url( plugins_url( 'assets/', MBBJ_FILE ) ); ?>" data-ver="<?php echo esc_attr( MBBJ_VERSION ); ?>"<?php echo $mbbj_start ? ' data-start-game="' . esc_attr( $mbbj_start ) . '"' : ''; ?>>
 	<div class="mb4-wrap">
 
-		<?php if ( $mbbj_intro ) : ?>
-		<div class="mb4-intro">
-			<div class="mb4-intro-main">
-				<p class="mb4-eyebrow">Fehler 404</p>
-				<div class="mb4-code" aria-hidden="true">
-					<span>4</span>
-					<svg viewBox="0 0 100 115.47" focusable="false">
-						<polygon points="50,6 94,31.4 94,84.1 50,109.5 6,84.1 6,31.4" fill="none" stroke="currentColor" stroke-width="12" stroke-linejoin="round"/>
-						<g class="mb4-code-bug">
-							<path d="M36 50l-10-6M36 62h-12M38 73l-9 8M64 50l10-6M64 62h12M62 73l9 8M45 36l-6-9M55 36l6-9" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/>
-							<circle cx="50" cy="40" r="7" fill="#fff"/>
-							<ellipse cx="50" cy="62" rx="15" ry="19" fill="#D3272F" stroke="#fff" stroke-width="3"/>
-							<path d="M50 44v36" stroke="#fff" stroke-width="3"/>
-						</g>
-					</svg>
-					<span>4</span>
-				</div>
-				<h1 class="mb4-title"><span class="mb4-hl">Bzzzt.</span> Hier summt nix.</h1>
-			</div>
-			<div class="mb4-intro-side">
-				<p class="mb4-lead">Diese Seite gibt es nicht oder nicht mehr. Vielleicht ein Tippfehler in der Adresse, vielleicht ein alter Link.</p>
-				<nav class="mb4-links" aria-label="Weiter auf mediabees.de">
-					<a class="mb4-btn mb4-btn--main" href="<?php echo esc_url( home_url( '/' ) ); ?>">Zur Startseite</a>
-					<a class="mb4-btn mb4-btn--line" href="<?php echo esc_url( home_url( '/unsere-leistungen/' ) ); ?>">Unsere Leistungen</a>
-					<a class="mb4-btn mb4-btn--line" href="<?php echo esc_url( home_url( '/kontakt/' ) ); ?>">Kontakt aufnehmen</a>
-				</nav>
-			</div>
-		</div>
-		<?php endif; ?>
 
-		<div class="mb4-arcade<?php echo $mbbj_intro ? '' : ' is-page'; ?>" hidden>
+		<div class="mb4-arcade" hidden>
 			<div class="mb4-arcade-head">
 				<h2 class="mb4-h2" id="mb4-arcade-title">Spielhalle</h2>
-				<p class="mb4-sub"><?php echo $mbbj_intro ? 'Wenn du schon mal hier bist: Eine Runde geht immer. Such dir ein Spiel aus.' : 'Such dir ein Spiel aus und hol dir einen Platz in der Top 10.'; ?></p>
+				<p class="mb4-sub">Such dir ein Spiel aus und hol dir einen Platz in der Top 10.</p>
 			</div>
 
 			<div class="mb4-tiles" role="group" aria-labelledby="mb4-arcade-title" data-tiles></div>

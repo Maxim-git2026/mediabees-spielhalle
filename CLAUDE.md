@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.6.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.7.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -86,7 +86,11 @@ Gestrichen: Bubble Ball, Schach.
 - Admin: Werkzeuge → Arcade-Rangliste. Datenschutztext über `wp_add_privacy_policy_content`.
 
 ## Shortcode
-`[mediabees_arcade]` (alter Alias `[mediabees_bugjagd]`). Optionen: `spiel="<id>"` = Startspiel, `intro="ja"` = 404-Kopf zeigen.
+`[mediabees_arcade]` (alter Alias `[mediabees_bugjagd]`). Option: `spiel="<id>"` = Startspiel.
+Das Plugin liefert **nur die Spielhalle**, keinen eigenen 404-Text (seit 2.7.0). Den Text darüber baut der Nutzer in Elementor:
+Theme Builder → Einzelbeitrag/Single → Vorlage „404-Seite“ mit eigenem Text + Shortcode-Widget `[mediabees_arcade]`.
+Gibt es keine Elementor-404-Vorlage, zeigt die 404 als Rückfall nur die Spielhalle (Filter `template_include`).
+Die alte Option `intro` wird ignoriert.
 
 ## Hinweise zur Live-Seite
 - Im Plugin „Admin Site Enhancements“ muss „Redirect 404 to Homepage“ **aus** sein.
