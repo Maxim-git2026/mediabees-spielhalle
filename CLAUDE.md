@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.4.0** (live).
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.5.0** (2.4.0 ist live).
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -48,9 +48,10 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | wespen | Bienenstich | 60 s Moorhuhn-Prinzip, 8 Schuss, Leertaste lädt nach, Serie ab 3 = +5 |
 | revier | Revierflug | Flappy-Prinzip durchs Ruhrgebiet, Ortsschilder als Meilensteine |
 | polonaise | Bienentanz | Snake-Prinzip, Pollen +10, Goldblume +50, wird schneller, Start erst bei erster Eingabe |
+| flitzer | A40-Flitzer | Ausweich-Racer von oben, 4 Spuren, Dortmund → Venlo, Ausfahrten je km, Strecke 1 Pkt/40 px, Honig +50, knapp vorbei +10, Wabenschild = 1 Rempler frei |
 
 ### Nächste Spiele (in dieser Reihenfolge)
-Ausweich-Racer → „Alte Website zerlegen“ → Minesweeper (Wespennester) → Pac-Man-Variante →
+„Alte Website zerlegen“ → Minesweeper (Wespennester) → Pac-Man-Variante →
 Waben-Tetris (Sechsecke) → Solitär → Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
 Ideenliste: Doodle-Jump-Prinzip, Dino-Läufer (Chrome-offline-Prinzip), Space-Invaders-Prinzip, Crossy-Road-Prinzip.
 Gestrichen: Bubble Ball, Schach.
@@ -61,7 +62,7 @@ Gestrichen: Bubble Ball, Schach.
    - `mount(ctx)` bekommt `ctx.screen`, `ctx.stage`, `ctx.setScore`, `ctx.setTime`, `ctx.say` (Toast), `ctx.tone` (Sound),
      `ctx.reduce` (weniger Bewegung), `ctx.touch`, `ctx.finish(stats)`.
    - Rückgabe: `{ start, setPaused(on), abort, unmount, resize, key(e) }` (key gibt true zurück, wenn verarbeitet).
-   - Gemeinsame Zeichenfunktionen: `MBArcade.art` (bee, queen, wasp …).
+   - Gemeinsame Zeichenfunktionen: `MBArcade.art` (bee, queen, wasp, car, flitzer, hex, rrect …).
    - Icons für die Anleitung: z. B. `'kbd:Esc'`, `'tap'`, `'swipe'`.
 3. In `mbbj_games()` (PHP) eintragen: `title`, `min_age` (Mindestdauer einer Runde in s), `max_score`, `sec_per_point`.
 4. Testen: Desktop und Handy (Touch), Pause/Esc, Vollbild, Rangliste, „weniger Bewegung“.

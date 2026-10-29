@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Arcade (404)
  * Description: 404-Seite mit kleiner Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz) und Top-10-Rangliste pro Spiel. Übernimmt automatisch die 404-Seite, solange es keine Elementor-404-Vorlage gibt. Shortcode für eine eigene Spielhallen-Seite: [mediabees_arcade], optional spiel="polonaise" oder intro="ja".
- * Version: 2.4.0
+ * Version: 2.5.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.4.0' );
+define( 'MBBJ_VERSION', '2.5.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -30,6 +30,7 @@ function mbbj_games() {
 		'wespen'  => array( 'title' => 'Bienenstich', 'min_age' => 58, 'max_score' => 6000, 'sec_per_point' => 0 ),
 		'revier'  => array( 'title' => 'Revierflug', 'min_age' => 2, 'max_score' => 999, 'sec_per_point' => 1.2 ),
 		'polonaise' => array( 'title' => 'Bienentanz', 'min_age' => 3, 'max_score' => 9999, 'sec_per_point' => 0.01 ),
+		'flitzer' => array( 'title' => 'A40-Flitzer', 'min_age' => 3, 'max_score' => 99999, 'sec_per_point' => 0.012 ),
 	);
 }
 
@@ -52,7 +53,7 @@ add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
 /**
  * Shortcode [mediabees_arcade]
  * intro="ja|nein"  Den 404-Kopf zeigen. Standard: nur auf der 404-Seite.
- * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz).
+ * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer).
  */
 function mbbj_render( $atts = array() ) {
 	$atts = shortcode_atts( array( 'intro' => '', 'spiel' => '' ), is_array( $atts ) ? $atts : array(), 'mediabees_arcade' );

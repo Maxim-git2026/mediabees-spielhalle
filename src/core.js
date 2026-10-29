@@ -7,6 +7,7 @@
 
   /* ---------- Gemeinsame Zeichnungen (lokale Koordinaten, Blick nach rechts) ---------- */
   function ell(g, x, y, rx, ry, rot) { g.beginPath(); g.ellipse(x, y, rx, ry, rot || 0, 0, TAU); }
+  function rrect(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function feelers(g, x1, y1, x2, y2, c) {
     g.strokeStyle = c || '#111'; g.lineWidth = 2;
     g.beginPath(); g.moveTo(x1, y1); g.quadraticCurveTo(x1 + 1, y1 - 10, x1 + 7, y1 - 12); g.stroke();
@@ -191,6 +192,42 @@
       g.moveTo(cx - s / 4, ty - s * 0.47); g.lineTo(cx + s / 4, ty - s * 0.47);
       g.stroke();
     },
+    /* Autos von oben, Bug zeigt nach oben, Mitte = 0,0 (40 × 72) */
+    car: function (g, body, roof) {
+      g.lineJoin = 'round';
+      g.fillStyle = body; g.strokeStyle = '#111'; g.lineWidth = 2;
+      g.fillRect(-24, -15, 5, 7); g.strokeRect(-24, -15, 5, 7); g.fillRect(19, -15, 5, 7); g.strokeRect(19, -15, 5, 7);
+      rrect(g, -20, -36, 40, 72, 10); g.fillStyle = body; g.fill(); g.lineWidth = 2.5; g.stroke();
+      g.fillStyle = '#1B2230';
+      g.beginPath(); g.moveTo(-15, -17); g.lineTo(15, -17); g.lineTo(12, -6); g.lineTo(-12, -6); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(-12, 20); g.lineTo(12, 20); g.lineTo(14, 27); g.lineTo(-14, 27); g.closePath(); g.fill();
+      rrect(g, -13, -6, 26, 26, 4); g.fillStyle = roof || 'rgba(0,0,0,0.18)'; g.fill();
+      g.fillStyle = '#FFF6D6'; g.fillRect(-16, -35, 8, 4); g.fillRect(8, -35, 8, 4);
+      g.fillStyle = '#E5322D'; g.fillRect(-17, 32, 8, 3); g.fillRect(9, 32, 8, 3);
+    },
+    /* Der Bienenflitzer: gelb-braun gestreift, Flügel auf dem Dach, Fühler vorn */
+    flitzer: function (g, wing) {
+      var f = 0.45 + 0.55 * Math.abs(wing);
+      g.lineJoin = 'round';
+      g.strokeStyle = '#111'; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(-7, -35); g.quadraticCurveTo(-9, -45, -15, -49); g.moveTo(7, -35); g.quadraticCurveTo(9, -45, 15, -49); g.stroke();
+      g.fillStyle = '#111';
+      g.beginPath(); g.arc(-15, -49, 2.8, 0, TAU); g.arc(15, -49, 2.8, 0, TAU); g.fill();
+      g.save();
+      rrect(g, -21, -37, 42, 74, 12); g.fillStyle = '#FDC506'; g.fill(); g.clip();
+      g.fillStyle = '#3A2410'; g.fillRect(-21, -27, 42, 6); g.fillRect(-21, 21, 42, 6); g.fillRect(-21, 30, 42, 4);
+      g.restore();
+      rrect(g, -21, -37, 42, 74, 12); g.strokeStyle = '#111'; g.lineWidth = 2.5; g.stroke();
+      g.fillStyle = '#1B2230';
+      g.beginPath(); g.moveTo(-16, -18); g.lineTo(16, -18); g.lineTo(13, -7); g.lineTo(-13, -7); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(-12, 13); g.lineTo(12, 13); g.lineTo(14, 19); g.lineTo(-14, 19); g.closePath(); g.fill();
+      rrect(g, -13, -7, 26, 20, 5); g.fillStyle = '#3A2410'; g.fill();
+      g.fillStyle = 'rgba(255,255,255,0.85)'; g.strokeStyle = 'rgba(17,17,17,0.55)'; g.lineWidth = 1.5;
+      ell(g, -16, 2, 13, 4 * f + 2, 0.45); g.fill(); g.stroke();
+      ell(g, 16, 2, 13, 4 * f + 2, -0.45); g.fill(); g.stroke();
+      g.fillStyle = '#FFF6D6'; g.fillRect(-17, -36, 9, 4); g.fillRect(8, -36, 9, 4);
+      g.fillStyle = '#E5322D'; g.fillRect(-17, 33, 8, 3); g.fillRect(9, 33, 8, 3);
+    },
     hex: function (g, cx, cy, r, fill, stroke, lw) {
       g.beginPath();
       for (var i = 0; i < 6; i++) { var a = Math.PI / 6 + i * Math.PI / 3; g[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * r, cy + Math.sin(a) * r); }
@@ -198,6 +235,7 @@
       if (fill) { g.fillStyle = fill; g.fill(); }
       if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw || 2; g.stroke(); }
     },
+    rrect: rrect,
     rng: function (seed) {
       var s = seed >>> 0;
       return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
