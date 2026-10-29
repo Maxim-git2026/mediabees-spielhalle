@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: MediaBees Arcade (404)
- * Description: 404-Seite mit kleiner Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz) und Top-10-Rangliste pro Spiel. Übernimmt automatisch die 404-Seite, solange es keine Elementor-404-Vorlage gibt. Shortcode für eine eigene Spielhallen-Seite: [mediabees_arcade], optional spiel="polonaise" oder intro="ja".
- * Version: 2.5.0
+ * Description: 404-Seite mit kleiner Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) und Top-10-Rangliste pro Spiel. Übernimmt automatisch die 404-Seite, solange es keine Elementor-404-Vorlage gibt. Shortcode für eine eigene Spielhallen-Seite: [mediabees_arcade], optional spiel="polonaise" oder intro="ja".
+ * Version: 2.6.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,9 +14,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.5.0' );
+define( 'MBBJ_VERSION', '2.6.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
+
+/**
+ * Updates direkt aus GitHub: Gibt es dort ein neueres Release, zeigt WordPress unter „Plugins“
+ * „Jetzt aktualisieren“ an. Das Repo ist öffentlich, deshalb braucht es keinen Schlüssel.
+ */
+$mbbj_puc = __DIR__ . '/vendor/plugin-update-checker/plugin-update-checker.php';
+if ( is_readable( $mbbj_puc ) ) {
+	require_once $mbbj_puc;
+	$mbbj_updates = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+		'https://github.com/Maxim-git2026/mediabees-spielhalle/',
+		MBBJ_FILE,
+		'mediabees-bugjagd'
+	);
+	$mbbj_updates->getVcsApi()->enableReleaseAssets( '/mediabees-arcade-[0-9.]+\.zip/' );
+}
 
 /**
  * Spiele und ihre Plausibilitätsgrenzen.

@@ -1,0 +1,73 @@
+# Baut bei jeder neuen Plugin-Version auf main automatisch ein GitHub-Release mit dem Plugin-ZIP.
+# WordPress (Plugin Update Checker) findet das Release und zeigt unter „Plugins“ „Jetzt aktualisieren“ an.
+# Ein Release entsteht nur, wenn es für die Version in MBBJ_VERSION noch keins gibt.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugin/**'
+      - 'src/**'
+      - 'build.sh'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version lesen
+        id: ver
+        run: |
+          VER=$(grep -m1 "define( 'MBBJ_VERSION'" plugin/mediabees-bugjagd/mediabees-bugjagd.php | sed "s/.*'\([0-9.]*\)'.*/\1/")
+          HEAD_VER=$(grep -m1 "^ \* Version:" plugin/mediabees-bugjagd/mediabees-bugjagd.php | sed 's/.*Version: *//' | tr -d '[:space:]')
+          if [ "$VER" != "$HEAD_VER" ]; then
+            echo "::error::MBBJ_VERSION ($VER) und Version-Kopfzeile ($HEAD_VER) passen nicht zusammen."
+            exit 1
+          fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      - name: Gibt es das Release schon?
+        id: exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.ver.outputs.version }}" > /dev/null 2>&1; then
+            echo "Release v${{ steps.ver.outputs.version }} gibt es schon, nichts zu tun."
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bauen
+        if: steps.exists.outputs.skip != '1'
+        run: |
+          ./build.sh
+          ZIP="dist/mediabees-arcade-${{ steps.ver.outputs.version }}.zip"
+          unzip -l "$ZIP" | grep -q " mediabees-bugjagd/mediabees-bugjagd.php$" || { echo "::error::ZIP hat nicht den Ordner mediabees-bugjagd/"; exit 1; }
+          # Changelog-Abschnitt dieser Version aus readme.txt als Release-Text
+          awk -v v="${{ steps.ver.outputs.version }}" '
+            $0 ~ "^= "v" " { on=1; next }
+            on && /^= / { exit }
+            on { print }
+          ' plugin/mediabees-bugjagd/readme.txt > notes.md
+          [ -s notes.md ] || echo "Version ${{ steps.ver.outputs.version }}" > notes.md
+          cat notes.md
+
+      - name: Release anlegen
+        if: steps.exists.outputs.skip != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.ver.outputs.version }}" \
+            "dist/mediabees-arcade-${{ steps.ver.outputs.version }}.zip" \
+            --title "Version ${{ steps.ver.outputs.version }}" \
+            --notes-file notes.md \
+            --target "${{ github.sha }}"

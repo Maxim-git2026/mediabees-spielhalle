@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.5.0
+Stable tag: 2.6.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.6.0 – 29.10.2026 =
+* Updates direkt im WordPress-Backend: Neue Versionen erscheinen unter „Plugins“ und lassen sich mit einem Klick installieren (aus den GitHub-Releases).
+* Beim Löschen des Plugins wird auch der Zwischenspeicher der Update-Prüfung entfernt.
 
 = 2.5.0 – 29.10.2026 =
 * Neues Spiel: A40-Flitzer (Ausweich-Prinzip). Mit dem Bienenflitzer durch den Feierabendverkehr von Dortmund Richtung Venlo, Ausfahrten als Meilensteine, Honiggläser, Wabenschild und Bonus für knappe Manöver.

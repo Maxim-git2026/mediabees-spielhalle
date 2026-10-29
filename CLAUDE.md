@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.5.0** (2.4.0 ist live).
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.6.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -26,19 +26,30 @@ plugin/mediabees-bugjagd/   Das WordPress-Plugin (Ordnername bleibt so, sonst ve
   assets/arcade.js          GEBAUT aus src/core.js + src/tiles/*.js – nicht direkt bearbeiten
   assets/games/*.js         GEBAUT (Kopie aus src/games)
   uninstall.php             Löscht beim Entfernen alle mbbj_-Optionen und Transients
+  vendor/plugin-update-checker/  Holt Updates aus den GitHub-Releases (nicht bearbeiten)
   readme.txt                Changelog
 build.sh             Baut assets/ aus src/ und erzeugt dist/mediabees-arcade-<version>.zip
+.github/workflows/release.yml  Legt bei neuer Version auf main automatisch das GitHub-Release mit dem ZIP an
 ```
 
-## Bauen und veröffentlichen
+## Bauen und veröffentlichen (Updates kommen automatisch ins WordPress-Backend)
+Der Nutzer ist kein Programmierer. Er will nur: Änderung beschreiben → in WordPress „Jetzt aktualisieren“ klicken.
 1. Code in `src/` ändern.
-2. `./build.sh` (prüft die Syntax mit node und baut das ZIP in `dist/`).
-3. Version erhöhen (MAJOR.MINOR.PATCH): `Version:`-Kopfzeile und `MBBJ_VERSION` in `mediabees-bugjagd.php`,
-   `Stable tag` und Changelog in `readme.txt`.
-4. Hochladen: WordPress → Plugins → Installieren → Plugin hochladen → ZIP wählen → „Aktuelle Version durch hochgeladene ersetzen“.
-   Ranglisten bleiben dabei erhalten (sie liegen in der Datenbank, nicht im Plugin).
-5. WP-Optimize bündelt `arcade.js` (Minify). Nach dem Update kurz die 404 aufrufen und prüfen, ob `data-ver` stimmt.
-   Die Spieldateien werden roh mit `?ver=` nachgeladen.
+2. `./build.sh` ausführen (prüft die Syntax mit node, baut `plugin/.../assets/` und das ZIP in `dist/`).
+   Die gebauten Dateien in `plugin/mediabees-bugjagd/assets/` mit committen.
+3. **Version erhöhen**, sonst gibt es kein Update (MAJOR.MINOR.PATCH, neues Spiel = MINOR, Korrektur = PATCH):
+   `Version:`-Kopfzeile **und** `MBBJ_VERSION` in `mediabees-bugjagd.php`, `Stable tag` und Changelog in `readme.txt`.
+   Den Changelog in einfachem Deutsch schreiben, er erscheint in WordPress als Update-Beschreibung.
+4. Auf `main` bringen (Branch mergen bzw. direkt pushen, wenn der Nutzer „übernimm in main“ sagt).
+5. Die GitHub Action `.github/workflows/release.yml` baut dann automatisch das Release `v<Version>` mit dem ZIP.
+   Sie bricht ab, wenn Kopfzeile und `MBBJ_VERSION` nicht übereinstimmen.
+6. WordPress prüft alle 12 Stunden. Sofort geht es unter Plugins → „Nach Updates suchen“ beim Plugin, danach „Jetzt aktualisieren“.
+   Ranglisten bleiben erhalten (sie liegen in der Datenbank, nicht im Plugin).
+7. Danach kurz die 404 aufrufen und prüfen, ob `data-ver` stimmt (WP-Optimize bündelt `arcade.js`).
+
+Technik: `vendor/plugin-update-checker` (YahnisElsts, v5.7) liest die Releases des öffentlichen Repos
+`Maxim-git2026/mediabees-spielhalle`, nur ZIPs `mediabees-arcade-<version>.zip` (Ordner im ZIP: `mediabees-bugjagd/`).
+Keine Zugangsdaten nötig. Nie Tokens oder Passwörter ins Repo schreiben, das Repo ist öffentlich.
 
 ## Spiele (ID → Name)
 Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich ändern.
