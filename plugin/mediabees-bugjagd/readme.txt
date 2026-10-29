@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.9.0
+Stable tag: 2.9.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,13 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.9.1 – 29.10.2026 =
+* Handy: Namensfeld und „Eintragen“-Knopf stehen jetzt untereinander und sind groß genug. Solange man sich einträgt, treten Statistik und Top 3 zurück.
+* Handy: „Ranglisten aller Spiele“ passt jetzt auch auf schmale Bildschirme.
+* Fair wie am PC: Während einer Runde zählt nur noch ein Finger, Tippen mit mehreren Fingern gleichzeitig bringt nichts mehr.
+* Wabenwacht: Auf dem Handy nur noch zwei Wabenwände, damit genug Platz zum Schießen bleibt.
+* Sicherheit: Updates werden nur noch aus dem fertigen Release-ZIP installiert. Jede Runde kann garantiert nur einmal eingetragen werden, auch bei gleichzeitigen Anfragen. Strengere Prüfung der Eingaben und faire Limits auch für IPv6-Anschlüsse.
 
 = 2.9.0 – 29.10.2026 =
 * Neues Spiel: Wabenwacht. Die Biene verteidigt den Stock mit Stacheln gegen anrückende Wespen und Hornissen, hinter Honigwaben gibt es Deckung. Mit Goldwespe als Bonus und Doppelstachel.

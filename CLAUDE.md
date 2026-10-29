@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.9.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.9.1**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -89,6 +89,14 @@ Gestrichen: Bubble Ball, Schach.
 - Titel in der Rangliste werden nicht gespeichert, sondern im Browser aus den Punkten und `ranks` der Kachel berechnet.
 - Speicher: Option `mbbj_top_<id>` (nur Top 10, autoload no). Schreiben mit Sperre `mbbj_lock_<id>` (INSERT IGNORE, nach 5 s veraltet).
 - Admin: Werkzeuge → Arcade-Rangliste. Datenschutztext über `wp_add_privacy_policy_content`.
+
+## Sicherheit (Check 2.9.1: keine Hintertür, keine SQL-Injection, kein XSS)
+- Größtes Risiko ist der Update-Kanal: Wer auf `main` pushen kann, bringt Code auf die Live-Seite. Deshalb: 2FA auf dem GitHub-Konto, Branch-Schutz für `main`, wenig Mitarbeitende.
+- Updates nur aus Release-ZIPs (`REQUIRE_RELEASE_ASSETS`, Regex verankert). `actions/checkout` im Workflow ist auf eine SHA gepinnt, Werte über `env:` statt direkt in `run:`.
+- Tickets werden atomar eingelöst (`mbbj_claim_ticket`, INSERT IGNORE `mbbj_used_<md5>`, alte Marken werden nach 2 h weggeräumt).
+- Namen nur per `textContent` ausgeben, nie per `innerHTML`. IP nie im Klartext, IPv6 zählt pro /64.
+- Punkte kommen aus dem Browser, Ranglisten lassen sich mit Aufwand fälschen. Gegenmittel: `max_score`/`sec_per_point` und Löschen im Admin.
+- Während einer Runde zählt nur ein Finger (`isPrimary`-Filter in `core.js`).
 
 ## Oberfläche
 - Handy (≤ 640 px): Kacheln als Karussell mit 2 Spielen, Pfeile und Punkte (`.mb4-carousel`, in `core.js` gebaut).

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Arcade (404)
  * Description: Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) mit Top-10-Rangliste pro Spiel. Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.9.0
+ * Version: 2.9.1
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.9.0' );
+define( 'MBBJ_VERSION', '2.9.1' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -30,7 +30,11 @@ if ( is_readable( $mbbj_puc ) ) {
 		MBBJ_FILE,
 		'mediabees-bugjagd'
 	);
-	$mbbj_updates->getVcsApi()->enableReleaseAssets( '/mediabees-arcade-[0-9.]+\.zip/' );
+	// Nur das fertige ZIP aus dem Release ist ein gültiges Update, nie der rohe Quellcode-Download.
+	$mbbj_updates->getVcsApi()->enableReleaseAssets(
+		'/^mediabees-arcade-[0-9.]+\.zip$/',
+		\YahnisElsts\PluginUpdateChecker\v5p7\Vcs\Api::REQUIRE_RELEASE_ASSETS
+	);
 }
 
 /**
@@ -146,6 +150,17 @@ function mbbj_lock( $game ) {
 	return false;
 }
 
+// Ticket genau einmal einlösen. INSERT IGNORE ist atomar: Kommen zwei Anfragen gleichzeitig, gewinnt nur eine.
+function mbbj_claim_ticket( $sig ) {
+	global $wpdb;
+	$ok = $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')", 'mbbj_used_' . md5( $sig ), (string) time() ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	// Ab und zu alte Marken wegräumen (Tickets gelten ohnehin nur 30 Minuten).
+	if ( 1 === wp_rand( 1, 50 ) ) {
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND CAST(option_value AS UNSIGNED) < %d", $wpdb->esc_like( 'mbbj_used_' ) . '%', time() - 2 * HOUR_IN_SECONDS ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+	return 1 === (int) $ok;
+}
+
 function mbbj_unlock( $game ) {
 	global $wpdb;
 	$wpdb->delete( $wpdb->options, array( 'option_name' => 'mbbj_lock_' . $game ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -183,6 +198,11 @@ add_action( 'init', function () {
 // Die IP wird nie gespeichert, nur gehasht (täglich wechselnd) als kurzlebiger Zähler.
 function mbbj_ip_hash() {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	// IPv6: Ein Anschluss hat viele Adressen (/64). Damit man das Limit nicht durch Adresswechsel umgeht, zählt der ganze Block.
+	$bin = false !== strpos( $ip, ':' ) ? @inet_pton( $ip ) : false; // phpcs:ignore WordPress.PHP.NoSilencedErrors
+	if ( $bin && 16 === strlen( $bin ) ) {
+		$ip = bin2hex( substr( $bin, 0, 8 ) ) . '::/64';
+	}
 	return substr( hash_hmac( 'sha256', $ip . gmdate( 'Y-m-d' ), wp_salt( 'nonce' ) ), 0, 20 );
 }
 
@@ -291,6 +311,12 @@ function mbbj_rest_start( WP_REST_Request $req ) {
 }
 
 function mbbj_rest_score( WP_REST_Request $req ) {
+	foreach ( array( 'game', 'token', 'name', 'website', 'score' ) as $field ) {
+		$v = $req->get_param( $field );
+		if ( is_array( $v ) || is_object( $v ) ) {
+			return mbbj_fail( 'Eintrag abgelehnt.' );
+		}
+	}
 	// Honeypot: Menschen sehen das Feld nicht.
 	if ( '' !== trim( (string) $req->get_param( 'website' ) ) ) {
 		return mbbj_fail( 'Eintrag abgelehnt.' );
@@ -348,6 +374,9 @@ function mbbj_rest_score( WP_REST_Request $req ) {
 	$day     = (int) get_transient( $day_key );
 	if ( $day >= 1000 ) {
 		return mbbj_fail( 'So viele Rekorde an einem Tag! Die Rangliste ruht sich kurz aus, morgen geht es weiter.', 429 );
+	}
+	if ( ! mbbj_claim_ticket( $sig ) ) {
+		return mbbj_fail( 'Für diese Runde gibt es schon einen Eintrag.' );
 	}
 	set_transient( $day_key, $day + 1, DAY_IN_SECONDS );
 	set_transient( $used_key, 1, HOUR_IN_SECONDS );

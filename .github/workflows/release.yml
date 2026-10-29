@@ -23,7 +23,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # Fest auf eine geprüfte Version gepinnt (v4.2.2), damit eine geänderte Fremd-Aktion nichts einschleusen kann.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Version lesen
         id: ver
@@ -40,34 +41,39 @@ jobs:
         id: exists
         env:
           GH_TOKEN: ${{ github.token }}
+          VER: ${{ steps.ver.outputs.version }}
         run: |
-          if gh release view "v${{ steps.ver.outputs.version }}" > /dev/null 2>&1; then
-            echo "Release v${{ steps.ver.outputs.version }} gibt es schon, nichts zu tun."
+          if gh release view "v$VER" > /dev/null 2>&1; then
+            echo "Release v$VER gibt es schon, nichts zu tun."
             echo "skip=1" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Bauen
         if: steps.exists.outputs.skip != '1'
+        env:
+          VER: ${{ steps.ver.outputs.version }}
         run: |
           ./build.sh
-          ZIP="dist/mediabees-arcade-${{ steps.ver.outputs.version }}.zip"
+          ZIP="dist/mediabees-arcade-$VER.zip"
           unzip -l "$ZIP" | grep -q " mediabees-bugjagd/mediabees-bugjagd.php$" || { echo "::error::ZIP hat nicht den Ordner mediabees-bugjagd/"; exit 1; }
           # Changelog-Abschnitt dieser Version aus readme.txt als Release-Text
-          awk -v v="${{ steps.ver.outputs.version }}" '
+          awk -v v="$VER" '
             $0 ~ "^= "v" " { on=1; next }
             on && /^= / { exit }
             on { print }
           ' plugin/mediabees-bugjagd/readme.txt > notes.md
-          [ -s notes.md ] || echo "Version ${{ steps.ver.outputs.version }}" > notes.md
+          [ -s notes.md ] || echo "Version $VER" > notes.md
           cat notes.md
 
       - name: Release anlegen
         if: steps.exists.outputs.skip != '1'
         env:
           GH_TOKEN: ${{ github.token }}
+          VER: ${{ steps.ver.outputs.version }}
+          SHA: ${{ github.sha }}
         run: |
-          gh release create "v${{ steps.ver.outputs.version }}" \
-            "dist/mediabees-arcade-${{ steps.ver.outputs.version }}.zip" \
-            --title "Version ${{ steps.ver.outputs.version }}" \
+          gh release create "v$VER" \
+            "dist/mediabees-arcade-$VER.zip" \
+            --title "Version $VER" \
             --notes-file notes.md \
-            --target "${{ github.sha }}"
+            --target "$SHA"
