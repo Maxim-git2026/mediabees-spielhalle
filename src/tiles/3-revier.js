@@ -5,6 +5,12 @@
   MBArcade.tile({
     id: 'revier',
     title: 'Revierflug',
+    ranks: [
+      [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
+      [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
+      [10, 'Ausflugs-Biene', 'Schöne Tour.'],
+      [0, 'Bruchpilot', 'Anschnallen und nochmal.']
+    ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
       gr.addColorStop(0, '#0B0E1F'); gr.addColorStop(0.7, '#1B1F3A'); gr.addColorStop(1, '#3A2A3F');

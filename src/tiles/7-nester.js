@@ -5,6 +5,12 @@
   MBArcade.tile({
     id: 'nester',
     title: 'Wespennest',
+    ranks: [
+      [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
+      [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
+      [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
+      [0, 'Gestochen', 'Autsch. Nochmal!']
+    ],
     thumb: function (g, w, h) {
       g.fillStyle = '#14120E'; g.fillRect(0, 0, w, h);
       var r = h / 6.2, nums = { '2,1': 1, '3,1': 2, '1,2': 1, '4,2': 3, '2,3': 2, '3,3': 1 };

@@ -95,12 +95,6 @@
         { draw: function (g) { g.translate(23, 23); g.rotate(0.3); rr(g, -16, -10, 32, 20, 2); g.fillStyle = '#C0C0C0'; g.fill(); g.strokeStyle = '#111'; g.lineWidth = 2; g.stroke(); g.fillStyle = '#111'; g.font = '700 8px Poppins, sans-serif'; g.textAlign = 'center'; g.fillText('NEU!', 0, 3); }, text: 'Jeder Treffer zählt, ganz kaputt gibt es Bonus. Schnell hintereinander = Kombo', val: '+' }
       ]
     },
-    ranks: [
-      [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
-      [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
-      [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
-      [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
-    ],
     cta: { path: 'unsere-leistungen/', text: 'Deine Website ist auch von gestern? Wir bauen dir eine neue.' },
     stats: function (s) {
       var t = s.parts + (s.parts === 1 ? ' Teil' : ' Teile') + ' zerlegt';

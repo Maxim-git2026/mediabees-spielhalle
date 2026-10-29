@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.8.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.9.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -62,16 +62,18 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | flitzer | A40-Flitzer | Ausweich-Racer von oben, 4 Spuren, Dortmund → Venlo, Ausfahrten je km, Strecke 1 Pkt/40 px, Honig +50, knapp vorbei +10, Wabenschild = 1 Rempler frei. Handy: wischen, Maus: neben den Flitzer klicken. Anzeige oben links, kein Toast (verdeckt sonst die Straße) |
 | abriss | Website-Abriss | PC-zerstören-Prinzip, 45 s, Homepages von 1999 (Kalles Trinkhalle, Kaninchenzüchter, Taubenverein, Modellbahn), Hammer/Flammen/Bienen (Tasten 1–3), 1 Pkt je Schaden, Bonus fürs Zerlegen mit Kombo bis ×5, Seite platt = +100 × Seite |
 | nester | Wespennest | Minesweeper auf Waben (6 Nachbarn), erster Klick immer frei, Wabe = 2 × Level Pkt, Feld geräumt = Bonus + nächstes Level, Markieren per Rechtsklick/F, lange drücken oder Umschalter unten |
+| wacht | Wabenwacht | Space-Invaders-Prinzip, Biene schießt Stacheln, Hornisse 30 (2 Treffer), Wespe 20, Feuerwespe 10, Goldwespe 100–300, Honigwaben als Deckung, 3 Leben, Doppelstachel, Welle geschafft = +100 × Welle. Handy: ziehen + Dauerfeuer |
 
 ### Nächste Spiele (in dieser Reihenfolge)
 Pac-Man-Variante →
 Waben-Tetris (Sechsecke) → Solitär → Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
-Ideenliste: Doodle-Jump-Prinzip, Dino-Läufer (Chrome-offline-Prinzip), Space-Invaders-Prinzip, Crossy-Road-Prinzip.
+Ideenliste: Doodle-Jump-Prinzip, Dino-Läufer (Chrome-offline-Prinzip), Crossy-Road-Prinzip.
 Gestrichen: Bubble Ball, Schach.
 
 ## Neues Spiel anlegen – Checkliste
-1. `src/tiles/<N>-<id>.js`: `MBArcade.tile({ id, title, thumb: function (g, w, h) {...} })`.
-2. `src/games/<id>.js`: `MBArcade.register({ id, title, duration (0 = ohne Zeitlimit), startText, help: {controls, legend}, ranks: [[minPunkte, Titel, Text], ...], cta, stats(s), mount(ctx) })`.
+1. `src/tiles/<N>-<id>.js`: `MBArcade.tile({ id, title, ranks: [[minPunkte, Titel, Text], ...], thumb: function (g, w, h) {...} })`.
+   Die Rangstufen stehen **in der Kachel**, weil die Ranglisten (auch „Ranglisten aller Spiele“) den Titel für jeden Eintrag aus den Punkten berechnen, ohne das Spiel zu laden.
+2. `src/games/<id>.js`: `MBArcade.register({ id, title, duration (0 = ohne Zeitlimit), startText, help: {controls, legend}, cta, stats(s), mount(ctx) })`.
    - `mount(ctx)` bekommt `ctx.screen`, `ctx.stage`, `ctx.setScore`, `ctx.setTime`, `ctx.say` (Toast), `ctx.tone` (Sound),
      `ctx.reduce` (weniger Bewegung), `ctx.touch`, `ctx.finish(stats)`.
    - Rückgabe: `{ start, setPaused(on), abort, unmount, resize, key(e) }` (key gibt true zurück, wenn verarbeitet).
@@ -84,8 +86,13 @@ Gestrichen: Bubble Ball, Schach.
 - `POST start` → signiertes Ticket `time.rand.game.hmac`. `POST score` → Eintrag. `GET top?game=<id>`.
 - Prüfungen: Mindestdauer, Punkte-Obergrenze, Zeit pro Punkt, Ticket nur einmal (`mbbj_used_`), Honeypot `website`, Namensfilter.
 - Limits pro IP-Hash (täglich wechselnd): Start 600/h, Eintrag 30 je 15 min, 1000/Tag. Texte freundlich halten (Büro-WLAN teilt eine IP).
+- Titel in der Rangliste werden nicht gespeichert, sondern im Browser aus den Punkten und `ranks` der Kachel berechnet.
 - Speicher: Option `mbbj_top_<id>` (nur Top 10, autoload no). Schreiben mit Sperre `mbbj_lock_<id>` (INSERT IGNORE, nach 5 s veraltet).
 - Admin: Werkzeuge → Arcade-Rangliste. Datenschutztext über `wp_add_privacy_policy_content`.
+
+## Oberfläche
+- Handy (≤ 640 px): Kacheln als Karussell mit 2 Spielen, Pfeile und Punkte (`.mb4-carousel`, in `core.js` gebaut).
+- Unter der Top 10: Knopf „Ranglisten aller Spiele“ → `[data-all]`, Handy Top 3, Desktop Top 5 je Spiel.
 
 ## Shortcode
 `[mediabees_arcade]` (alter Alias `[mediabees_bugjagd]`). Option: `spiel="<id>"` = Startspiel.

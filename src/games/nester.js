@@ -76,12 +76,6 @@
         { draw: function (g) { g.translate(23, 23); g.scale(0.5, 0.5); art.queen(g, 0.5); }, text: 'Feld leer geräumt: Bonus und nächstes Level', val: 'Bonus' }
       ]
     },
-    ranks: [
-      [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
-      [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
-      [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
-      [0, 'Gestochen', 'Autsch. Nochmal!']
-    ],
     cta: { path: 'webseiten-wartung/', text: 'Sicherheitslücken auf deiner Website finden wir, bevor sie zustechen.' },
     stats: function (s) {
       var t = 'Level ' + s.level + ' erreicht, ' + s.opened + (s.opened === 1 ? ' Wabe' : ' Waben') + ' aufgedeckt';

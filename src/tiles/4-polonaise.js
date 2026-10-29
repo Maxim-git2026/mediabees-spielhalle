@@ -5,6 +5,12 @@
   MBArcade.tile({
     id: 'polonaise',
     title: 'Bienentanz',
+    ranks: [
+      [1000, 'Schwarmkönigin', 'Die ganze Wiese tanzt mit!'],
+      [500, 'Tanzprofi', 'Da ist Stimmung in der Bude.'],
+      [200, 'Tanzbiene', 'Schöner Schwarm.'],
+      [0, 'Mauerblümchen', 'Allein tanzt es sich schlecht. Nochmal!']
+    ],
     thumb: function (g, w, h) {
       var c = h / 3.6, ox = (w - Math.ceil(w / c) * c) / 2;
       g.fillStyle = '#0F120E'; g.fillRect(0, 0, w, h);

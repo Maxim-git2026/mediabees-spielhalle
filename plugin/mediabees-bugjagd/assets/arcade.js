@@ -297,6 +297,7 @@
     var inName = $('#mb4-name'), inHp = $('#mb4-website'), btnSubmit = $('[data-submit]');
     var feedback = $('[data-feedback]'), list = $('[data-list]'), empty = $('[data-empty]');
     var podium = $('[data-podium]'), podiumBox = $('[data-podium-box]');
+    var allBtn = $('[data-all-btn]'), allBox = $('[data-all]'), allGrid = $('[data-all-grid]');
     var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
     arcade.hidden = false;
@@ -457,11 +458,20 @@
         .catch(function () { return { ok: false, message: 'Keine Verbindung. Versuch es gleich nochmal.' }; });
     }
 
-    function row(pos, name, score, cls) {
+    /* Rangstufen stehen in der Kachel, damit sie für alle Spiele bekannt sind */
+    function tileOf(gid) { return tiles.filter(function (t) { return t.id === gid; })[0]; }
+    function rankFor(gid, score) {
+      var t = tileOf(gid), ranks = (t && t.ranks) || [[0, '', '']];
+      return ranks.filter(function (r) { return score >= r[0]; })[0] || ranks[ranks.length - 1];
+    }
+    function row(pos, name, score, cls, gid) {
       var li = document.createElement('li');
       li.className = (cls || '') + (pos <= 3 ? ' is-top' : '');
       var p = document.createElement('span'); p.className = 'mb4-pos'; p.textContent = pos + '.';
-      var n = document.createElement('span'); n.className = 'mb4-name'; n.textContent = name;
+      var n = document.createElement('span'); n.className = 'mb4-name';
+      var nn = document.createElement('span'); nn.className = 'mb4-name-n'; nn.textContent = name; n.appendChild(nn);
+      var title = gid ? rankFor(gid, score)[1] : '';
+      if (title) { var nt = document.createElement('span'); nt.className = 'mb4-name-t'; nt.textContent = title; n.appendChild(nt); }
       var s = document.createElement('span'); s.className = 'mb4-pts'; s.textContent = fmt(score);
       li.appendChild(p); li.appendChild(n); li.appendChild(s);
       return li;
@@ -469,6 +479,7 @@
 
     function renderTop(gid) {
       updateTile(gid);
+      renderAll();
       if (S.sel !== gid) return;
       var top = S.tops[gid];
       list.innerHTML = '';
@@ -477,9 +488,40 @@
         empty.hidden = false;
         return;
       }
-      top.forEach(function (e, i) { list.appendChild(row(i + 1, e.name, e.score, e.id && e.id === S.ownIds[gid] ? 'is-me' : '')); });
+      top.forEach(function (e, i) { list.appendChild(row(i + 1, e.name, e.score, e.id && e.id === S.ownIds[gid] ? 'is-me' : '', gid)); });
       empty.textContent = 'Noch alles frei. Hol dir Platz 1.';
       empty.hidden = top.length > 0;
+    }
+
+    /* Übersicht: alle Spiele mit ihren besten Plätzen */
+    function renderAll() {
+      if (!allBox || allBox.hidden) return;
+      allGrid.innerHTML = '';
+      var ALL_N = window.innerWidth <= 640 ? 3 : 5;
+      tiles.forEach(function (t) {
+        var card = document.createElement('div'); card.className = 'mb4-all-card' + (t.id === S.sel ? ' is-sel' : '');
+        var h = document.createElement('p'); h.className = 'mb4-all-h'; h.textContent = t.title; card.appendChild(h);
+        var top = S.tops[t.id], ol = document.createElement('ol'); ol.className = 'mb4-list';
+        if (top && top.length) top.slice(0, ALL_N).forEach(function (e, i) { ol.appendChild(row(i + 1, e.name, e.score, e.id && e.id === S.ownIds[t.id] ? 'is-me' : '', t.id)); });
+        if (top && top.length) card.appendChild(ol);
+        else {
+          var em = document.createElement('p'); em.className = 'mb4-empty';
+          em.textContent = top ? 'Noch alles frei. Hol dir Platz 1.' : (S.topErr[t.id] ? 'Gerade nicht erreichbar.' : 'Lädt …');
+          card.appendChild(em);
+        }
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'mb4-all-go';
+        b.textContent = t.id === S.sel ? 'Wird gerade gespielt' : (top && top.length > ALL_N ? 'Top 10 und spielen' : 'Spielen');
+        b.disabled = t.id === S.sel;
+        b.addEventListener('click', function () { select(t.id, true); });
+        card.appendChild(b);
+        allGrid.appendChild(card);
+      });
+    }
+    function toggleAll(open) {
+      allBox.hidden = !open;
+      allBtn.setAttribute('aria-expanded', String(open));
+      allBtn.textContent = open ? 'Übersicht schließen' : 'Ranglisten aller Spiele';
+      if (open) { renderAll(); tiles.forEach(function (t) { loadTop(t.id); }); }
     }
 
     function loadTop(gid) {
@@ -515,11 +557,11 @@
         podium.appendChild(li);
         return;
       }
-      rows.slice(0, 3).forEach(function (r, i) { podium.appendChild(row(i + 1, r.name, r.score, r.me ? 'is-me' : '')); });
+      rows.slice(0, 3).forEach(function (r, i) { podium.appendChild(row(i + 1, r.name, r.score, r.me ? 'is-me' : '', gid)); });
       if (myPos > 3) {
         var gap = document.createElement('li'); gap.className = 'is-gap'; gap.textContent = '…';
         podium.appendChild(gap);
-        podium.appendChild(row(myPos, 'Du', mine, 'is-me'));
+        podium.appendChild(row(myPos, 'Du', mine, 'is-me', gid));
       }
     }
 
@@ -601,7 +643,7 @@
 
       var isNew = score > (S.best[gid] || 0);
       if (isNew) { S.best[gid] = score; elBest.textContent = fmt(score); }
-      var rank = g.ranks.filter(function (r) { return score >= r[0]; })[0] || g.ranks[g.ranks.length - 1];
+      var rank = rankFor(gid, score);
       rankEl.textContent = rank[1];
       resultEl.textContent = fmt(score) + ' Punkte. ' + (isNew && score > 0 ? 'Neuer Rekord!' : rank[2]);
       statsEl.textContent = (g.stats && stats) ? g.stats(stats) : '';
@@ -633,6 +675,7 @@
       });
     }
 
+    if (allBtn) allBtn.addEventListener('click', function () { toggleAll(allBox.hidden); });
     btnStart.addEventListener('click', startRound);
     btnAgain.addEventListener('click', startRound);
     btnRestart.addEventListener('click', startRound);
@@ -734,6 +777,7 @@
       elBest.textContent = fmt(S.best[id] || 0);
       setScore(0);
       renderTop(id);
+      renderAll();
       if (S.booted) loadTop(id);
       showView('start');
       if (scroll) ensureVisible();
@@ -770,6 +814,33 @@
       g._rec = b.querySelector('.mb4-tile-rec');
     });
 
+    /* Handy: Kacheln als Karussell mit Pfeilen und Punkten */
+    var car = document.createElement('div'); car.className = 'mb4-carousel';
+    tilesEl.parentNode.insertBefore(car, tilesEl); car.appendChild(tilesEl);
+    function arrow(dir) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'mb4-car-btn is-' + (dir < 0 ? 'prev' : 'next');
+      b.setAttribute('aria-label', dir < 0 ? 'Vorherige Spiele' : 'Weitere Spiele');
+      b.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="' + (dir < 0 ? 'M12.5 4l-6 6 6 6' : 'M7.5 4l6 6-6 6') + '"/></svg>';
+      b.addEventListener('click', function () { tilesEl.scrollBy({ left: dir * tilesEl.clientWidth, behavior: reduce ? 'auto' : 'smooth' }); });
+      car.appendChild(b);
+      return b;
+    }
+    var carPrev = arrow(-1), carNext = arrow(1);
+    var dots = document.createElement('div'); dots.className = 'mb4-car-dots'; dots.setAttribute('aria-hidden', 'true');
+    car.parentNode.insertBefore(dots, car.nextSibling);
+    function carState() {
+      var max = tilesEl.scrollWidth - tilesEl.clientWidth, x = tilesEl.scrollLeft, on = max > 4;
+      car.classList.toggle('is-scroll', on);
+      carPrev.hidden = !on || x < 4; carNext.hidden = !on || x > max - 4;
+      var pages = on ? Math.ceil(tilesEl.scrollWidth / tilesEl.clientWidth - 0.05) : 0;
+      if (dots.children.length !== pages) { dots.innerHTML = ''; for (var i = 0; i < pages; i++) dots.appendChild(document.createElement('span')); }
+      var cur = Math.round(x / (tilesEl.clientWidth || 1));
+      Array.prototype.forEach.call(dots.children, function (d, i) { d.classList.toggle('is-on', i === Math.min(cur, pages - 1)); });
+    }
+    tilesEl.addEventListener('scroll', carState, { passive: true });
+    window.addEventListener('resize', carState);
+    setTimeout(carState, 50);
+
     var first = root.getAttribute('data-start-game');
     if (!first || !tiles.some(function (t) { return t.id === first; })) first = tiles[0].id;
     select(first, false);
@@ -794,6 +865,12 @@
   MBArcade.tile({
     id: 'bugjagd',
     title: 'Käfer-Jagd',
+    ranks: [
+      [40, 'Chef-Biene', 'Das ist ja großartig!'],
+      [25, 'Programmier-Biene', 'Sauberer Code, saubere Waben.'],
+      [12, 'Webdesign-Biene', 'Ordentlich gejagt.'],
+      [0, 'Praktikanten-Biene', 'Da geht noch was.']
+    ],
     thumb: function (g, w, h) {
       var art = MBArcade.art, TAU = Math.PI * 2;
       g.fillStyle = '#111'; g.fillRect(0, 0, w, h);
@@ -824,6 +901,12 @@
   MBArcade.tile({
     id: 'wespen',
     title: 'Bienenstich',
+    ranks: [
+      [1600, 'Hornissen-Schreck', 'Der Stock ist sicher!'],
+      [1000, 'Wächterbiene', 'Starke Verteidigung.'],
+      [500, 'Arbeiterbiene', 'Solide Schicht.'],
+      [0, 'Drohne', 'Da summt noch Luft nach oben.']
+    ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
       gr.addColorStop(0, '#1E1630'); gr.addColorStop(0.5, '#6E2E3A'); gr.addColorStop(0.85, '#D9731F'); gr.addColorStop(1, '#FDC506');
@@ -850,6 +933,12 @@
   MBArcade.tile({
     id: 'revier',
     title: 'Revierflug',
+    ranks: [
+      [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
+      [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
+      [10, 'Ausflugs-Biene', 'Schöne Tour.'],
+      [0, 'Bruchpilot', 'Anschnallen und nochmal.']
+    ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
       gr.addColorStop(0, '#0B0E1F'); gr.addColorStop(0.7, '#1B1F3A'); gr.addColorStop(1, '#3A2A3F');
@@ -881,6 +970,12 @@
   MBArcade.tile({
     id: 'polonaise',
     title: 'Bienentanz',
+    ranks: [
+      [1000, 'Schwarmkönigin', 'Die ganze Wiese tanzt mit!'],
+      [500, 'Tanzprofi', 'Da ist Stimmung in der Bude.'],
+      [200, 'Tanzbiene', 'Schöner Schwarm.'],
+      [0, 'Mauerblümchen', 'Allein tanzt es sich schlecht. Nochmal!']
+    ],
     thumb: function (g, w, h) {
       var c = h / 3.6, ox = (w - Math.ceil(w / c) * c) / 2;
       g.fillStyle = '#0F120E'; g.fillRect(0, 0, w, h);
@@ -923,6 +1018,12 @@
   MBArcade.tile({
     id: 'flitzer',
     title: 'A40-Flitzer',
+    ranks: [
+      [5000, 'Autobahn-Legende', 'Einmal Venlo und zurück!'],
+      [2500, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
+      [1000, 'Pendler-Biene', 'Schöne Fahrt.'],
+      [0, 'Blechschaden', 'Anschnallen und nochmal.']
+    ],
     thumb: function (g, w, h) {
       g.fillStyle = '#132219'; g.fillRect(0, 0, w, h);
       var r = art.rng(9);
@@ -959,6 +1060,12 @@
   MBArcade.tile({
     id: 'abriss',
     title: 'Website-Abriss',
+    ranks: [
+      [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
+      [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
+      [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
+      [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
+    ],
     thumb: function (g, w, h) {
       g.fillStyle = '#0E0E10'; g.fillRect(0, 0, w, h);
       var x = w * 0.06, y = h * 0.08, ww = w * 0.88, hh = h * 0.84;
@@ -999,6 +1106,12 @@
   MBArcade.tile({
     id: 'nester',
     title: 'Wespennest',
+    ranks: [
+      [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
+      [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
+      [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
+      [0, 'Gestochen', 'Autsch. Nochmal!']
+    ],
     thumb: function (g, w, h) {
       g.fillStyle = '#14120E'; g.fillRect(0, 0, w, h);
       var r = h / 6.2, nums = { '2,1': 1, '3,1': 2, '1,2': 1, '4,2': 3, '2,3': 2, '3,3': 1 };
@@ -1024,6 +1137,44 @@
       g.fillStyle = '#111'; g.beginPath(); g.ellipse(nx, ny + r * 0.55, r * 0.2, r * 0.14, 0, 0, TAU); g.fill();
       g.save(); g.translate(w * 0.86, h * 0.22); g.scale(-h / 150, h / 150); art.wasp(g, 0.6); g.restore();
       g.save(); g.translate(w * 0.66, h * 0.86); g.scale(h / 190, h / 190); art.wasp(g, 0.2); g.restore();
+    }
+  });
+})();
+/* Kachel: Wabenwacht */
+(function () {
+  'use strict';
+  var TAU = Math.PI * 2, art = MBArcade.art;
+  MBArcade.tile({
+    id: 'wacht',
+    title: 'Wabenwacht',
+    ranks: [
+      [6000, 'Königinnen-Garde', 'Der Stock ist sicher!'],
+      [3000, 'Wächterbiene', 'Keine Wespe kommt durch.'],
+      [1000, 'Stachel-Azubi', 'Gut gezielt.'],
+      [0, 'Wespenfutter', 'Die Wespen feiern. Nochmal!']
+    ],
+    thumb: function (g, w, h) {
+      var gr = g.createLinearGradient(0, 0, 0, h);
+      gr.addColorStop(0, '#07091A'); gr.addColorStop(1, '#2A1E33');
+      g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      var r = art.rng(3);
+      g.fillStyle = '#fff';
+      for (var i = 0; i < 30; i++) { g.globalAlpha = 0.3 + r() * 0.6; g.fillRect(r() * w, r() * h * 0.8, 1.5, 1.5); }
+      g.globalAlpha = 1;
+      var s = h / 150, cols = Math.max(4, Math.floor(w / (h * 0.24)));
+      for (var row = 0; row < 3; row++) for (var c = 0; c < cols; c++) {
+        var x = w * (c + 0.5) / cols + (row % 2 ? 4 : -4), y = h * (0.14 + row * 0.15);
+        g.save(); g.translate(x, y); g.rotate(Math.PI / 2); g.scale(s, s);
+        if (row === 0) art.hornet(g, 0.5); else art.wasp(g, (c % 2) ? 0.2 : 0.8, row === 2 ? '#FF8A3D' : undefined, row === 2 ? '#2A1408' : undefined);
+        g.restore();
+      }
+      [0.25, 0.5, 0.75].forEach(function (fx) {
+        for (var k = 0; k < 5; k++) art.hex(g, w * fx - 12 + k * 6, h * 0.72 + (k % 2) * 4, 4, '#F2B705', 'rgba(0,0,0,0.5)', 1);
+      });
+      var bx = w * 0.42, by = h * 0.88;
+      g.fillStyle = '#FDC506';
+      [[bx, by - h * 0.2], [bx, by - h * 0.42]].forEach(function (p) { g.beginPath(); g.moveTo(p[0], p[1] - 6); g.lineTo(p[0] + 2.5, p[1] + 2); g.lineTo(p[0] - 2.5, p[1] + 2); g.closePath(); g.fill(); });
+      g.save(); g.translate(bx, by); g.rotate(-Math.PI / 2); g.scale(h / 140, h / 140); art.bee(g, 0.6); g.restore();
     }
   });
 })();

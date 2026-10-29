@@ -5,6 +5,12 @@
   MBArcade.tile({
     id: 'abriss',
     title: 'Website-Abriss',
+    ranks: [
+      [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
+      [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
+      [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
+      [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
+    ],
     thumb: function (g, w, h) {
       g.fillStyle = '#0E0E10'; g.fillRect(0, 0, w, h);
       var x = w * 0.06, y = h * 0.08, ww = w * 0.88, hh = h * 0.84;

@@ -5,6 +5,12 @@
   MBArcade.tile({
     id: 'wespen',
     title: 'Bienenstich',
+    ranks: [
+      [1600, 'Hornissen-Schreck', 'Der Stock ist sicher!'],
+      [1000, 'Wächterbiene', 'Starke Verteidigung.'],
+      [500, 'Arbeiterbiene', 'Solide Schicht.'],
+      [0, 'Drohne', 'Da summt noch Luft nach oben.']
+    ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
       gr.addColorStop(0, '#1E1630'); gr.addColorStop(0.5, '#6E2E3A'); gr.addColorStop(0.85, '#D9731F'); gr.addColorStop(1, '#FDC506');

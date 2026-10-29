@@ -73,12 +73,6 @@
         { draw: function (g) { g.translate(24, 26); g.rotate(2.6); g.scale(0.52, -0.52); art.bee(g, 0.2); }, text: 'Gegen den Rand oder in den eigenen Schwarm', val: 'Ende', minus: true }
       ]
     },
-    ranks: [
-      [1000, 'Schwarmkönigin', 'Die ganze Wiese tanzt mit!'],
-      [500, 'Tanzprofi', 'Da ist Stimmung in der Bude.'],
-      [200, 'Tanzbiene', 'Schöner Schwarm.'],
-      [0, 'Mauerblümchen', 'Allein tanzt es sich schlecht. Nochmal!']
-    ],
     cta: { path: 'unsere-leistungen/', text: 'Soll deine Website auch so wachsen? Wir helfen.' },
     stats: function (s) {
       var t = 'Schwarm mit ' + s.len + ' Bienen, ' + s.pollen + ' Pollen';

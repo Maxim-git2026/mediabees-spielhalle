@@ -96,6 +96,11 @@ if ( ! $mbbj_privacy ) {
 				<ol class="mb4-list" data-list></ol>
 				<p class="mb4-empty" data-empty hidden></p>
 				<p class="mb4-side-note">Wie am Automaten: Die Top 10 bleiben stehen, bis jemand besser ist.</p>
+				<button type="button" class="mb4-btn mb4-btn--line mb4-btn--sm mb4-all-btn" data-all-btn aria-expanded="false" aria-controls="mb4-all">Ranglisten aller Spiele</button>
+			</div>
+			<div class="mb4-all" id="mb4-all" data-all hidden aria-labelledby="mb4-all-title">
+				<h3 class="mb4-h3" id="mb4-all-title">Alle Ranglisten <span class="mb4-h3-game">auf einen Blick</span></h3>
+				<div class="mb4-all-grid" data-all-grid></div>
 			</div>
 			<p class="mb4-sr" aria-live="polite" data-live></p>
 		</div>

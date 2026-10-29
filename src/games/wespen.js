@@ -57,12 +57,6 @@
         { draw: function (g) { g.fillStyle = '#FDC506'; g.font = '900 20px Poppins, sans-serif'; g.textAlign = 'center'; g.fillText('×3', 23, 30); }, text: 'Treffer-Serie ab 3 am Stück', val: '+5 extra' }
       ]
     },
-    ranks: [
-      [1600, 'Hornissen-Schreck', 'Der Stock ist sicher!'],
-      [1000, 'Wächterbiene', 'Starke Verteidigung.'],
-      [500, 'Arbeiterbiene', 'Solide Schicht.'],
-      [0, 'Drohne', 'Da summt noch Luft nach oben.']
-    ],
     cta: { path: 'webseiten-wartung/', text: 'Plagegeister auf deiner Website? Die halten wir fern.' },
     stats: function (s) {
       var t = s.hits + ' Treffer bei ' + s.shots + ' Schuss';

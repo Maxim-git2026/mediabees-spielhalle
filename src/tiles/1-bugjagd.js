@@ -5,6 +5,12 @@
   MBArcade.tile({
     id: 'bugjagd',
     title: 'Käfer-Jagd',
+    ranks: [
+      [40, 'Chef-Biene', 'Das ist ja großartig!'],
+      [25, 'Programmier-Biene', 'Sauberer Code, saubere Waben.'],
+      [12, 'Webdesign-Biene', 'Ordentlich gejagt.'],
+      [0, 'Praktikanten-Biene', 'Da geht noch was.']
+    ],
     thumb: function (g, w, h) {
       var art = MBArcade.art, TAU = Math.PI * 2;
       g.fillStyle = '#111'; g.fillRect(0, 0, w, h);

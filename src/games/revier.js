@@ -59,12 +59,6 @@
         { draw: function (g) { miniSign(g); }, text: 'Alle 10 Punkte geht es in die nächste Stadt' }
       ]
     },
-    ranks: [
-      [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
-      [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
-      [10, 'Ausflugs-Biene', 'Schöne Tour.'],
-      [0, 'Bruchpilot', 'Anschnallen und nochmal.']
-    ],
     cta: { path: 'kontakt/', text: 'Deine Website soll auch abheben? Lass uns reden.' },
     stats: function (s) {
       return s.score < 10 ? 'Aus Herne bist du diesmal nicht rausgekommen.' : 'Du bist bis ' + s.city + ' gekommen.';

@@ -38,12 +38,6 @@
         { svg: '<svg viewBox="0 0 60 70"><polygon points="30,8 54,22 54,48 30,62 6,48 6,22" fill="#1A1A1A" stroke="#E5322D" stroke-width="3.5"/><path d="M22 27l16 16M38 27L22 43" stroke="#E5322D" stroke-width="4" stroke-linecap="round"/></svg>', text: 'Leere Wabe angeklickt. Dauerklicken lohnt sich nicht.', val: '−1', minus: true }
       ]
     },
-    ranks: [
-      [40, 'Chef-Biene', 'Das ist ja großartig!'],
-      [25, 'Programmier-Biene', 'Sauberer Code, saubere Waben.'],
-      [12, 'Webdesign-Biene', 'Ordentlich gejagt.'],
-      [0, 'Praktikanten-Biene', 'Da geht noch was.']
-    ],
     cta: { path: 'webseiten-wartung/', text: 'Echte Bugs auf deiner Website? Die fixen wir.' },
     stats: function (s) {
       var t = s.caught + ' Käfer erwischt, ' + s.escaped + ' entkommen';

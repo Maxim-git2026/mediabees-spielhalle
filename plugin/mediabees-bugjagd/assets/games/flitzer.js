@@ -115,12 +115,6 @@
         { draw: function (g) { g.translate(23, 25); g.rotate(0.5); g.scale(0.5, 0.5); art.flitzer(g, 0.2); }, text: 'Auffahren oder seitlich rammen', val: 'Ende', minus: true }
       ]
     },
-    ranks: [
-      [5000, 'Autobahn-Legende', 'Einmal Venlo und zurück!'],
-      [2500, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
-      [1000, 'Pendler-Biene', 'Schöne Fahrt.'],
-      [0, 'Blechschaden', 'Anschnallen und nochmal.']
-    ],
     cta: { path: 'kontakt/', text: 'Deine Website soll auch Gas geben? Lass uns reden.' },
     stats: function (s) {
       var t = fmtKm(s.km) + ' km gefahren, ' + (s.exit ? 'zuletzt an der Ausfahrt ' + s.exit + ' vorbei.' : 'die erste Ausfahrt war noch nicht in Sicht.');
