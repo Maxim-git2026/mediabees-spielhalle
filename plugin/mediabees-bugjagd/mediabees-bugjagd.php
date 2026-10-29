@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Arcade (404)
  * Description: Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) mit Top-10-Rangliste pro Spiel. Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.7.1
+ * Version: 2.8.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.7.1' );
+define( 'MBBJ_VERSION', '2.8.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -46,6 +46,8 @@ function mbbj_games() {
 		'revier'  => array( 'title' => 'Revierflug', 'min_age' => 2, 'max_score' => 999, 'sec_per_point' => 1.2 ),
 		'polonaise' => array( 'title' => 'Bienentanz', 'min_age' => 3, 'max_score' => 9999, 'sec_per_point' => 0.01 ),
 		'flitzer' => array( 'title' => 'A40-Flitzer', 'min_age' => 3, 'max_score' => 99999, 'sec_per_point' => 0.012 ),
+		'abriss'  => array( 'title' => 'Website-Abriss', 'min_age' => 43, 'max_score' => 30000, 'sec_per_point' => 0 ),
+		'nester'  => array( 'title' => 'Wespennest', 'min_age' => 3, 'max_score' => 99999, 'sec_per_point' => 0.004 ),
 	);
 }
 
@@ -67,7 +69,7 @@ add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
 
 /**
  * Shortcode [mediabees_arcade]
- * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer).
+ * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest).
  */
 function mbbj_render( $atts = array() ) {
 	// "intro" wird seit 2.7.0 ignoriert (kein 404-Kopf mehr), bleibt aber erlaubt, damit alte Shortcodes nicht brechen.
@@ -397,7 +399,7 @@ function mbbj_rest_top( WP_REST_Request $req ) {
 function mbbj_privacy_text() {
 	return '<h2>Spiele auf unserer Fehlerseite (Rangliste)</h2>'
 		. '<p>Auf unserer 404-Fehlerseite kannst du kleine Browserspiele spielen. Die Spiele laufen in deinem Browser. Dafür werden keine Cookies gesetzt und keine Daten auf deinem Gerät gespeichert.</p>'
-		. '<p>Wenn du nach einer Runde freiwillig einen Namen in die Rangliste einträgst, speichern wir diesen Namen zusammen mit Spiel, Punktzahl und Zeitpunkt und zeigen ihn öffentlich an. Bitte verwende dafür einen Spitznamen und nicht deinen echten Namen. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die du jederzeit widerrufen kannst. Schreib uns dafür einfach eine Nachricht, dann löschen wir deinen Eintrag. Gespeichert werden nur die zehn besten Einträge je Spiel. Fällt ein Eintrag aus den Top 10, wird er sofort gelöscht.</p>'
+		. '<p>Wenn du nach einer Runde freiwillig einen Namen in die Rangliste einträgst, speichern wir diesen Namen zusammen mit Spiel, Punktzahl und Zeitpunkt und zeigen ihn öffentlich an. Bitte verwende dafür einen Spitznamen und nicht deinen echten Namen. Einen eingetragenen Namen kannst du nachträglich nicht selbst ändern oder löschen. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die du jederzeit widerrufen kannst. Schreib uns dafür einfach eine Nachricht, dann löschen wir deinen Eintrag. Gespeichert werden nur die zehn besten Einträge je Spiel. Fällt ein Eintrag aus den Top 10, wird er sofort gelöscht.</p>'
 		. '<p>Zum Schutz vor automatisierten Masseneinträgen verarbeiten wir beim Spielen kurzzeitig einen gehashten, täglich wechselnden Wert deiner IP-Adresse. Er wird nach spätestens einer Stunde ungültig, danach automatisch gelöscht und nie mit deinem Ranglisten-Eintrag verknüpft. Rechtsgrundlage ist unser berechtigtes Interesse an einem sicheren Betrieb der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>';
 }
 

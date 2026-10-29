@@ -73,7 +73,7 @@ if ( ! $mbbj_privacy ) {
 									<label for="mb4-website">Website</label>
 									<input id="mb4-website" name="website" type="text" tabindex="-1" autocomplete="off">
 								</div>
-								<p class="mb4-note" id="mb4-name-note">Bitte nicht deinen echten Namen, der Spitzname ist öffentlich sichtbar. <a href="<?php echo esc_url( $mbbj_privacy ); ?>">Datenschutz</a></p>
+								<p class="mb4-note" id="mb4-name-note">Bitte nicht deinen echten Namen, der Spitzname ist öffentlich sichtbar. Ändern oder löschen kannst du ihn danach nicht selbst, schreib uns dafür einfach kurz. <a href="<?php echo esc_url( $mbbj_privacy ); ?>">Datenschutz</a></p>
 								<p class="mb4-feedback" data-feedback role="status"></p>
 							</form>
 

@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.7.1
+Stable tag: 2.8.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -11,7 +11,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
-* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer).
+* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest).
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -19,6 +19,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.8.0 – 29.10.2026 =
+* Neues Spiel: Website-Abriss. Alte Homepages von 1999 in 45 Sekunden mit Hammer, Flammenwerfer und Bienenschwarm zerlegen. Ist eine Seite platt, kommt die nächste.
+* Neues Spiel: Wespennest. Waben aufdecken, ohne ein Wespennest zu erwischen. Die Zahlen zeigen die Nester in den 6 Nachbarwaben. Jedes geräumte Feld bringt Bonus und ein größeres Level.
+* Datenschutz-Hinweis beim Eintragen: Einen eingetragenen Namen kann man nicht selbst ändern oder löschen, sondern schreibt uns dafür.
 
 = 2.7.1 – 29.10.2026 =
 * A40-Flitzer: Punkte, Tempo und Ausfahrtsschilder stehen jetzt klein oben links und verdecken die Straße nicht mehr.

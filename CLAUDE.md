@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.7.1**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.8.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -60,9 +60,11 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | revier | Revierflug | Flappy-Prinzip durchs Ruhrgebiet, Ortsschilder als Meilensteine |
 | polonaise | Bienentanz | Snake-Prinzip, Pollen +10, Goldblume +50, wird schneller, Start erst bei erster Eingabe |
 | flitzer | A40-Flitzer | Ausweich-Racer von oben, 4 Spuren, Dortmund → Venlo, Ausfahrten je km, Strecke 1 Pkt/40 px, Honig +50, knapp vorbei +10, Wabenschild = 1 Rempler frei. Handy: wischen, Maus: neben den Flitzer klicken. Anzeige oben links, kein Toast (verdeckt sonst die Straße) |
+| abriss | Website-Abriss | PC-zerstören-Prinzip, 45 s, Homepages von 1999 (Kalles Trinkhalle, Kaninchenzüchter, Taubenverein, Modellbahn), Hammer/Flammen/Bienen (Tasten 1–3), 1 Pkt je Schaden, Bonus fürs Zerlegen mit Kombo bis ×5, Seite platt = +100 × Seite |
+| nester | Wespennest | Minesweeper auf Waben (6 Nachbarn), erster Klick immer frei, Wabe = 2 × Level Pkt, Feld geräumt = Bonus + nächstes Level, Markieren per Rechtsklick/F, lange drücken oder Umschalter unten |
 
 ### Nächste Spiele (in dieser Reihenfolge)
-„Alte Website zerlegen“ → Minesweeper (Wespennester) → Pac-Man-Variante →
+Pac-Man-Variante →
 Waben-Tetris (Sechsecke) → Solitär → Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
 Ideenliste: Doodle-Jump-Prinzip, Dino-Läufer (Chrome-offline-Prinzip), Space-Invaders-Prinzip, Crossy-Road-Prinzip.
 Gestrichen: Bubble Ball, Schach.
