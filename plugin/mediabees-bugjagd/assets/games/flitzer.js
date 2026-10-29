@@ -104,7 +104,8 @@
       legendTitle: 'So läuft die Fahrt',
       controls: [
         { icons: ['kbd:← →', 'kbd:A D'], text: 'Spur wechseln', kb: true },
-        { icons: ['mouse-left', 'tap'], text: 'Links oder rechts neben den Flitzer klicken oder tippen' },
+        { icons: ['mouse-left'], text: 'Links oder rechts neben den Flitzer klicken' },
+        { icons: ['swipe'], text: 'Nach links oder rechts wischen', touch: true },
         { icons: ['kbd:Esc'], text: 'Pause und Menü', kb: true }
       ],
       legend: [
@@ -261,7 +262,6 @@
           puff(ox, oy, ['#FDC506', '#FFE680', '#FFFFFF', o.c[0]], 26, 300, 0, 0.6);
           shakeIt(0.25); st.flash = 0.6;
           pop(st.px, PY - 50 * sc, 'Schild weg!', '#FFE680');
-          ctx.say('Der Wabenschild hat dich gerettet!');
           ctx.tone(700, 200, 0.25, 'square', 0.05);
           return;
         }
@@ -302,7 +302,6 @@
               st.exit = ex;
               st.sign = { name: ex, km: km, t0: st.t };
               st.deco.push({ k: 'sign', x: roadR + 26, y: -70 });
-              ctx.say(km === EXITS.length ? 'Bis an die Grenze! Respekt!' : 'Ausfahrt ' + ex + '!');
               ctx.tone(660, 990, 0.12, 'triangle', 0.06); ctx.tone(990, 1320, 0.12, 'triangle', 0.05, 0.1);
             }
           }
@@ -345,7 +344,6 @@
               st.shield = true;
               pop(ix, it.y - 20 * sc, 'Wabenschild!', '#FFE680');
               puff(ix, it.y, ['#FDC506', '#FFFFFF'], 18, 220, 0, 0.6);
-              ctx.say('Wabenschild an: Ein Rempler ist frei.');
               ctx.tone(520, 1040, 0.2, 'triangle', 0.06);
             }
           }
@@ -476,26 +474,29 @@
         g.restore();
       }
 
-      function drawSign(s) {
+      /* Anzeige oben links: in der Wiese, wenn Platz ist, sonst klein in der Ecke */
+      function hudScale() { return Math.max(0.62, Math.min(1, (roadL - 30) / 180)); }
+
+      function drawSign(s, hs) {
         var age = (st.t - s.t0) / 1000;
         if (age > 2.6) { st.sign = null; return; }
         var e = age < 0.35 ? age / 0.35 : age > 2.2 ? 1 - (age - 2.2) / 0.4 : 1;
-        g.font = '700 22px Poppins, sans-serif';
-        var w = Math.min(W - 24, Math.max(g.measureText(s.name).width, 120) + 48), h = 60;
-        var cx = W / 2, y = 92 - (age < 0.35 ? (1 - e) * 26 : 0);
+        g.font = '700 17px Poppins, sans-serif';
+        var w = Math.min(Math.max(150, W * 0.55 / hs), Math.max(g.measureText(s.name).width, 110) + 30), h = 50;
+        var x = -(age < 0.35 ? (1 - e) * 40 : 0), y = 66;
         g.save();
-        g.globalAlpha = Math.max(0, Math.min(1, e * 1.4));
-        rr(g, cx - w / 2, y, w, h, 7); g.fillStyle = '#1E4FA0'; g.fill();
-        g.lineWidth = 3; g.strokeStyle = '#111'; g.stroke();
-        rr(g, cx - w / 2 + 5, y + 5, w - 10, h - 10, 4); g.lineWidth = 2; g.strokeStyle = '#fff'; g.stroke();
-        g.fillStyle = '#fff'; g.textAlign = 'center';
-        g.font = '600 12px Poppins, sans-serif'; g.fillText(s.top || 'Ausfahrt · km ' + s.km, cx, y + 22);
-        g.font = '700 20px Poppins, sans-serif'; g.fillText(s.name, cx, y + 46, w - 24);
+        g.globalAlpha = Math.max(0, Math.min(1, e * 1.4)) * (hs < 1 ? 0.9 : 1);
+        rr(g, x, y, w, h, 6); g.fillStyle = '#1E4FA0'; g.fill();
+        g.lineWidth = 2.5; g.strokeStyle = '#111'; g.stroke();
+        rr(g, x + 4, y + 4, w - 8, h - 8, 3); g.lineWidth = 1.5; g.strokeStyle = '#fff'; g.stroke();
+        g.fillStyle = '#fff'; g.textAlign = 'left';
+        g.font = '600 10px Poppins, sans-serif'; g.fillText(s.top || 'Ausfahrt · km ' + s.km, x + 12, y + 19);
+        g.font = '700 17px Poppins, sans-serif'; g.fillText(s.name, x + 12, y + 38, w - 24);
         g.restore();
       }
 
       function drawHint() {
-        var txt = ctx.touch() ? 'Tipp links oder rechts neben den Flitzer' : '← → oder A D: Spur wechseln';
+        var txt = ctx.touch() ? 'Nach links oder rechts wischen' : '← → oder A D: Spur wechseln';
         var fs = 15;
         g.font = '700 ' + fs + 'px Poppins, sans-serif';
         var w = Math.min(W - 20, g.measureText(txt).width + fs * 1.6), h = fs * 2.1;
@@ -550,20 +551,24 @@
           g.restore();
         });
         if (st.on || st.score) {
-          var bs = 1 + st.bump * 0.3;
-          g.save(); g.translate(W / 2, 44); g.scale(bs, bs);
-          g.textAlign = 'center'; g.lineJoin = 'round';
-          g.font = '800 40px Poppins, sans-serif';
-          g.lineWidth = 7; g.strokeStyle = 'rgba(17,17,17,0.8)'; g.strokeText(String(st.score), 0, 14);
-          g.fillStyle = st.bump > 0.5 ? '#FDC506' : '#FFFFFF'; g.fillText(String(st.score), 0, 14);
+          var hs = hudScale();
+          g.save(); g.translate(12, 10); g.scale(hs, hs);
+          g.textAlign = 'left'; g.lineJoin = 'round';
+          g.font = '800 34px Poppins, sans-serif';
+          var txtW = g.measureText(String(st.score)).width;
+          var bs = 1 + st.bump * 0.25;
+          g.save(); g.translate(0, 32); g.scale(bs, bs);
+          g.lineWidth = 6; g.strokeStyle = 'rgba(17,17,17,0.8)'; g.strokeText(String(st.score), 0, 0);
+          g.fillStyle = st.bump > 0.5 ? '#FDC506' : '#FFFFFF'; g.fillText(String(st.score), 0, 0);
           g.restore();
-          g.textAlign = 'center'; g.font = '700 13px Poppins, sans-serif';
+          if (st.shield) art.hex(g, txtW + 22, 20, 11, 'rgba(253,197,6,0.35)', '#FDC506', 2.5);
+          g.font = '700 13px Poppins, sans-serif';
           g.lineWidth = 4; g.strokeStyle = 'rgba(17,17,17,0.8)';
           var info = 'km ' + fmtKm(st.dist / KM) + ' · ' + Math.round(st.speed / 4) + ' km/h';
-          g.strokeText(info, W / 2, 76); g.fillStyle = 'rgba(255,255,255,0.8)'; g.fillText(info, W / 2, 76);
-          if (st.shield) art.hex(g, W / 2 + 60, 40, 11, 'rgba(253,197,6,0.35)', '#FDC506', 2.5);
+          g.strokeText(info, 0, 52); g.fillStyle = 'rgba(255,255,255,0.85)'; g.fillText(info, 0, 52);
+          if (st.sign) drawSign(st.sign, hs);
+          g.restore();
         }
-        if (st.sign) drawSign(st.sign);
         if (st.on && !st.moved && !st.paused && st.t < 6000) drawHint();
         if (st.flash > 0) {
           g.setTransform(1, 0, 0, 1, 0, 0);
@@ -608,13 +613,30 @@
         ctx.finish(st.score, { km: st.dist / KM, exit: st.exit, honey: st.honey, close: st.close });
       }
 
+      /* Maus: neben den Flitzer klicken. Handy: wischen, auch mehrere Spuren in einem Zug. */
+      var swipe = null;
       cv.addEventListener('pointerdown', function (e) {
         if (!st.on || st.paused) return;
-        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (e.pointerType === 'mouse') {
+          if (e.button !== 0) return;
+          e.preventDefault();
+          var r = cv.getBoundingClientRect();
+          move((e.clientX - r.left) / k < st.px ? -1 : 1);
+          return;
+        }
         e.preventDefault();
-        var r = cv.getBoundingClientRect();
-        move((e.clientX - r.left) / k < st.px ? -1 : 1);
+        swipe = { id: e.pointerId, x: e.clientX, y: e.clientY };
+        try { cv.setPointerCapture(e.pointerId); } catch (err) {}
       });
+      cv.addEventListener('pointermove', function (e) {
+        if (!swipe || e.pointerId !== swipe.id) return;
+        var dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+        if (Math.abs(dx) < 24 || Math.abs(dx) < Math.abs(dy)) return;
+        move(dx > 0 ? 1 : -1);
+        swipe.x = e.clientX; swipe.y = e.clientY;
+      });
+      cv.addEventListener('pointerup', function () { swipe = null; });
+      cv.addEventListener('pointercancel', function () { swipe = null; });
 
       resize();
       idleRaf = requestAnimationFrame(idle);
@@ -637,6 +659,7 @@
         },
         setPaused: function (on) {
           st.paused = on;
+          swipe = null;
           if (!on) { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); }
         },
         abort: function () { stop(); st = fresh(); resize(); },

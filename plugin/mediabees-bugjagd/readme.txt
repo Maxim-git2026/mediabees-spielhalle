@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.7.1 – 29.10.2026 =
+* A40-Flitzer: Punkte, Tempo und Ausfahrtsschilder stehen jetzt klein oben links und verdecken die Straße nicht mehr.
+* A40-Flitzer: Auf dem Handy wechselt man die Spur jetzt durch Wischen nach links oder rechts. Ein langer Wisch geht über mehrere Spuren.
+* A40-Flitzer: Keine große Einblendung mehr mitten auf der Fahrbahn.
 
 = 2.7.0 – 29.10.2026 =
 * Der 404-Kopf („Bzzzt. Hier summt nix.“ mit Buttons) ist entfernt. Das Plugin liefert nur noch die Spielhalle, den eigenen Text setzt ihr in Elementor darüber.
