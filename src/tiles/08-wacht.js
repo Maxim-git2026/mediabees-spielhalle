@@ -6,9 +6,13 @@
     id: 'wacht',
     title: 'Wabenwacht',
     ranks: [
+      [9000, 'Stock-Heldin', 'Die Wespen haben aufgegeben.'],
       [6000, 'Königinnen-Garde', 'Der Stock ist sicher!'],
+      [4500, 'Elite-Stachel', 'Treffsicher bis zur letzten Welle.'],
       [3000, 'Wächterbiene', 'Keine Wespe kommt durch.'],
+      [2000, 'Torwächterin', 'Die erste Welle hat keine Chance.'],
       [1000, 'Stachel-Azubi', 'Gut gezielt.'],
+      [400, 'Probestachel', 'Die ersten Treffer sitzen.'],
       [0, 'Wespenfutter', 'Die Wespen feiern. Nochmal!']
     ],
     thumb: function (g, w, h) {

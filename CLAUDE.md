@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.12.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.13.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -63,9 +63,9 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | abriss | Website-Abriss | PC-zerstören-Prinzip, 45 s, Homepages von 1999 (Kalles Trinkhalle, Kaninchenzüchter, Taubenverein, Modellbahn), Hammer/Flammen/Bienen (Tasten 1–3), 1 Pkt je Schaden, Bonus fürs Zerlegen mit Kombo bis ×5, Seite platt = +100 × Seite |
 | nester | Wespennest | Minesweeper auf Waben (6 Nachbarn), erster Klick immer frei, Wabe = 2 × Level Pkt, Feld geräumt = Bonus + nächstes Level, Markieren per Rechtsklick/F, lange drücken oder Umschalter unten |
 | wacht | Wabenwacht | Space-Invaders-Prinzip, Biene schießt Stacheln, Hornisse 30 (2 Treffer), Wespe 20, Feuerwespe 10, Goldwespe 100–300, Honigwaben als Deckung, 3 Leben, Doppelstachel, Welle geschafft = +100 × Welle. Handy: ziehen + Dauerfeuer |
-| pfad | Pollenpfad | Pac-Man-Prinzip mit eigenem Labyrinth (19 × 21, 176 Pollen), Pollen 10, Honigglas 50 (Wespen werden Beute), Biene schaut ganz in Flugrichtung mit Kau-Mund, Wespen fangen 200/400/800/1.600, Blume +100 × Level, Level geschafft +500 × Level, 3 Leben. Wespen: Rüpel jagt direkt, Lauer zielt vor die Biene, Zick kommt nah und weicht aus, Zufall streut. Handy: wischen oder neben die Biene tippen. Juice: `ring`, `shakeIt`, `hitstop` (Freeze), `punch` (Zoom), `sparkle`, goldener Rand im Honig-Rausch |
-| wabenbau | Wabenbau | Tetris-Prinzip mit Sechsecken: 9 senkrechte Wabenspalten × 16, Teile aus 4 Waben (7 Formen, axiale Koordinaten, Drehen in 60°-Schritten), volle Zickzack-Reihe verschwindet, 100/300/500/800 × Level, Sofort-Fallen +2 je Wabe, Level alle 10 Reihen. Handy: wischen schiebt, nach unten wischen lässt fallen, tippen dreht |
-| solitaer | Bienen-Solitär | Klondike, 1 Karte ziehen, eigene Farben (Blume + Wabe rot, Käfer + Klee dunkel), K = Königin, D = Hummel, B = Arbeitsbiene. Punkte: Ablage +10, aufdecken/vom Stapel anlegen +5, von Ablage zurück −15, Stapel neu −50, Sieg +500 + (600 − Sekunden) × 2. Antippen = bester Zug, Ziehen geht auch, Zurück-Knopf (stellt auch Punkte zurück), Aufgeben, Auto-Abschluss, Gewinn-Kaskade |
+| pfad | Pollenpfad | Pac-Man-Prinzip mit 3 eigenen Labyrinthen (19 × 21, Wiese gelb / Zeche orange / Kanal blau, Nest in der Mitte überall gleich, rotieren pro Level), Wespen: Level 1 = 2, jedes Level +1, max. 5 (Rüpel, Zufall, Lauer, Zick, Brumm), Pollen 10, Honigglas 50 (Wespen werden Beute), Biene schaut ganz in Flugrichtung mit Kau-Mund, Wespen fangen 200/400/800/1.600, Blume +100 × Level, Level geschafft +500 × Level, 3 Leben. Wespen: Rüpel jagt direkt, Lauer zielt vor die Biene, Zick kommt nah und weicht aus, Zufall streut. Handy: wischen oder neben die Biene tippen. Juice: `ring`, `shakeIt`, `hitstop` (Freeze), `punch` (Zoom), `sparkle`, goldener Rand im Honig-Rausch |
+| wabenbau | Wabenbau | Tetris-Prinzip mit Sechsecken: 9 senkrechte Wabenspalten × 16, Teile aus 4 Waben (7 Formen, axiale Koordinaten, Drehen in 60°-Schritten), volle Zickzack-Reihe verschwindet, 100/300/500/800 × Level, Sofort-Fallen +2 je Wabe, Level alle 10 Reihen. Tasten: A/D bzw. ← → schieben, W/↑ drehen, Q andersherum, S/Leertaste sofort fallen, ↓ schneller. Hinweis nur beim ersten Stein, Schritt für Schritt. Handy: wischen schiebt, nach unten wischen lässt fallen, tippen dreht |
+| solitaer | Bienen-Solitär | Klondike, 1 Karte ziehen, eigene Farben (Blume + Wabe rot, Käfer + Klee schwarz, kein Grün!), K = Königin, D = Hummel, B = Arbeitsbiene. Punkte: Ablage +10, aufdecken/vom Stapel anlegen +5, von Ablage zurück −15, Stapel neu −50, Sieg +500 + (600 − Sekunden) × 2. Antippen = bester Zug, Ziehen geht auch, Zurück-Knopf (stellt auch Punkte zurück), Aufgeben, Auto-Abschluss, Gewinn-Kaskade. Keine Züge mehr → blinkender Hinweis mit „Zug zurück“/„Runde beenden“. Karten werden vorgezeichnet (Cache), sonst ruckelt es |
 
 ### Nächste Spiele (in dieser Reihenfolge)
 Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
@@ -74,7 +74,7 @@ Gestrichen: Bubble Ball, Schach.
 
 ## Neues Spiel anlegen – Checkliste
 1. `src/tiles/<NN>-<id>.js` (zweistellig, z. B. `11-solitaer.js`): `MBArcade.tile({ id, title, ranks: [[minPunkte, Titel, Text], ...], thumb: function (g, w, h) {...} })`.
-   Die Rangstufen stehen **in der Kachel**, weil die Ranglisten (auch „Ranglisten aller Spiele“) den Titel für jeden Eintrag aus den Punkten berechnen, ohne das Spiel zu laden.
+   **8 Stufen** pro Spiel, unten fein abgestuft. Die Rangstufen stehen **in der Kachel**, weil die Ranglisten (auch „Ranglisten aller Spiele“) den Titel für jeden Eintrag aus den Punkten berechnen, ohne das Spiel zu laden.
 2. `src/games/<id>.js`: `MBArcade.register({ id, title, duration (0 = ohne Zeitlimit), startText, help: {controls, legend}, cta, stats(s), mount(ctx) })`.
    - `mount(ctx)` bekommt `ctx.screen`, `ctx.stage`, `ctx.setScore`, `ctx.setTime`, `ctx.say` (Toast), `ctx.tone` (Sound),
      `ctx.reduce` (weniger Bewegung), `ctx.touch`, `ctx.finish(stats)`.

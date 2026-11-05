@@ -6,9 +6,13 @@
     id: 'nester',
     title: 'Wespennest',
     ranks: [
+      [4000, 'Nest-Orakel', 'Du siehst durch Wachs.'],
       [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
+      [1600, 'Detektivbiene', 'Kombiniert wie im Krimi.'],
       [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
+      [600, 'Kundschafterin', 'Mutig aufgedeckt.'],
       [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
+      [100, 'Glückspilz', 'Ein paar Waben hast du geschafft.'],
       [0, 'Gestochen', 'Autsch. Nochmal!']
     ],
     thumb: function (g, w, h) {

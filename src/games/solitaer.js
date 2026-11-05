@@ -2,12 +2,12 @@
 (function () {
   'use strict';
   var TAU = Math.PI * 2, BAR = 46;
-  /* Farben: 0 Blume und 1 Wabe sind rot, 2 Käfer und 3 Klee sind dunkel */
+  /* Farben: 0 Blume und 1 Wabe sind rot, 2 Käfer und 3 Klee sind schwarz */
   var SUITS = [
     { name: 'Blume', c: '#D3273F', red: true },
-    { name: 'Wabe', c: '#E8702A', red: true },
-    { name: 'Käfer', c: '#1E1E1E', red: false },
-    { name: 'Klee', c: '#1F6B3A', red: false }
+    { name: 'Wabe', c: '#C0262F', red: true },
+    { name: 'Käfer', c: '#1A1A1A', red: false },
+    { name: 'Klee', c: '#1A1A1A', red: false }
   ];
   var RANKS = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'B', 'D', 'K'];
   var art = MBArcade.art, rr = art.rrect;
@@ -22,7 +22,7 @@
       g.beginPath(); g.arc(0, 0, s * 0.22, 0, TAU); g.fillStyle = '#FDC506'; g.fill();
     } else if (si === 1) {
       art.hex(g, 0, 0, s * 0.62, su.c, null);
-      art.hex(g, 0, 0, s * 0.3, '#FFD27A', null);
+      art.hex(g, 0, 0, s * 0.3, '#FFE1A8', null);
     } else if (si === 2) {
       g.strokeStyle = su.c; g.lineWidth = Math.max(1, s * 0.09); g.lineCap = 'round';
       g.beginPath(); g.moveTo(-s * 0.15, -s * 0.45); g.lineTo(-s * 0.3, -s * 0.7); g.moveTo(s * 0.15, -s * 0.45); g.lineTo(s * 0.3, -s * 0.7);
@@ -80,7 +80,8 @@
       controls: [
         { icons: ['mouse-left', 'tap'], text: 'Karte antippen: Sie springt automatisch an den besten Platz' },
         { icons: ['swipe'], text: 'Karten oder ganze Reihen auch ziehen und ablegen' },
-        { icons: ['kbd:Leertaste'], text: 'Neue Karte vom Stapel ziehen, U = Zug zurück', kb: true },
+        { icons: ['kbd:Leertaste'], text: 'Neue Karte vom Stapel ziehen', kb: true },
+        { icons: ['mouse-left', 'tap'], text: 'Unten links „Zug zurück“ nimmt den letzten Zug zurück (Taste U)' },
         { icons: ['kbd:Esc'], text: 'Pause und Menü', kb: true }
       ],
       legend: [
@@ -104,7 +105,7 @@
       ctx.screen.appendChild(cv);
       var g = cv.getContext('2d');
       var cssW = 0, cssH = 0, dpr = 1, cw = 60, ch = 84, gap = 8, ox = 0, topY = 10, tabY = 100;
-      var raf = 0, idleRaf = 0, ptr = null, anim = {}, cascade = null, layer = null;
+      var raf = 0, idleRaf = 0, ptr = null, anim = {}, cascade = null, layer = null, cache = {};
       var st = fresh();
 
       function fresh() {
@@ -134,7 +135,7 @@
         ch = cw * 1.4;
         ox = (cssW - (7 * cw + 6 * gap)) / 2;
         topY = 10; tabY = topY + ch + gap * 1.6;
-        layer = null;
+        layer = null; cache = {};
       }
       function colX(i) { return ox + i * (cw + gap); }
       function stackOffsets(col) {
@@ -169,6 +170,7 @@
         if (!u) { ctx.tone(160, 140, 0.05, 'square', 0.02); return; }
         st.stock = u.stock; st.waste = u.waste; st.found = u.found; st.tab = u.tab; st.score = u.score; st.moves = u.moves; st.recycles = u.recycles;
         ctx.setScore(st.score);
+        st.stuck = false; checkStuck();
         ctx.tone(500, 380, 0.06, 'triangle', 0.03);
       }
       function addScore(n) { st.score = Math.max(0, st.score + n); ctx.setScore(st.score); }
@@ -212,6 +214,7 @@
         if (src.from === 'tab') flipTop(src.i);
         st.moves++; st.hint = false;
         checkWin();
+        checkStuck();
       }
       function draw() {
         if (st.auto || st.won) return;
@@ -228,6 +231,7 @@
           ctx.tone(300, 200, 0.12, 'square', 0.03);
           ctx.fx.ring(colX(0) + cw / 2, topY + ch / 2, '#FFFFFF', cw, 3, 300);
         }
+        checkStuck();
       }
       /* Bester Zug für eine angetippte Karte */
       function autoMove(src) {
@@ -246,6 +250,37 @@
         st.wiggle = { ids: src.from === 'tab' ? st.tab[src.i].slice(src.k).map(function (c) { return c.id; }) : [card.id], t0: st.t };
         ctx.tone(180, 150, 0.06, 'square', 0.025);
         return false;
+      }
+      /* Gibt es überhaupt noch einen sinnvollen Zug? */
+      function hasMoves() {
+        var i, ci, k, fi;
+        var pool = st.stock.concat(st.waste);
+        for (i = 0; i < pool.length; i++) {
+          for (fi = 0; fi < 4; fi++) if (canFound(pool[i], fi)) return true;
+          for (ci = 0; ci < 7; ci++) if (canTab(pool[i], ci)) return true;
+        }
+        for (ci = 0; ci < 7; ci++) {
+          var col = st.tab[ci], t = top(col);
+          if (t) for (fi = 0; fi < 4; fi++) if (canFound(t, fi)) return true;
+          for (k = 0; k < col.length; k++) {
+            if (!col[k].up) continue;
+            var reveals = k > 0 && !col[k - 1].up;
+            for (var cj = 0; cj < 7; cj++) {
+              if (cj === ci || !canTab(col[k], cj)) continue;
+              if (reveals || (k === 0 && st.tab[cj].length)) return true;
+            }
+            break;
+          }
+        }
+        return false;
+      }
+      function checkStuck() {
+        var was = st.stuck;
+        st.stuck = st.on && !st.won && !st.auto && !hasMoves();
+        if (st.stuck && !was) {
+          ctx.fx.flash('255,74,61', 0.5); ctx.fx.shake(0.2, 6);
+          ctx.tone(330, 140, 0.4, 'sawtooth', 0.04);
+        }
       }
       function checkWin() {
         if (foundCount() === 52 && !st.won) {
@@ -310,15 +345,24 @@
 
       function render() {
         g.setTransform(1, 0, 0, 1, 0, 0);
-        var bg = g.createRadialGradient(cv.width / 2, cv.height * 0.4, 10, cv.width / 2, cv.height * 0.4, Math.max(cv.width, cv.height) * 0.8);
-        bg.addColorStop(0, '#1F4A2C'); bg.addColorStop(1, '#0F2617');
-        g.fillStyle = bg; g.fillRect(0, 0, cv.width, cv.height);
+        /* Filztisch nur einmal vorzeichnen */
+        if (!cache.bg) {
+          var bc = document.createElement('canvas'); bc.width = cv.width; bc.height = cv.height;
+          var bx = bc.getContext('2d'), bgr = bx.createRadialGradient(cv.width / 2, cv.height * 0.4, 10, cv.width / 2, cv.height * 0.4, Math.max(cv.width, cv.height) * 0.8);
+          bgr.addColorStop(0, '#1F4A2C'); bgr.addColorStop(1, '#0F2617');
+          bx.fillStyle = bgr; bx.fillRect(0, 0, cv.width, cv.height);
+          cache.bg = bc;
+        }
+        g.drawImage(cache.bg, 0, 0);
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         /* leere Plätze */
         function slot(x, y, label, fl) {
           rr(g, x, y, cw, ch, cw * 0.1); g.fillStyle = 'rgba(0,0,0,0.22)'; g.fill();
           g.lineWidth = 2; g.strokeStyle = fl ? 'rgba(253,197,6,' + (0.4 + fl * 0.6) + ')' : 'rgba(253,197,6,0.35)'; g.stroke();
-          if (label !== null) { g.globalAlpha = 0.35; drawSuit(g, label, x + cw / 2, y + ch / 2, cw * 0.3); g.globalAlpha = 1; }
+          if (label !== null) {
+            g.beginPath(); g.arc(x + cw / 2, y + ch / 2, cw * 0.3, 0, TAU); g.fillStyle = 'rgba(255,248,230,0.28)'; g.fill();
+            g.globalAlpha = 0.75; drawSuit(g, label, x + cw / 2, y + ch / 2, cw * 0.26); g.globalAlpha = 1;
+          }
         }
         slot(colX(0), topY, null);
         if (!st.stock.length && st.waste.length) {
@@ -350,17 +394,34 @@
         var by = cssH - BAR;
         g.fillStyle = 'rgba(10,20,14,0.92)'; g.fillRect(0, by, cssW, BAR);
         g.textBaseline = 'middle';
-        function btn(x, w, label, on) {
-          rr(g, x, by + 7, w, BAR - 14, (BAR - 14) / 2); g.fillStyle = on ? '#262626' : '#1A1A1A'; g.fill();
-          g.lineWidth = 1.5; g.strokeStyle = on ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)'; g.stroke();
-          g.fillStyle = on ? '#FFFFFF' : 'rgba(255,255,255,0.35)'; g.textAlign = 'center'; g.font = '700 13px Poppins, sans-serif'; g.fillText(label, x + w / 2, by + BAR / 2 + 1);
+        function btn(x, w, label, on, main) {
+          rr(g, x, by + 6, w, BAR - 12, (BAR - 12) / 2);
+          g.fillStyle = main && on ? '#FDC506' : on ? '#262626' : '#1A1A1A'; g.fill();
+          g.lineWidth = 2; g.strokeStyle = main ? (on ? '#FDC506' : 'rgba(253,197,6,0.3)') : on ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)'; g.stroke();
+          g.fillStyle = main && on ? '#111' : on ? '#FFFFFF' : 'rgba(255,255,255,0.35)'; g.textAlign = 'center'; g.font = '800 14px Poppins, sans-serif'; g.fillText(label, x + w / 2, by + BAR / 2 + 1, w - 10);
         }
-        var bw2 = Math.min(120, cssW * 0.28);
-        btn(10, bw2, '↶ Zurück', st.undo.length > 0 && !st.won);
+        var bw2 = Math.min(140, cssW * 0.3);
+        btn(10, bw2, '↶ Zug zurück', st.undo.length > 0 && !st.won, true);
         btn(cssW - bw2 - 10, bw2, 'Aufgeben', !st.won);
         var secs = st.on ? Math.floor((st.t - st.startT) / 1000) : 0, m = Math.floor(secs / 60), s = secs % 60;
         g.fillStyle = 'rgba(255,255,255,0.75)'; g.font = '700 14px Poppins, sans-serif'; g.textAlign = 'center';
         g.fillText(m + ':' + (s < 10 ? '0' : '') + s + '  ·  ' + foundCount() + '/52', cssW / 2, by + BAR / 2 + 1);
+        /* Keine Züge mehr: blinkender Hinweis mit zwei Knöpfen */
+        if (st.stuck && !st.paused) {
+          var bh2 = Math.min(170, cssH * 0.34), byy = (cssH - BAR) / 2 - bh2 / 2;
+          g.fillStyle = 'rgba(10,10,10,0.88)'; g.fillRect(0, byy, cssW, bh2);
+          g.fillStyle = '#FDC506'; g.fillRect(0, byy, cssW, 3); g.fillRect(0, byy + bh2 - 3, cssW, 3);
+          g.textAlign = 'center'; g.textBaseline = 'middle';
+          g.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(performance.now() / 300));
+          g.font = '900 ' + Math.min(30, cssW / 12) + 'px Poppins, sans-serif'; g.fillStyle = '#FF7A6B';
+          g.fillText('Keine Züge mehr!', cssW / 2, byy + bh2 * 0.3);
+          g.globalAlpha = 1;
+          stuckButtons().forEach(function (b) {
+            rr(g, b.x, b.y, b.w, b.h, b.h / 2); g.fillStyle = b.main ? '#FDC506' : 'rgba(0,0,0,0)'; g.fill();
+            g.lineWidth = 2; g.strokeStyle = b.main ? '#FDC506' : '#FFFFFF'; g.stroke();
+            g.fillStyle = b.main ? '#111' : '#FFFFFF'; g.font = '800 14px Poppins, sans-serif'; g.fillText(b.label, b.x + b.w / 2, b.y + b.h / 2 + 1, b.w - 10);
+          });
+        }
         if (st.on && st.hint && !st.paused) {
           var txt = ctx.touch() ? 'Karte antippen, sie springt an den besten Platz' : 'Karte anklicken oder ziehen, Stapel links oben klicken';
           g.font = '700 13px Poppins, sans-serif';
@@ -372,6 +433,19 @@
           g.globalAlpha = 1;
         }
       }
+      /* Jede Karte wird einmal vorgezeichnet und danach nur noch als Bild hingelegt (gegen Ruckeln) */
+      function img(c, up) {
+        var key = up ? c.id : 'b';
+        if (!cache[key]) {
+          var cc = document.createElement('canvas'), pad = 2;
+          cc.width = Math.ceil((cw + pad * 2) * dpr); cc.height = Math.ceil((ch + pad * 2) * dpr);
+          var x = cc.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, pad * dpr, pad * dpr);
+          if (up) drawFace(x, c, 0, 0, cw, ch); else drawBack(x, 0, 0, cw, ch);
+          cache[key] = cc;
+        }
+        return cache[key];
+      }
+      function blit(c, up, x, y) { g.drawImage(img(c, up), x - 2, y - 2, cw + 4, ch + 4); }
       function drawCard(c, a) {
         var x = a.x, y = a.y;
         if (st.wiggle && st.wiggle.ids.indexOf(c.id) >= 0) {
@@ -382,13 +456,20 @@
           a.flip = Math.max(0, a.flip - 0.12);
           var sx = Math.abs(Math.cos(a.flip * Math.PI / 2 * 2));
           g.save(); g.translate(x + cw / 2, y); g.scale(Math.max(0.05, sx), 1); g.translate(-cw / 2, 0);
-          if (a.flip > 0.5) drawBack(g, 0, 0, cw, ch); else drawFace(g, c, 0, 0, cw, ch);
+          blit(c, a.flip <= 0.5, 0, 0);
           g.restore();
           return;
         }
-        if (c.up) drawFace(g, c, x, y, cw, ch); else drawBack(g, x, y, cw, ch);
+        blit(c, c.up, x, y);
       }
 
+      function stuckButtons() {
+        var bh2 = Math.min(170, cssH * 0.34), byy = (cssH - BAR) / 2 - bh2 / 2, w = Math.min(170, cssW * 0.4), h = 42, y = byy + bh2 * 0.62;
+        return [
+          { k: 'undo', label: '↶ Zug zurück', x: cssW / 2 - w - 8, y: y, w: w, h: h },
+          { k: 'end', label: 'Runde beenden', x: cssW / 2 + 8, y: y, w: w, h: h, main: true }
+        ];
+      }
       /* Was liegt unter dem Finger? */
       function hit(x, y) {
         if (x >= colX(0) && x <= colX(0) + cw && y >= topY && y <= topY + ch) return { from: 'stock' };
@@ -420,8 +501,14 @@
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         e.preventDefault();
         var p = local(e);
+        if (st.stuck) {
+          stuckButtons().forEach(function (b) {
+            if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h) { if (b.k === 'undo') undo(); else st.over = true; }
+          });
+          return;
+        }
         if (p.y > cssH - BAR) {
-          var bw2 = Math.min(120, cssW * 0.28);
+          var bw2 = Math.min(140, cssW * 0.3);
           if (p.x < 10 + bw2) undo();
           else if (p.x > cssW - bw2 - 10) { ctx.fx.banner('Aufgegeben', '#FFFFFF', 30); st.over = true; }
           return;

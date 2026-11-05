@@ -6,9 +6,13 @@
     id: 'flitzer',
     title: 'A40-Flitzer',
     ranks: [
+      [8000, 'Venlo-Rakete', 'Schneller als die Polizei erlaubt.'],
       [5000, 'Autobahn-Legende', 'Einmal Venlo und zurück!'],
+      [3500, 'Spurwechsel-Profi', 'Elegant durch den Verkehr.'],
       [2500, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
-      [1000, 'Pendler-Biene', 'Schöne Fahrt.'],
+      [1600, 'Pendler-Biene', 'Schöne Fahrt.'],
+      [1000, 'Sonntagsfahrer', 'Gemütlich unterwegs.'],
+      [400, 'Fahrschülerin', 'Die ersten Kilometer sitzen.'],
       [0, 'Blechschaden', 'Anschnallen und nochmal.']
     ],
     thumb: function (g, w, h) {

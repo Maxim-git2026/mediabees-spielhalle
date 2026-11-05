@@ -6,9 +6,13 @@
     id: 'pfad',
     title: 'Pollenpfad',
     ranks: [
+      [40000, 'Labyrinth-Legende', 'Du kennst jeden Gang.'],
       [30000, 'Pollen-Legende', 'Kein Pollen bleibt liegen.'],
+      [20000, 'Wespen-Fängerin', 'Die Wespen laufen vor dir weg.'],
       [12000, 'Sammelprofi', 'Die Wespen schauen dumm aus der Wäsche.'],
+      [7000, 'Labyrinth-Läuferin', 'Zwei Labyrinthe gemeistert.'],
       [4000, 'Flinke Biene', 'Gut gesammelt.'],
+      [1500, 'Pollen-Naschkatze', 'Ein paar Pollen geschnappt.'],
       [0, 'Wespenfang', 'Erwischt! Nochmal.']
     ],
     thumb: function (g, w, h) {

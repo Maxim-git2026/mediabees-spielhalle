@@ -50,10 +50,10 @@
     help: {
       legendTitle: 'Punkte',
       controls: [
-        { icons: ['kbd:← →'], text: 'Teil verschieben', kb: true },
-        { icons: ['kbd:↑', 'kbd:X'], text: 'Drehen (Z dreht andersherum)', kb: true },
-        { icons: ['kbd:↓'], text: 'Schneller fallen lassen', kb: true },
-        { icons: ['kbd:Leertaste'], text: 'Teil sofort ganz nach unten', kb: true },
+        { icons: ['kbd:A D', 'kbd:← →'], text: 'Teil verschieben', kb: true },
+        { icons: ['kbd:W', 'kbd:↑'], text: 'Drehen (Q dreht andersherum)', kb: true },
+        { icons: ['kbd:S', 'kbd:Leertaste'], text: 'Teil sofort ganz nach unten', kb: true },
+        { icons: ['kbd:↓'], text: 'Schneller fallen lassen, solange gedrückt', kb: true },
         { icons: ['swipe'], text: 'Wischen links/rechts schiebt, nach unten lässt fallen', touch: true },
         { icons: ['tap'], text: 'Tippen dreht das Teil', touch: true },
         { icons: ['kbd:Esc'], text: 'Pause und Menü', kb: true }
@@ -306,8 +306,10 @@
           g.fillText('Nächstes', nx0 - nr - 8, TOP / 2);
           us.forEach(function (u) { drawCell(g, nx0 + u.x * nr, TOP / 2 + (u.y - (minY + maxY) / 2) * nr, nr, st.next.c); });
         }
-        if (st.on && st.hint && !st.paused) {
-          var txt = ctx.touch() ? 'Wischen schiebt, Tippen dreht' : '← → schieben, ↑ drehen, Leertaste fallen';
+        if (st.on && st.hint && !st.paused && st.pieces === 0) {
+          var txt = ctx.touch()
+            ? (!st.didMove ? 'Wisch nach links oder rechts' : !st.didRot ? 'Tipp zum Drehen' : 'Nach unten wischen lässt fallen')
+            : (!st.didMove ? 'A / D schieben' : !st.didRot ? 'W dreht' : 'S lässt das Teil fallen');
           g.font = '700 14px Poppins, sans-serif';
           var w = Math.min(cssW - 20, g.measureText(txt).width + 26), h = 32, hx = cssW / 2, hy = oy + bh * 0.62;
           g.globalAlpha = 0.75 + Math.sin(performance.now() / 260) * 0.25;
@@ -340,7 +342,9 @@
 
       function act(what) {
         if (!st.on || st.paused || !st.cur || st.clearing || st.dying) return;
-        st.hint = false;
+        if (what === 'left' || what === 'right') st.didMove = true;
+        if (what === 'rot' || what === 'rotl') st.didRot = true;
+        if (what === 'drop') st.hint = false;
         if (what === 'left' || what === 'right') { if (tryMove(what === 'left' ? -1 : 1, 0)) ctx.tone(400, 420, 0.03, 'triangle', 0.02); }
         else if (what === 'rot') rotate(1);
         else if (what === 'rotl') rotate(-1);
@@ -370,7 +374,7 @@
         ptr = null;
       });
       cv.addEventListener('pointercancel', function () { ptr = null; });
-      function onKeyUp(e) { if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') st.soft = false; }
+      function onKeyUp(e) { if (e.key === 'ArrowDown') st.soft = false; }
       document.addEventListener('keyup', onKeyUp);
 
       layout();
@@ -396,9 +400,9 @@
           if (k === 'ArrowLeft' || k === 'a' || k === 'A') { act('left'); return true; }
           if (k === 'ArrowRight' || k === 'd' || k === 'D') { act('right'); return true; }
           if (k === 'ArrowUp' || k === 'w' || k === 'W' || k === 'x' || k === 'X') { if (!e.repeat) act('rot'); return true; }
-          if (k === 'z' || k === 'Z' || k === 'y' || k === 'Y') { if (!e.repeat) act('rotl'); return true; }
-          if (k === 'ArrowDown' || k === 's' || k === 'S') { st.soft = true; st.hint = false; return true; }
-          if (k === ' ') { if (!e.repeat) act('drop'); return true; }
+          if (k === 'q' || k === 'Q' || k === 'z' || k === 'Z' || k === 'y' || k === 'Y') { if (!e.repeat) act('rotl'); return true; }
+          if (k === 'ArrowDown') { st.soft = true; return true; }
+          if (k === ' ' || k === 's' || k === 'S') { if (!e.repeat) act('drop'); return true; }
           return false;
         },
         _debug: function () { return { st: st, cellsOf: cellsOf, fits: fits, lock: lock, cx: cx, cy: cy }; }

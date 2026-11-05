@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.12.0
+Stable tag: 2.13.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,12 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.13.0 – 05.11.2026 =
+* Pollenpfad: Drei verschiedene Labyrinthe (Wiese, Zeche, Kanal) mit eigener Farbe. Level 1 startet mit 2 Wespen, jedes Level kommt eine dazu, ab Level 4 sind es fünf.
+* Wabenbau: Steuerung mit WASD. W dreht, S lässt das Teil sofort fallen, A und D schieben. Beim ersten Stein zeigt ein Hinweis Schritt für Schritt die Steuerung.
+* Bienen-Solitär: Nur noch zwei rote und zwei schwarze Farben. Läuft deutlich flüssiger. Der Knopf „Zug zurück“ ist jetzt gut sichtbar. Geht nichts mehr, blinkt „Keine Züge mehr!“ mit „Zug zurück“ und „Runde beenden“.
+* Mehr Titel in allen Spielen: jetzt 8 Stufen statt 4, damit nicht alle den gleichen Titel bekommen.
 
 = 2.12.0 – 05.11.2026 =
 * Neues Spiel: Bienen-Solitär. Patience mit eigenen Karten (Blume, Wabe, Käfer, Klee, Königin, Hummel und Arbeitsbiene). Karte antippen und sie springt an den besten Platz, Ziehen geht auch. Mit Zurück-Knopf, automatischem Abschluss und springenden Karten beim Sieg.

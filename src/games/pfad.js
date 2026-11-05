@@ -2,40 +2,91 @@
 (function () {
   'use strict';
   var TAU = Math.PI * 2, BAR = 40, LIVES = 3;
-  var MAZE = [
-    '###################',
-    '#........#........#',
-    '#o##.###.#.###.##o#',
-    '#.................#',
-    '#.##.#.#####.#.##.#',
-    '#....#...#...#....#',
-    '####.###.#.###.####',
-    '####.#.......#.####',
-    '####.#.##-##.#.####',
-    '    ...#HHH#...    ',
-    '####.#.#####.#.####',
-    '####.#.......#.####',
-    '####.#.#####.#.####',
-    '#........#........#',
-    '#.##.###.#.###.##.#',
-    '#o.#.....P.....#.o#',
-    '##.#.#.#####.#.#.##',
-    '#....#...#...#....#',
-    '#.######.#.######.#',
-    '#.................#',
-    '###################'
+  /* Drei Labyrinthe, das Wespennest in der Mitte ist überall gleich */
+  var MAZES = [
+    { name: 'Wiese', line: '#FDC506', fill: ['#2B2412', '#2F2814'], rows: [
+      '###################',
+      '#........#........#',
+      '#o##.###.#.###.##o#',
+      '#.................#',
+      '#.##.#.#####.#.##.#',
+      '#....#...#...#....#',
+      '####.###.#.###.####',
+      '####.#.......#.####',
+      '####.#.##-##.#.####',
+      '    ...#HHH#...    ',
+      '####.#.#####.#.####',
+      '####.#.......#.####',
+      '####.#.#####.#.####',
+      '#........#........#',
+      '#.##.###.#.###.##.#',
+      '#o.#.....P.....#.o#',
+      '##.#.#.#####.#.#.##',
+      '#....#...#...#....#',
+      '#.######.#.######.#',
+      '#.................#',
+      '###################'
+    ] },
+    { name: 'Zeche', line: '#FF8A3D', fill: ['#2A1A12', '#2F1E15'], rows: [
+      '###################',
+      '#o...............o#',
+      '#.###.#.###.#.###.#',
+      '#.#.............#.#',
+      '#.#.##.#####.##.#.#',
+      '#......#...#......#',
+      '####.#.#.#.#.#.####',
+      '####.#.......#.####',
+      '####.#.##-##.#.####',
+      '    ...#HHH#...    ',
+      '####.#.#####.#.####',
+      '####.#.......#.####',
+      '####.#.#####.#.####',
+      '#o.......#.......o#',
+      '#.###.##.#.##.###.#',
+      '#...#....P....#...#',
+      '###.#.#.###.#.#.###',
+      '#.....#.....#.....#',
+      '#.###.#.###.#.###.#',
+      '#.................#',
+      '###################'
+    ] },
+    { name: 'Kanal', line: '#7FD3FF', fill: ['#12202A', '#15252F'], rows: [
+      '###################',
+      '#.................#',
+      '#.#.###.###.###.#.#',
+      '#o#...#.....#...#o#',
+      '#.#.#.#.###.#.#.#.#',
+      '#.................#',
+      '####.#.##.##.#.####',
+      '####.#.......#.####',
+      '####.#.##-##.#.####',
+      '    ...#HHH#...    ',
+      '####.#.#####.#.####',
+      '####.#.......#.####',
+      '####.#.#####.#.####',
+      '#.................#',
+      '#.#.#.#.#.#.#.#.#.#',
+      '#o#...#..P..#...#o#',
+      '#.###.#.###.#.###.#',
+      '#.................#',
+      '#.##.#.#####.#.##.#',
+      '#.................#',
+      '###################'
+    ] }
   ];
-  var ROWS = MAZE.length, COLS = MAZE[0].length, TOTAL = (MAZE.join('').match(/[.o]/g) || []).length;
+  var ROWS = 21, COLS = 19;
   var DOOR = { x: 9, y: 8 }, EXIT = { x: 9, y: 7 }, HOME = { x: 9, y: 9 };
   var DIRS = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
   var KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', W: 'up', s: 'down', S: 'down', a: 'left', A: 'left', d: 'right', D: 'right' };
   /* Abwechselnd verteilen und jagen, in Sekunden */
   var MODES = [7, 20, 7, 20, 5, 1e9];
+  /* Level 1: 2 Wespen, jedes Level eine mehr, ab Level 4 alle fünf */
   var WASPS = [
-    { name: 'Rüpel', body: '#FF5A4A', stripe: '#2A0E0A', corner: { x: 17, y: -3 }, start: { x: 9, y: 7 }, out: 0 },
-    { name: 'Lauer', hornet: true, corner: { x: 1, y: -3 }, start: { x: 9, y: 9 }, out: 1.5 },
-    { name: 'Zick', body: '#FF8A3D', stripe: '#2A1408', corner: { x: 17, y: 23 }, start: { x: 8, y: 9 }, out: 5 },
-    { name: 'Zufall', body: '#FFD400', stripe: '#111', corner: { x: 1, y: 23 }, start: { x: 10, y: 9 }, out: 9 }
+    { name: 'Rüpel', kind: 'jagd', body: '#FF5A4A', stripe: '#2A0E0A', corner: { x: 17, y: -3 }, start: { x: 9, y: 7 }, out: 0 },
+    { name: 'Zufall', kind: 'zufall', body: '#FFD400', stripe: '#111', corner: { x: 1, y: 23 }, start: { x: 10, y: 9 }, out: 2 },
+    { name: 'Lauer', kind: 'lauer', hornet: true, corner: { x: 1, y: -3 }, start: { x: 9, y: 9 }, out: 4 },
+    { name: 'Zick', kind: 'zick', body: '#FF8A3D', stripe: '#2A1408', corner: { x: 17, y: 23 }, start: { x: 8, y: 9 }, out: 7 },
+    { name: 'Brumm', kind: 'brumm', body: '#B78CFF', stripe: '#24113D', corner: { x: 9, y: 23 }, start: { x: 9, y: 9 }, out: 10 }
   ];
   var art = MBArcade.art, rr = art.rrect;
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -71,7 +122,7 @@
     id: 'pfad',
     title: 'Pollenpfad',
     duration: 0,
-    startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit einem Honigglas drehst du den Spieß um und kannst die Wespen kurz jagen.',
+    startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit einem Honigglas drehst du den Spieß um. Drei Labyrinthe, und mit jedem Level kommt eine Wespe dazu.',
     help: {
       legendTitle: 'Punkte',
       controls: [
@@ -113,7 +164,9 @@
         };
       }
       function loadGrid() {
-        st.grid = MAZE.map(function (row) { return row.split(''); });
+        st.maze = MAZES[(st.level - 1) % MAZES.length];
+        st.grid = st.maze.rows.map(function (row) { return row.split(''); });
+        st.total = (st.maze.rows.join('').match(/[.o]/g) || []).length;
         st.left = 0;
         st.grid.forEach(function (row) { row.forEach(function (c) { if (c === '.' || c === 'o') st.left++; }); });
         st.flowersShown = 0;
@@ -132,9 +185,9 @@
       }
 
       function resetActors() {
-        var p = MAZE.reduce(function (acc, row, y) { var x = row.indexOf('P'); return x >= 0 ? { x: x, y: y } : acc; }, null);
+        var p = st.maze.rows.reduce(function (acc, row, y) { var x = row.indexOf('P'); return x >= 0 ? { x: x, y: y } : acc; }, null);
         st.bee = { x: p.x, y: p.y, dx: 0, dy: 0, want: null, face: { x: 1, y: 0 }, mouth: 0 };
-        st.ghosts = WASPS.map(function (w, i) {
+        st.ghosts = WASPS.slice(0, Math.min(WASPS.length, st.level + 1)).map(function (w, i) {
           return { ghost: true, i: i, w: w, x: w.start.x, y: w.start.y, dx: i ? 0 : -1, dy: 0, state: i ? 'house' : 'chase', outAt: w.out, bob: Math.random() * TAU };
         });
         st.fright = 0; st.chain = 0;
@@ -160,17 +213,17 @@
         var x = c.getContext('2d');
         x.setTransform(dpr, 0, 0, dpr, 0, 0);
         for (var yy = 0; yy < ROWS; yy++) for (var xx = 0; xx < COLS; xx++) {
-          var ch = MAZE[yy][xx];
+          var M = st.maze.rows, ch = M[yy][xx];
           if (ch !== '#') continue;
           var px = xx * T, py = yy * T;
-          x.fillStyle = (xx + yy) % 2 ? '#2B2412' : '#2F2814';
+          x.fillStyle = st.maze.fill[(xx + yy) % 2];
           x.fillRect(px, py, T + 0.5, T + 0.5);
           x.fillStyle = 'rgba(253,197,6,0.07)';
           art.hex(x, px + T / 2, py + T / 2, T * 0.36, 'rgba(253,197,6,0.07)', null);
-          x.strokeStyle = '#FDC506'; x.lineWidth = Math.max(1.5, T * 0.1); x.lineCap = 'round';
+          x.strokeStyle = st.maze.line; x.lineWidth = Math.max(1.5, T * 0.1); x.lineCap = 'round';
           x.beginPath();
           var inset = x.lineWidth / 2;
-          function open(ax, ay) { var k = ay < 0 || ay >= ROWS ? '#' : MAZE[ay][wrapX(ax)]; return k !== '#' && !(ay === 9 && (ax < 0 || ax >= COLS)); }
+          function open(ax, ay) { var k = ay < 0 || ay >= ROWS ? '#' : M[ay][wrapX(ax)]; return k !== '#' && !(ay === 9 && (ax < 0 || ax >= COLS)); }
           if (open(xx, yy - 1)) { x.moveTo(px, py + inset); x.lineTo(px + T, py + inset); }
           if (open(xx, yy + 1)) { x.moveTo(px, py + T - inset); x.lineTo(px + T, py + T - inset); }
           if (open(xx - 1, yy) && xx > 0) { x.moveTo(px + inset, py); x.lineTo(px + inset, py + T); }
@@ -214,9 +267,11 @@
         var b = st.bee, w = gh.w;
         if (gh.state === 'eyes') return EXIT;
         if (st.mode % 2 === 0) return w.corner;
-        if (gh.i === 0) return { x: Math.round(b.x), y: Math.round(b.y) };
-        if (gh.i === 1) return { x: Math.round(b.x) + b.face.x * 4, y: Math.round(b.y) + b.face.y * 4 };
-        if (gh.i === 2) return Math.hypot(gh.x - b.x, gh.y - b.y) > 7 ? { x: Math.round(b.x), y: Math.round(b.y) } : w.corner;
+        if (w.kind === 'jagd') return { x: Math.round(b.x), y: Math.round(b.y) };
+        if (w.kind === 'lauer') return { x: Math.round(b.x) + b.face.x * 4, y: Math.round(b.y) + b.face.y * 4 };
+        /* Brumm schneidet den Weg von hinten ab */
+        if (w.kind === 'brumm') return { x: Math.round(b.x) - b.face.x * 3, y: Math.round(b.y) - b.face.y * 3 };
+        if (w.kind === 'zick') return Math.hypot(gh.x - b.x, gh.y - b.y) > 7 ? { x: Math.round(b.x), y: Math.round(b.y) } : w.corner;
         return { x: Math.round(b.x) + Math.round(rnd(-4, 4)), y: Math.round(b.y) + Math.round(rnd(-4, 4)) };
       }
       function chooseGhost(e, cx, cy) {
@@ -301,7 +356,7 @@
           pop(cssW / 2, oy + T * 6, 'HONIG-RAUSCH!', '#FDC506', true);
           ctx.tone(330, 990, 0.3, 'triangle', 0.05); ctx.tone(660, 1320, 0.25, 'square', 0.025, 0.08);
         }
-        var eaten = TOTAL - st.left;
+        var eaten = st.total - st.left;
         if ((eaten === 60 && st.flowersShown === 0) || (eaten === 130 && st.flowersShown === 1)) {
           st.flowersShown++;
           st.flower = { x: 9, y: 11, until: st.t + 9000, t0: st.t };
@@ -354,7 +409,13 @@
         }
         st.pops = st.pops.filter(function (p) { return st.t - p.t0 < (p.big ? 1500 : 800); });
         if (st.levelDone) {
-          if (st.t >= st.levelDone) { st.levelDone = 0; st.level++; loadGrid(); resetActors(); pop(cssW / 2, oy + T * 11.5, 'Level ' + st.level, '#FFFFFF', true); }
+          if (st.t >= st.levelDone) {
+            st.levelDone = 0; st.level++; loadGrid(); resetActors(); paintWalls();
+            var nw = Math.min(WASPS.length, st.level + 1);
+            ctx.fx.banner('Level ' + st.level + ': ' + st.maze.name, st.maze.line, 34);
+            if (st.level <= WASPS.length - 1) pop(cssW / 2, oy + T * 13, 'Eine Wespe mehr: ' + WASPS[nw - 1].name + '!', '#FF7A6B', true);
+            ctx.fx.flash('255,255,255', 0.5);
+          }
           return;
         }
         if (st.dying) {

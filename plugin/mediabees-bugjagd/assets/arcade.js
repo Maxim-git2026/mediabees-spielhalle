@@ -960,10 +960,14 @@
     id: 'bugjagd',
     title: 'Käfer-Jagd',
     ranks: [
+      [50, 'Bug-Terminator', 'Kein Käfer hat eine Chance.'],
       [40, 'Chef-Biene', 'Das ist ja großartig!'],
+      [32, 'Senior-Biene', 'Routiniert gejagt.'],
       [25, 'Programmier-Biene', 'Sauberer Code, saubere Waben.'],
-      [12, 'Webdesign-Biene', 'Ordentlich gejagt.'],
-      [0, 'Praktikanten-Biene', 'Da geht noch was.']
+      [18, 'Webdesign-Biene', 'Schick gejagt.'],
+      [12, 'Junior-Biene', 'Ordentlich gejagt.'],
+      [6, 'Praktikanten-Biene', 'Da geht noch was.'],
+      [0, 'Frisch geschlüpft', 'Erstmal warm werden. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var art = MBArcade.art, TAU = Math.PI * 2;
@@ -996,10 +1000,14 @@
     id: 'wespen',
     title: 'Bienenstich',
     ranks: [
+      [2200, 'Wespen-Albtraum', 'Die Wespen erzählen sich Geschichten über dich.'],
       [1600, 'Hornissen-Schreck', 'Der Stock ist sicher!'],
-      [1000, 'Wächterbiene', 'Starke Verteidigung.'],
-      [500, 'Arbeiterbiene', 'Solide Schicht.'],
-      [0, 'Drohne', 'Da summt noch Luft nach oben.']
+      [1200, 'Scharfschützin', 'Kaum ein Schuss daneben.'],
+      [900, 'Wächterbiene', 'Starke Verteidigung.'],
+      [600, 'Arbeiterbiene', 'Solide Schicht.'],
+      [350, 'Flugschülerin', 'Das Zielen klappt schon.'],
+      [150, 'Drohne', 'Da summt noch Luft nach oben.'],
+      [0, 'Daneben-Biene', 'Zielwasser trinken und nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
@@ -1028,9 +1036,13 @@
     id: 'revier',
     title: 'Revierflug',
     ranks: [
+      [100, 'Ehrenbürgerin des Reviers', 'Einmal ums ganze Revier!'],
       [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
+      [45, 'Kumpel-Biene', 'Glück auf!'],
       [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
+      [20, 'Stadtflitzer', 'Schon zwei Städte weit.'],
       [10, 'Ausflugs-Biene', 'Schöne Tour.'],
+      [4, 'Startbiene', 'Aus Herne raus ist schwer.'],
       [0, 'Bruchpilot', 'Anschnallen und nochmal.']
     ],
     thumb: function (g, w, h) {
@@ -1065,9 +1077,13 @@
     id: 'polonaise',
     title: 'Bienentanz',
     ranks: [
+      [1500, 'Polonaise-Legende', 'Ganz Herne tanzt mit!'],
       [1000, 'Schwarmkönigin', 'Die ganze Wiese tanzt mit!'],
+      [700, 'Partybiene', 'Da geht die Post ab.'],
       [500, 'Tanzprofi', 'Da ist Stimmung in der Bude.'],
-      [200, 'Tanzbiene', 'Schöner Schwarm.'],
+      [300, 'Tanzbiene', 'Schöner Schwarm.'],
+      [150, 'Taktgefühl', 'Der Rhythmus stimmt.'],
+      [50, 'Schunkelbiene', 'Ein paar tanzen schon mit.'],
       [0, 'Mauerblümchen', 'Allein tanzt es sich schlecht. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1113,9 +1129,13 @@
     id: 'flitzer',
     title: 'A40-Flitzer',
     ranks: [
+      [8000, 'Venlo-Rakete', 'Schneller als die Polizei erlaubt.'],
       [5000, 'Autobahn-Legende', 'Einmal Venlo und zurück!'],
+      [3500, 'Spurwechsel-Profi', 'Elegant durch den Verkehr.'],
       [2500, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
-      [1000, 'Pendler-Biene', 'Schöne Fahrt.'],
+      [1600, 'Pendler-Biene', 'Schöne Fahrt.'],
+      [1000, 'Sonntagsfahrer', 'Gemütlich unterwegs.'],
+      [400, 'Fahrschülerin', 'Die ersten Kilometer sitzen.'],
       [0, 'Blechschaden', 'Anschnallen und nochmal.']
     ],
     thumb: function (g, w, h) {
@@ -1155,9 +1175,13 @@
     id: 'abriss',
     title: 'Website-Abriss',
     ranks: [
+      [3000, 'Abrissbirne', 'Da steht kein Stein mehr.'],
       [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
+      [1500, 'Kahlschlag-Biene', 'Ordentlich aufgeräumt.'],
       [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
+      [700, 'Bauarbeiterbiene', 'Mit Schmackes dabei.'],
       [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
+      [150, 'Hobbybastlerin', 'Ein paar Risse sind drin.'],
       [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1201,9 +1225,13 @@
     id: 'nester',
     title: 'Wespennest',
     ranks: [
+      [4000, 'Nest-Orakel', 'Du siehst durch Wachs.'],
       [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
+      [1600, 'Detektivbiene', 'Kombiniert wie im Krimi.'],
       [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
+      [600, 'Kundschafterin', 'Mutig aufgedeckt.'],
       [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
+      [100, 'Glückspilz', 'Ein paar Waben hast du geschafft.'],
       [0, 'Gestochen', 'Autsch. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1242,9 +1270,13 @@
     id: 'wacht',
     title: 'Wabenwacht',
     ranks: [
+      [9000, 'Stock-Heldin', 'Die Wespen haben aufgegeben.'],
       [6000, 'Königinnen-Garde', 'Der Stock ist sicher!'],
+      [4500, 'Elite-Stachel', 'Treffsicher bis zur letzten Welle.'],
       [3000, 'Wächterbiene', 'Keine Wespe kommt durch.'],
+      [2000, 'Torwächterin', 'Die erste Welle hat keine Chance.'],
       [1000, 'Stachel-Azubi', 'Gut gezielt.'],
+      [400, 'Probestachel', 'Die ersten Treffer sitzen.'],
       [0, 'Wespenfutter', 'Die Wespen feiern. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1280,9 +1312,13 @@
     id: 'pfad',
     title: 'Pollenpfad',
     ranks: [
+      [40000, 'Labyrinth-Legende', 'Du kennst jeden Gang.'],
       [30000, 'Pollen-Legende', 'Kein Pollen bleibt liegen.'],
+      [20000, 'Wespen-Fängerin', 'Die Wespen laufen vor dir weg.'],
       [12000, 'Sammelprofi', 'Die Wespen schauen dumm aus der Wäsche.'],
+      [7000, 'Labyrinth-Läuferin', 'Zwei Labyrinthe gemeistert.'],
       [4000, 'Flinke Biene', 'Gut gesammelt.'],
+      [1500, 'Pollen-Naschkatze', 'Ein paar Pollen geschnappt.'],
       [0, 'Wespenfang', 'Erwischt! Nochmal.']
     ],
     thumb: function (g, w, h) {
@@ -1319,8 +1355,12 @@
     title: 'Wabenbau',
     ranks: [
       [40000, 'Wabenwunder', 'Ein Bau für die Ewigkeit.'],
+      [25000, 'Baumeisterin', 'Statik? Sitzt.'],
       [15000, 'Baubiene', 'Saubere Reihen.'],
+      [8000, 'Polierbiene', 'Da glänzt der Stock.'],
       [4000, 'Wachs-Azubi', 'Der Stock wächst.'],
+      [2000, 'Lehrlingsbiene', 'Die ersten Reihen stehen.'],
+      [700, 'Wachsknetende', 'Das Wachs wird warm.'],
       [0, 'Wachsklumpen', 'Das wird noch. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1349,9 +1389,13 @@
     id: 'solitaer',
     title: 'Bienen-Solitär',
     ranks: [
+      [3000, 'Kartenkönigin', 'Schneller sortiert als gemischt.'],
       [2500, 'Solitär-Ass', 'Blitzsauber sortiert!'],
-      [1500, 'Stapelprofi', 'Alles an seinem Platz.'],
-      [500, 'Kartenbiene', 'Gut gemischt.'],
+      [2000, 'Stapelprofi', 'Alles an seinem Platz.'],
+      [1500, 'Sortiertalent', 'Fast alles im Griff.'],
+      [900, 'Kartenbiene', 'Gut gemischt.'],
+      [500, 'Stapelbiene', 'Die ersten Reihen liegen.'],
+      [200, 'Kartenzähler', 'Ein paar Karten sitzen.'],
       [0, 'Mischmasch', 'Die Karten waren gemein. Nochmal!']
     ],
     thumb: function (g, w, h) {

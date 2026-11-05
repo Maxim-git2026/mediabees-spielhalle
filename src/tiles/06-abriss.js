@@ -6,9 +6,13 @@
     id: 'abriss',
     title: 'Website-Abriss',
     ranks: [
+      [3000, 'Abrissbirne', 'Da steht kein Stein mehr.'],
       [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
+      [1500, 'Kahlschlag-Biene', 'Ordentlich aufgeräumt.'],
       [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
+      [700, 'Bauarbeiterbiene', 'Mit Schmackes dabei.'],
       [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
+      [150, 'Hobbybastlerin', 'Ein paar Risse sind drin.'],
       [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
     ],
     thumb: function (g, w, h) {

@@ -6,9 +6,13 @@
     id: 'solitaer',
     title: 'Bienen-Solitär',
     ranks: [
+      [3000, 'Kartenkönigin', 'Schneller sortiert als gemischt.'],
       [2500, 'Solitär-Ass', 'Blitzsauber sortiert!'],
-      [1500, 'Stapelprofi', 'Alles an seinem Platz.'],
-      [500, 'Kartenbiene', 'Gut gemischt.'],
+      [2000, 'Stapelprofi', 'Alles an seinem Platz.'],
+      [1500, 'Sortiertalent', 'Fast alles im Griff.'],
+      [900, 'Kartenbiene', 'Gut gemischt.'],
+      [500, 'Stapelbiene', 'Die ersten Reihen liegen.'],
+      [200, 'Kartenzähler', 'Ein paar Karten sitzen.'],
       [0, 'Mischmasch', 'Die Karten waren gemein. Nochmal!']
     ],
     thumb: function (g, w, h) {

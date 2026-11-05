@@ -6,9 +6,13 @@
     id: 'revier',
     title: 'Revierflug',
     ranks: [
+      [100, 'Ehrenbürgerin des Reviers', 'Einmal ums ganze Revier!'],
       [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
+      [45, 'Kumpel-Biene', 'Glück auf!'],
       [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
+      [20, 'Stadtflitzer', 'Schon zwei Städte weit.'],
       [10, 'Ausflugs-Biene', 'Schöne Tour.'],
+      [4, 'Startbiene', 'Aus Herne raus ist schwer.'],
       [0, 'Bruchpilot', 'Anschnallen und nochmal.']
     ],
     thumb: function (g, w, h) {
