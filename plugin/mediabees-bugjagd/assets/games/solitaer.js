@@ -174,7 +174,8 @@
         ctx.tone(500, 380, 0.06, 'triangle', 0.03);
       }
       function addScore(n) { st.score = Math.max(0, st.score + n); ctx.setScore(st.score); }
-      function canFound(c, fi) { var f = st.found[fi]; return f.length ? (top(f).s === c.s && top(f).r === c.r - 1) : c.r === 1; }
+      /* Jede Ablage gehört fest zu ihrer Farbe (Symbol auf dem leeren Platz): 0 Blume, 1 Wabe, 2 Käfer, 3 Klee */
+      function canFound(c, fi) { var f = st.found[fi]; if (c.s !== fi) return false; return f.length ? top(f).r === c.r - 1 : c.r === 1; }
       function canTab(c, ci) { var col = st.tab[ci]; if (!col.length) return c.r === 13; var t = top(col); return t.up && red(t) !== red(c) && t.r === c.r + 1; }
       function flipTop(ci) {
         var col = st.tab[ci], t = top(col);

@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.13.0
+Stable tag: 2.13.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.13.1 – 05.11.2026 =
+* Bienen-Solitär: Jede Ablage oben gehört jetzt fest zu ihrer Farbe. Käfer landen nur noch auf dem Käfer-Platz, Blumen nur auf dem Blumen-Platz.
 
 = 2.13.0 – 05.11.2026 =
 * Pollenpfad: Drei verschiedene Labyrinthe (Wiese, Zeche, Kanal) mit eigener Farbe. Level 1 startet mit 2 Wespen, jedes Level kommt eine dazu, ab Level 4 sind es fünf.
