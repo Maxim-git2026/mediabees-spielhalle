@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.18.0
+Stable tag: 2.18.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.18.1 – 05.11.2026 =
+* Honigknaller allein: Schon ab Level 1 legen Wespen und Hornissen selbst Bomben, wenn die Biene in der Nähe ist. Hornissen öfter als Wespen. Ihre eigenen Bomben tun ihnen nichts, dir aber schon.
 
 = 2.18.0 – 05.11.2026 =
 * Honigknaller: Neue Spielarten „Gegen 3 Bots“ (auch auf dem Handy) und „Zu zweit + 2 Bots“. Die Bots legen selbst Bomben, sammeln Extras und jagen dich. Wird ein Duell zu lang, gibt es einen Endspurt mit mehr Wumms für alle.

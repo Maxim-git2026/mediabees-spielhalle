@@ -57,7 +57,7 @@
       ],
       legend: [
         { draw: function (g) { g.translate(26, 24); g.scale(0.6, 0.6); art.wasp(g, 0.4); }, text: 'Wespe erwischt (mehrere auf einmal zählen doppelt)', val: '100' },
-        { draw: function (g) { g.translate(26, 24); g.scale(0.55, 0.55); art.hornet(g, 0.4); }, text: 'Hornisse, schneller und schlauer, legt ab Level 3 selbst Bomben', val: '200' },
+        { draw: function (g) { g.translate(26, 24); g.scale(0.55, 0.55); art.hornet(g, 0.4); }, text: 'Hornisse, schneller und schlauer. Wespen und Hornissen legen auch selbst Bomben!', val: '200' },
         { draw: function (g) { drawPower(g, 'bomb', 23, 23, 15, 0); }, text: 'Extra: eine Bombe mehr' },
         { draw: function (g) { drawPower(g, 'fire', 23, 23, 15, 0); }, text: 'Extra: größere Reichweite' },
         { draw: function (g) { drawPower(g, 'speed', 23, 23, 15, 0); }, text: 'Extra: schneller laufen' }
@@ -131,7 +131,7 @@
           free.sort(function () { return Math.random() - 0.5; });
           for (var i = 0; i < nW + nH && free.length; i++) {
             var f = free.pop();
-            st.enemies.push({ x: f[0], y: f[1], tx: f[0], ty: f[1], hornet: i >= nW, dir: [0, 0], dead: 0, bob: rnd(0, 6), nextBomb: st.t + rnd(5000, 9000) });
+            st.enemies.push({ x: f[0], y: f[1], tx: f[0], ty: f[1], hornet: i >= nW, dir: [0, 0], dead: 0, bob: rnd(0, 6), nextBomb: st.t + rnd(3000, 9000) });
           }
         }
       }
@@ -165,9 +165,9 @@
         });
         return out;
       }
-      function dangerMap(extra, minAge, self) {
+      function dangerMap(extra, minAge, self, onlyFoe) {
         var m = {}, cells = [];
-        st.bombs.forEach(function (b) { if (!minAge || b.t >= minAge || b.owner === self) blastCells(b, cells); });
+        st.bombs.forEach(function (b) { if (onlyFoe && !b.foe) return; if (!minAge || b.t >= minAge || b.owner === self) blastCells(b, cells); });
         if (extra) blastCells(extra, cells);
         cells.forEach(function (c) { m[c[0] + ',' + c[1]] = 1; });
         st.flames.forEach(function (f) { m[f.x + ',' + f.y] = 2; });
@@ -285,9 +285,9 @@
         if (free(p.x + w[0], p.y + w[1])) { p.tx = p.x + w[0]; p.ty = p.y + w[1]; }
       }
       function chooseEnemy(e) {
-        /* Hornissen legen ab Level 3 selbst Bomben, wenn die Biene in der Nähe ist */
-        if (e.hornet && st.level >= 3 && st.t > e.nextBomb && !st.respawn && !st.levelEnd) {
-          e.nextBomb = st.t + rnd(6000, 10000) - st.level * 200;
+        /* Wespen und Hornissen legen schon ab Level 1 selbst Bomben, wenn die Biene in der Nähe ist */
+        if (st.t > e.nextBomb && !st.respawn && !st.levelEnd) {
+          e.nextBomb = st.t + (e.hornet ? rnd(5000, 8000) : rnd(8000, 13000)) - Math.min(3000, st.level * 250);
           var p0 = st.players[0], hr = 1 + Math.floor(st.level / 5);
           if (p0 && !p0.dead && Math.abs(p0.x - e.x) + Math.abs(p0.y - e.y) < 10 && !bombAt(e.x, e.y)) {
             var esc = escapeAfterBomb(e.x, e.y, hr, 3);
@@ -297,9 +297,11 @@
               setDir(e, esc.dir); return;
             }
           }
+          e.nextBomb = Math.min(e.nextBomb, st.t + 1200);
         }
-        if (e.hornet && st.bombs.length) {
-          var m = dangerMap();
+        /* Vor Bomben fliehen: Hornissen vor allen, Wespen nur vor den eigenen */
+        if (st.bombs.length) {
+          var m = dangerMap(null, 0, null, !e.hornet);
           if (m[e.x + ',' + e.y]) {
             var run = bfs(e.x, e.y, function (x, y) { return !m[x + ',' + y]; }, function (x, y) { return m[x + ',' + y] === 2; }, 10);
             if (run && run.dir) { setDir(e, run.dir); return; }
@@ -340,7 +342,7 @@
             var x = b.x + d[0] * i, y = b.y + d[1] * i, c = cell(x, y);
             if (c === 2) break;
             cells.push([x, y]);
-            if (c === 1) { st.grid[y][x] = 0; crumble(x, y); break; }
+            if (c === 1) { st.grid[y][x] = 0; crumble(x, y, b.foe); break; }
             var other = bombAt(x, y); if (other) { other.t = FUSE - 0.05; break; }
           }
         });
@@ -351,9 +353,9 @@
         ctx.tone(140, 40, 0.35, 'sawtooth', 0.06); ctx.tone(90, 30, 0.3, 'square', 0.04, 0.03);
         for (var k = 0; k < (ctx.reduce ? 6 : 14); k++) st.parts.push({ x: px(b.x), y: py(b.y), vx: rnd(-240, 240), vy: rnd(-240, 240), t: 0, life: rnd(0.3, 0.6), size: rnd(2, 5), c: k % 2 ? '#FFD24A' : '#FF7A1A' });
       }
-      function crumble(x, y) {
-        st.blocksN++;
-        if (!st.duo) { st.score += 10; ctx.setScore(st.score); }
+      function crumble(x, y, foe) {
+        if (!foe) st.blocksN++;
+        if (!st.duo && !foe) { st.score += 10; ctx.setScore(st.score); }
         for (var k = 0; k < (ctx.reduce ? 4 : 8); k++) st.parts.push({ x: px(x), y: py(y), vx: rnd(-150, 150), vy: rnd(-200, 50), t: 0, life: rnd(0.4, 0.7), size: rnd(2, 4), c: k % 2 ? '#E9A800' : '#C98A00', grav: 500 });
         if (Math.random() < 0.28) {
           var r = Math.random();
