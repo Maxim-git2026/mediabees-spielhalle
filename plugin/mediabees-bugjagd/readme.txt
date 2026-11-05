@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.10.0
+Stable tag: 2.10.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.10.1 – 05.11.2026 =
+* Pollenpfad: Die Biene schaut jetzt immer ganz in Flugrichtung, auch nach oben und unten, und ihr Mund geht beim Fliegen auf und zu.
+* Pollenpfad: Statt Gelée royale gibt es jetzt Honiggläser, mit denen man die Wespen jagen kann.
 
 = 2.10.0 – 05.11.2026 =
 * Neues Spiel: Pollenpfad. Die Biene sammelt alle Pollen im Waben-Labyrinth, vier Wespen jagen sie. Mit Gelée royale dreht sich der Spieß um und man kann die Wespen kurz fangen. Dazu Bonus-Blumen, 3 Leben und Level, die immer schneller werden. Auf dem Handy per Wischen.

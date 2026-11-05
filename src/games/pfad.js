@@ -41,15 +41,19 @@
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function wrapX(x) { return ((x % COLS) + COLS) % COLS; }
 
-  function drawJelly(g, x, y, r, t) {
-    var p = 1 + Math.sin(t / 150) * 0.15;
-    g.save(); g.translate(x, y); g.scale(p, p);
-    var gl = g.createRadialGradient(0, 0, r * 0.2, 0, 0, r * 2.2);
-    gl.addColorStop(0, 'rgba(255,246,214,0.7)'); gl.addColorStop(1, 'rgba(255,246,214,0)');
-    g.fillStyle = gl; g.beginPath(); g.arc(0, 0, r * 2.2, 0, TAU); g.fill();
-    g.beginPath(); g.moveTo(0, -r); g.bezierCurveTo(r * 1.1, -r * 0.2, r * 0.9, r, 0, r); g.bezierCurveTo(-r * 0.9, r, -r * 1.1, -r * 0.2, 0, -r);
-    g.fillStyle = '#FFF6D6'; g.fill(); g.lineWidth = Math.max(1, r * 0.18); g.strokeStyle = '#111'; g.stroke();
-    g.beginPath(); g.arc(-r * 0.25, -r * 0.1, r * 0.22, 0, TAU); g.fillStyle = '#fff'; g.fill();
+  /* Honigglas: macht die Wespen kurz zur Beute */
+  function drawHoney(g, x, y, r, t) {
+    var p = 1 + Math.sin(t / 150) * 0.1;
+    g.save(); g.translate(x, y); g.scale(p * r / 10, p * r / 10);
+    var gl = g.createRadialGradient(0, 0, 2, 0, 0, 22);
+    gl.addColorStop(0, 'rgba(253,197,6,0.55)'); gl.addColorStop(1, 'rgba(253,197,6,0)');
+    g.fillStyle = gl; g.beginPath(); g.arc(0, 0, 22, 0, TAU); g.fill();
+    g.lineJoin = 'round';
+    rr(g, -8, -6, 16, 16, 4); g.fillStyle = '#E9A800'; g.fill(); g.lineWidth = 1.8; g.strokeStyle = '#111'; g.stroke();
+    g.fillStyle = '#FFF6D6'; g.fillRect(-5, -1, 10, 6);
+    g.fillStyle = '#C98A00'; g.font = '800 5px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('MB', 0, 2.2);
+    rr(g, -5.5, -4, 2.2, 4, 1); g.fillStyle = 'rgba(255,255,255,0.6)'; g.fill();
+    rr(g, -9, -11, 18, 5.5, 1.5); g.fillStyle = '#7A4A1A'; g.fill(); g.stroke();
     g.restore();
   }
   function drawFlower(g, x, y, r, t) {
@@ -67,7 +71,7 @@
     id: 'pfad',
     title: 'Pollenpfad',
     duration: 0,
-    startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit Gelée royale drehst du den Spieß um und kannst die Wespen kurz jagen.',
+    startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit einem Honigglas drehst du den Spieß um und kannst die Wespen kurz jagen.',
     help: {
       legendTitle: 'Punkte',
       controls: [
@@ -77,7 +81,7 @@
       ],
       legend: [
         { draw: function (g) { g.beginPath(); g.arc(23, 23, 5, 0, TAU); g.fillStyle = '#FDC506'; g.fill(); }, text: 'Pollen', val: '10' },
-        { draw: function (g) { drawJelly(g, 23, 23, 9, 0); }, text: 'Gelée royale: Jetzt kannst du die Wespen jagen', val: '50' },
+        { draw: function (g) { drawHoney(g, 23, 24, 13, 0); }, text: 'Honigglas: Jetzt kannst du die Wespen jagen', val: '50' },
         { draw: function (g) { g.translate(25, 24); g.scale(0.55, 0.55); art.wasp(g, 0.4, '#7FA7D9', '#203050'); }, text: 'Verängstigte Wespe fangen, jede weitere zählt doppelt', val: '200–1.600' },
         { draw: function (g) { drawFlower(g, 23, 23, 14, 0); }, text: 'Blume, taucht zweimal pro Level auf', val: '+100 × Level' },
         { draw: function (g) { g.translate(25, 24); g.scale(0.55, 0.55); art.wasp(g, 0.4, '#FF5A4A', '#2A0E0A'); }, text: 'Von einer Wespe erwischt', val: '−1 Leben', minus: true }
@@ -270,8 +274,8 @@
             if (gh.state === 'chase') { gh.state = 'fright'; gh.dx = -gh.dx; gh.dy = -gh.dy; }
             else if (gh.state === 'house' || gh.state === 'leave') gh.scared = true;
           });
-          puff(px(x), py(y), ['#FFF6D6', '#FFFFFF', '#FDC506'], 16, 140);
-          pop(px(x), py(y) - T, 'Gelée royale!', '#FFF6D6');
+          puff(px(x), py(y), ['#FDC506', '#FFE680', '#E9A800'], 18, 150);
+          pop(px(x), py(y) - T, 'Honig!', '#FDC506');
           ctx.tone(330, 990, 0.3, 'triangle', 0.05);
         }
         var eaten = TOTAL - st.left;
@@ -419,9 +423,9 @@
           var a = (st.t - st.dying) / 1500;
           g.rotate(a * 8); g.scale(Math.max(0.05, 1 - a), Math.max(0.05, 1 - a));
         } else {
-          if (b.face.x) b.side = b.face.x;
-          if ((b.side || 1) < 0) g.scale(-1, 1);
-          if (b.face.y) g.rotate(b.face.y * 0.45);
+          /* Wie beim Vorbild: Der Kopf zeigt immer ganz in Flugrichtung */
+          if (b.face.x < 0) g.scale(-1, 1);
+          else if (b.face.y) g.rotate(b.face.y * Math.PI / 2);
         }
         g.scale(s, s);
         if (st.fright > 0 && !st.dying) {
@@ -429,6 +433,12 @@
           g.fillStyle = gl; g.beginPath(); g.arc(0, 0, 48, 0, TAU); g.fill();
         }
         art.bee(g, Math.sin(st.t / 1000 * 42));
+        /* Mund: geht beim Fliegen auf und zu */
+        var moving = (b.dx || b.dy) && !st.dying && !st.ready;
+        var open = moving ? 0.5 + 0.5 * Math.sin(b.mouth * 22) : 0.15;
+        g.beginPath(); g.ellipse(16, 6.5, 4.6, 0.8 + 4 * open, 0, 0, TAU);
+        g.fillStyle = '#F05A6E'; g.fill(); g.lineWidth = 1.6; g.strokeStyle = '#111'; g.stroke();
+        if (open > 0.45) { g.beginPath(); g.ellipse(16, 6.5 + 2 * open, 2.6, 1.2 * open, 0, 0, TAU); g.fillStyle = '#9E1F33'; g.fill(); }
         g.restore();
       }
 
@@ -448,7 +458,7 @@
           for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) {
             var c = st.grid[y][x];
             if (c === '.') { g.beginPath(); g.arc(px(x), py(y), Math.max(1.6, T * 0.1), 0, TAU); g.fillStyle = '#FDC506'; g.fill(); }
-            else if (c === 'o') drawJelly(g, px(x), py(y), T * 0.28, st.t + x * 100);
+            else if (c === 'o') drawHoney(g, px(x), py(y), T * 0.36, st.t + x * 100);
           }
         }
         if (st.flower) {
