@@ -736,6 +736,8 @@
       resultEl.textContent = fmt(score) + ' Punkte. ' + (isNew && score > 0 ? 'Neuer Rekord!' : rank[2]);
       statsEl.textContent = (g.stats && stats) ? g.stats(stats) : '';
       statsEl.hidden = !statsEl.textContent;
+      /* Spiele ohne Rangliste (z. B. zu zweit) liefern eine eigene Überschrift */
+      if (stats && stats.headline) { rankEl.textContent = stats.headline; resultEl.textContent = stats.line || ''; }
       ctaEl.textContent = g.cta.text;
       ctaEl.href = HOME + g.cta.path;
       form.hidden = true;
@@ -778,7 +780,8 @@
     /* Fair wie am PC: Während einer Runde zählt nur ein Finger. Weitere gleichzeitige
        Berührungen werden abgefangen, bevor sie das Spiel erreichen. */
     stage.addEventListener('pointerdown', function (e) {
-      if (S.running && !S.paused && e.isPrimary === false) { e.stopPropagation(); e.preventDefault(); }
+      /* Ausnahme: Spiele mit Steuerkreuz + Knopf (multiTouch: true) brauchen zwei Finger gleichzeitig */
+      if (S.running && !S.paused && e.isPrimary === false && !(S.game && S.game.multiTouch)) { e.stopPropagation(); e.preventDefault(); }
     }, true);
 
     document.addEventListener('visibilitychange', function () { if (document.hidden) pause(true); });

@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.15.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.16.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -68,9 +68,10 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | solitaer | Bienen-Solitär | Klondike, 1 Karte ziehen, eigene Farben (Blume + Wabe rot, Käfer + Klee schwarz, kein Grün!), K = Königin, D = Hummel, B = Arbeitsbiene. Ablage oben fest pro Farbe (Index = Farbe). Punkte: Ablage +10, aufdecken/vom Stapel anlegen +5, von Ablage zurück −15, Stapel neu −50, Sieg +500 + (600 − Sekunden) × 2. Antippen = bester Zug, Ziehen geht auch, Zurück-Knopf (stellt auch Punkte zurück), Aufgeben, Auto-Abschluss, Gewinn-Kaskade. Keine Züge mehr → blinkender Hinweis mit „Zug zurück“/„Runde beenden“. Karten werden vorgezeichnet (Cache), sonst ruckelt es |
 | hopser | Hummelhopser | Crossy-Road-Prinzip, 9 Spalten, endlos nach vorn: Wiese (Bäume blocken, Honigglas +5), Straße (Autos/Laster), S-Bahn (Warnlicht 1,2 s vorher), Emscher (Stämme/Kohlekähne, treiben mit, Rand = raus). +1 je neue Reihe. Kamera schiebt nach, wer zurückfällt wird von der Wespe geschnappt. Tippen = vor, Wischen = Richtung, WASD/Pfeile |
 | honigdieb | Honigdieb | Flucht-Runner von der Seite: Biene mit Honigglas flieht vor dem Kammerjäger. Springen (W/↑/Leertaste, halten = höher; Handy tippen) über Tonne/Zaun/Hydrant/Gully, ducken (S/↓; Handy nach unten wischen) unter Spinnweben/Banner. 1 Pkt je Meter, Honigtropfen +10. Stolpern statt sofort aus: Abstand zum Kammerjäger sinkt, erholt sich langsam, zweimal kurz hintereinander = geschnappt. Stadtschild alle 250 m |
+| knaller | Honigknaller | Bomberman-Prinzip. Feld quer 15 × 11, hochkant 11 × 13 (Rand + Säulen fest, Wachsblöcke zufällig). Allein: Level mit 2 + Level Wespen und Level/2 Hornissen, Wespe 100, Hornisse 200, mehrere in einer Explosion × Kette, Block 10, Extra 50, Level geschafft +500 × Level, 3 Leben. Extras: Bombe, Reichweite, Tempo. Zu zweit (nur PC, `finish(0, {headline})`, keine Rangliste): Biene WASD + Leertaste gegen Hummel Pfeile + Enter, wer zuerst 2 Runden gewinnt. Handy: nur allein, Steuerkreuz + Bombenknopf (`multiTouch: true` hebt den Ein-Finger-Filter auf) |
 
 ### Nächste Spiele (in dieser Reihenfolge)
-Bomberman (1 Spieler mit Rangliste, am PC zu zweit ohne Rangliste, Handy nur allein) → Flipper (eigener Bienenstock-Tisch) → Wurfduell (Prinzip Xiao Xiao/Worms, rundenbasiert, gegen CPU oder zu zweit) → Wimmelbild (oder „Finde die Unterschiede“).
+Flipper (eigener Bienenstock-Tisch) → Wurfduell (Prinzip Xiao Xiao/Worms, rundenbasiert, gegen CPU oder zu zweit) → Wimmelbild (oder „Finde die Unterschiede“).
 Ideenliste: Doodle-Jump-Prinzip.
 Gestrichen: Bubble Ball, Schach.
 
@@ -105,7 +106,8 @@ Gestrichen: Bubble Ball, Schach.
 - Tickets werden atomar eingelöst (`mbbj_claim_ticket`, INSERT IGNORE `mbbj_used_<md5>`, alte Marken werden nach 2 h weggeräumt).
 - Namen nur per `textContent` ausgeben, nie per `innerHTML`. IP nie im Klartext, IPv6 zählt pro /64.
 - Punkte kommen aus dem Browser, Ranglisten lassen sich mit Aufwand fälschen. Gegenmittel: `max_score`/`sec_per_point` und Löschen im Admin.
-- Während einer Runde zählt nur ein Finger (`isPrimary`-Filter in `core.js`).
+- Während einer Runde zählt nur ein Finger (`isPrimary`-Filter in `core.js`), außer das Spiel setzt `multiTouch: true` (Steuerkreuz + Knopf).
+- Spiele ohne Rangliste geben `finish(0, { headline, line })` zurück: Punkte 0 = kein Eintrag, eigene Überschrift im Endscreen.
 
 ## Oberfläche
 - Handy (≤ 640 px): Kacheln als Karussell mit 2 Spielen, Pfeile und Punkte (`.mb4-carousel`, in `core.js` gebaut).
