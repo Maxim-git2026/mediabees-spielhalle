@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.14.0
+Stable tag: 2.15.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -11,7 +11,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
-* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser).
+* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb).
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.15.0 – 05.11.2026 =
+* Neues Spiel: Honigdieb. Die Biene flieht mit einem stibitzten Honigglas vor dem Kammerjäger durchs nächtliche Ruhrgebiet. Über Mülltonnen, Zäune und Gullys springen, unter Spinnweben und Bannern durchducken, Honigtropfen sammeln. Wer stolpert, lässt den Kammerjäger aufholen.
 
 = 2.14.0 – 05.11.2026 =
 * Neues Spiel: Hummelhopser. Die Hummel hüpft über Straßen, S-Bahn-Gleise und die Emscher, so weit sie kommt. In der Emscher nur auf Baumstämmen und Kohlekähnen stehen, Honiggläser bringen Bonus. Wer trödelt, wird von der Wespe geschnappt. Auf dem Handy tippen und wischen, am PC WASD oder Pfeiltasten.
