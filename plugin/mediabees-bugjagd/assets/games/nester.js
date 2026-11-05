@@ -183,7 +183,12 @@
         var p = center(c);
         pop(p.x, p.y - R * 0.6, '+' + pts, n > 8 ? '#FFE680' : '#FDC506');
         puff(p.x, p.y, ['#FDC506', '#FFE680', '#C98A00'], n > 1 ? 14 : 6, n > 1 ? 160 : 90);
-        if (n > 8) { shakeIt(0.08); ctx.tone(520, 1040, 0.15, 'triangle', 0.05); }
+        ctx.fx.ring(p.x, p.y, '#FDC506', R * (n > 8 ? 5 : 1.6), n > 8 ? 6 : 3, n > 8 ? 600 : 300);
+        if (n > 8) {
+          shakeIt(0.08); ctx.tone(520, 1040, 0.15, 'triangle', 0.05);
+          ctx.fx.flash('253,197,6', Math.min(0.6, 0.2 + n / 80)); ctx.fx.sparkle(p.x, p.y, null, Math.min(30, 8 + n / 2), 220);
+          if (n >= 20) ctx.fx.text(p.x, p.y - R * 1.5, 'Riesig!', '#FFE680', 26);
+        }
         else ctx.tone(700 + Math.random() * 120, 980, 0.05, 'triangle', 0.04);
         if (!safeLeft()) win();
       }
@@ -215,6 +220,7 @@
         shakeIt(0.45);
         var p = center(c);
         puff(p.x, p.y, ['#B8AE9C', '#111', '#FFD400'], 26, 260);
+        ctx.fx.flash('255,74,61', 1); ctx.fx.ring(p.x, p.y, '#FF5A4A', R * 7, 7, 650); ctx.fx.text(p.x, p.y - R, 'AUTSCH!', '#FF7A6B', 30);
         ctx.tone(220, 60, 0.4, 'sawtooth', 0.07);
         /* Die übrigen Nester gehen nacheinander auf */
         var others = st.cells.filter(function (x) { return x.nest && x !== c; });
@@ -236,6 +242,8 @@
         pop(cssW / 2, (cssH - BAR) * 0.45, 'Feld geräumt! +' + bonus, '#FDC506', true);
         st.cells.forEach(function (c) { if (c.nest && !c.flag) { c.flag = true; c.pop = 1; } });
         for (var i = 0; i < 4; i++) puff(rnd(0, cssW), rnd(0, cssH - BAR), ['#FDC506', '#FFE680', '#FFFFFF'], 12, 220);
+        ctx.fx.shake(0.3, 9);
+        for (var j = 0; j < 4; j++) { var fxp = rnd(cssW * 0.15, cssW * 0.85), fyp = rnd(30, cssH - BAR - 30); ctx.fx.ring(fxp, fyp, j % 2 ? '#FFE680' : '#FDC506', 90, 5, 650); ctx.fx.sparkle(fxp, fyp, ['#FDC506', '#FFE680', '#FFFFFF', '#5CC46A'], 14, 260); }
         ctx.tone(523, 784, 0.12, 'triangle', 0.06); ctx.tone(784, 1046, 0.12, 'triangle', 0.06, 0.12); ctx.tone(1046, 1568, 0.2, 'triangle', 0.05, 0.24);
       }
       function nextLevel() {
@@ -258,6 +266,7 @@
             var c = st.boom[b].c, p = center(c);
             c.open = true; c.openT = st.t;
             puff(p.x, p.y, ['#B8AE9C', '#111'], 8, 140);
+            ctx.fx.ring(p.x, p.y, '#FF8A3D', R * 2.5, 4, 350);
             if (Math.random() < 0.6) wasp(p.x, p.y);
             ctx.tone(rnd(160, 260), 80, 0.08, 'sawtooth', 0.03);
             shakeIt(0.08);

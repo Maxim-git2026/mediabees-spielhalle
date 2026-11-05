@@ -188,6 +188,9 @@
         pop(p.x, p.y - 10, '+' + pts, e.type === 'hornet' ? '#FFE680' : '#FDC506');
         puff(p.x, p.y, e.type === 'red' ? ['#FF8A3D', '#2A1408', '#FFFFFF'] : e.type === 'hornet' ? ['#E8902A', '#2A1A10', '#C9A227'] : ['#FFD400', '#111', '#FFFFFF'], 14, 220, 200);
         shakeIt(0.06);
+        ctx.fx.ring(p.x * k, p.y * k, e.type === 'hornet' ? '#FFE680' : '#FFFFFF', (e.type === 'hornet' ? 60 : 38) * k, 4, 320);
+        st.rapid = st.t - (st.lastKill || -9999) < 450 ? (st.rapid || 0) + 1 : 0; st.lastKill = st.t;
+        if (st.rapid === 4) { ctx.fx.text(p.x * k, p.y * k - 30, 'Stachel-Sturm!', '#FDC506', 22); ctx.fx.flash('253,197,6', 0.35); }
         ctx.tone(400 + Math.random() * 200, 90, 0.12, 'square', 0.04);
         if (Math.random() < 0.06 && st.t > st.double) st.powers.push({ x: p.x, y: p.y, vy: 120 });
         if (!st.enemies.some(function (x) { return x.alive; })) {
@@ -195,6 +198,9 @@
           addScore(bonus);
           st.flash = 0.5; st.flashC = '253,197,6';
           pop(W / 2, H * 0.42, 'Welle geschafft! +' + bonus, '#FDC506', true);
+          ctx.fx.flash('253,197,6', 1); ctx.fx.shake(0.35, 10);
+          ctx.fx.ring(p.x * k, p.y * k, '#FDC506', 200 * k, 8, 700);
+          ctx.fx.sparkle(W / 2 * k, H * 0.42 * k, ['#FDC506', '#FFE680', '#FFFFFF', '#FF8A3D'], 36, 340);
           ctx.tone(523, 784, 0.12, 'triangle', 0.06); ctx.tone(784, 1046, 0.18, 'triangle', 0.06, 0.12);
           st.nextWave = st.t + 1400;
         }
@@ -207,6 +213,8 @@
         st.flash = 1; st.flashC = '255,74,61';
         shakeIt(0.35);
         puff(st.px, PY, ['#F7B500', '#3A2410', '#FFFFFF'], 24, 260, 200);
+        ctx.fx.ring(st.px * k, PY * k, '#FF5A4A', 110 * k, 7, 550);
+        if (st.lives === 1) ctx.fx.banner('Letzte Biene!', '#FF7A6B');
         ctx.tone(220, 60, 0.35, 'sawtooth', 0.06);
         if (st.lives <= 0) { st.dead = true; st.deadT = st.t; }
         else pop(st.px, PY - 40, st.lives === 1 ? 'Letzte Biene!' : 'Autsch!', '#FF7A6B');
@@ -274,6 +282,8 @@
             addScore(up); st.gold++;
             pop(st.ufo.x, st.ufo.y + 20, '+' + up, '#FFE680', false);
             puff(st.ufo.x, st.ufo.y, ['#FFE680', '#FFFFFF', '#A87400'], 26, 260, 120);
+            ctx.fx.boom(st.ufo.x * k, st.ufo.y * k, '#FFE680', '253,197,6', 1.2);
+            ctx.fx.text(st.ufo.x * k, st.ufo.y * k + 50, 'GOLDWESPE!', '#FFE680', 24);
             ctx.tone(660, 1320, 0.25, 'triangle', 0.06);
             shakeIt(0.12); st.ufo = null; gone = true;
           }
@@ -312,6 +322,7 @@
           if (!st.dead && Math.abs(pw.x - st.px) < 26 && Math.abs(pw.y - PY) < 24) {
             st.powers.splice(w, 1);
             st.double = st.t + DOUBLE_TIME;
+            ctx.fx.boom(st.px * k, PY * k, '#FDC506', '253,197,6', 0.8);
             pop(st.px, PY - 40, 'Doppelstachel!', '#FFE680');
             ctx.tone(520, 1040, 0.2, 'triangle', 0.06);
           }

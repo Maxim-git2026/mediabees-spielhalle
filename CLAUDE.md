@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.10.2**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.11.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -16,7 +16,7 @@ und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **
 ## Aufbau des Repos
 ```
 src/core.js          Kern der Spielhalle (Kacheln, Overlay, Rangliste, Sound, Juice, Lazy-Load)
-src/tiles/N-<id>.js  Kachel je Spiel: MBArcade.tile({id, title, thumb})  -> landet in arcade.js
+src/tiles/NN-<id>.js Kachel je Spiel (zweistellig nummeriert, das ist die Reihenfolge): MBArcade.tile({id, title, thumb})  -> landet in arcade.js
 src/games/<id>.js    Das Spiel selbst: MBArcade.register({...})          -> wird erst beim Antippen geladen
 plugin/mediabees-bugjagd/   Das WordPress-Plugin (Ordnername bleibt so, sonst verliert WP die Zuordnung)
   mediabees-bugjagd.php     Hauptdatei: MBBJ_VERSION, mbbj_games(), REST-API, Shortcode, Admin
@@ -64,20 +64,26 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | nester | Wespennest | Minesweeper auf Waben (6 Nachbarn), erster Klick immer frei, Wabe = 2 × Level Pkt, Feld geräumt = Bonus + nächstes Level, Markieren per Rechtsklick/F, lange drücken oder Umschalter unten |
 | wacht | Wabenwacht | Space-Invaders-Prinzip, Biene schießt Stacheln, Hornisse 30 (2 Treffer), Wespe 20, Feuerwespe 10, Goldwespe 100–300, Honigwaben als Deckung, 3 Leben, Doppelstachel, Welle geschafft = +100 × Welle. Handy: ziehen + Dauerfeuer |
 | pfad | Pollenpfad | Pac-Man-Prinzip mit eigenem Labyrinth (19 × 21, 176 Pollen), Pollen 10, Honigglas 50 (Wespen werden Beute), Biene schaut ganz in Flugrichtung mit Kau-Mund, Wespen fangen 200/400/800/1.600, Blume +100 × Level, Level geschafft +500 × Level, 3 Leben. Wespen: Rüpel jagt direkt, Lauer zielt vor die Biene, Zick kommt nah und weicht aus, Zufall streut. Handy: wischen oder neben die Biene tippen. Juice: `ring`, `shakeIt`, `hitstop` (Freeze), `punch` (Zoom), `sparkle`, goldener Rand im Honig-Rausch |
+| wabenbau | Wabenbau | Tetris-Prinzip mit Sechsecken: 9 senkrechte Wabenspalten × 16, Teile aus 4 Waben (7 Formen, axiale Koordinaten, Drehen in 60°-Schritten), volle Zickzack-Reihe verschwindet, 100/300/500/800 × Level, Sofort-Fallen +2 je Wabe, Level alle 10 Reihen. Handy: wischen schiebt, nach unten wischen lässt fallen, tippen dreht |
 
 ### Nächste Spiele (in dieser Reihenfolge)
-Waben-Tetris (Sechsecke) → Solitär → Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
+Solitär → Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
 Ideenliste: Doodle-Jump-Prinzip, Dino-Läufer (Chrome-offline-Prinzip), Crossy-Road-Prinzip.
 Gestrichen: Bubble Ball, Schach.
 
 ## Neues Spiel anlegen – Checkliste
-1. `src/tiles/<N>-<id>.js`: `MBArcade.tile({ id, title, ranks: [[minPunkte, Titel, Text], ...], thumb: function (g, w, h) {...} })`.
+1. `src/tiles/<NN>-<id>.js` (zweistellig, z. B. `11-solitaer.js`): `MBArcade.tile({ id, title, ranks: [[minPunkte, Titel, Text], ...], thumb: function (g, w, h) {...} })`.
    Die Rangstufen stehen **in der Kachel**, weil die Ranglisten (auch „Ranglisten aller Spiele“) den Titel für jeden Eintrag aus den Punkten berechnen, ohne das Spiel zu laden.
 2. `src/games/<id>.js`: `MBArcade.register({ id, title, duration (0 = ohne Zeitlimit), startText, help: {controls, legend}, cta, stats(s), mount(ctx) })`.
    - `mount(ctx)` bekommt `ctx.screen`, `ctx.stage`, `ctx.setScore`, `ctx.setTime`, `ctx.say` (Toast), `ctx.tone` (Sound),
      `ctx.reduce` (weniger Bewegung), `ctx.touch`, `ctx.finish(stats)`.
    - Rückgabe: `{ start, setPaused(on), abort, unmount, resize, key(e) }` (key gibt true zurück, wenn verarbeitet).
    - Gemeinsame Zeichenfunktionen: `MBArcade.art` (bee, queen, wasp, car, flitzer, hex, rrect …).
+   - **Juice für große Momente:** `ctx.fx` (eigene Ebene über dem Spielfeld, Koordinaten in CSS-Pixeln relativ zur Bühne):
+     `flash(rgb, stärke)`, `shake(sek, px)`, `ring(x, y, farbe, radius, linie, ms)`, `sparkle(x, y, farben, n, tempo)`,
+     `text(x, y, text, farbe, größe)`, `banner(text, farbe)`, `boom(x, y, farbe, rgb, stärke)` = alles auf einmal, `at(element)` = Mitte eines DOM-Elements.
+     Spiele mit eigenen Spielkoordinaten rechnen mit `* k` um. „Weniger Bewegung“ beachtet `ctx.fx` selbst.
+     Beim A40-Flitzer keine `banner` (verdecken die Straße).
    - Icons für die Anleitung: z. B. `'kbd:Esc'`, `'tap'`, `'swipe'`.
 3. In `mbbj_games()` (PHP) eintragen: `title`, `min_age` (Mindestdauer einer Runde in s), `max_score`, `sec_per_point`.
 4. Testen: Desktop und Handy (Touch), Pause/Esc, Vollbild, Rangliste, „weniger Bewegung“.

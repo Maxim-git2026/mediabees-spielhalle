@@ -158,12 +158,18 @@
         setTimeout(function () { cell.el.classList.remove('is-hit', 'is-bee-hit'); }, 260);
         popText(cell, pts > 0 ? '+' + pts : '−' + Math.abs(pts), pts < 0);
         sparks(cell, type);
+        /* Juice: jeder Treffer knallt, Gold und Biene richtig */
+        var at = ctx.fx.at(cell.el);
+        if (type === 'gold') ctx.fx.boom(at.x, at.y, '#FDC506', '253,197,6', 1);
+        else if (type === 'bee') { ctx.fx.flash('255,74,61', 0.8); ctx.fx.shake(0.3, 10); ctx.fx.ring(at.x, at.y, '#FF5A4A', 80, 6, 450); }
+        else { ctx.fx.ring(at.x, at.y, '#FFFFFF', 46, 4, 320); ctx.fx.shake(0.08, 3); }
         if (type === 'bee') { st.combo = 0; shake(); }
         else {
           st.combo++;
           st.bestCombo = Math.max(st.bestCombo, st.combo);
           if (st.combo >= 3) showCombo(st.combo);
-          if (st.combo === 10 || st.combo === 20) ctx.say(st.combo + ' Käfer ohne Fehler!');
+          if (st.combo === 10 || st.combo === 20) { ctx.fx.banner(st.combo + 'er Kombo!', '#FDC506'); ctx.fx.flash('253,197,6', 0.6); ctx.fx.sparkle(at.x, at.y, null, 24, 260); }
+          else if (st.combo >= 5 && st.combo % 5 === 0) ctx.fx.sparkle(at.x, at.y, null, 14, 200);
         }
         if (type === 'bee') { ctx.say(pick(BEE_LINES)); ctx.tone(170, 120, 0.28, 'sawtooth', 0.05); }
         else if (type === 'gold') { ctx.say(pick(GOLD_LINES)); ctx.tone(660, 990, 0.1, 'triangle', 0.08); ctx.tone(990, 1320, 0.12, 'triangle', 0.07, 0.09); }

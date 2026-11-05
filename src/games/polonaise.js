@@ -200,6 +200,7 @@
           var a = Math.random() * TAU, v = rnd(4, 9);
           return { x: p.x + 0.5, y: p.y + 0.5, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2, rot: Math.random() * TAU, vr: rnd(-8, 8), head: i === 0 };
         });
+        ctx.fx.flash('255,74,61', 0.9); ctx.fx.ring(ox + hx * c, oy + hy * c, '#FF5A4A', c * 4, 6, 550);
         ctx.tone(330, 80, 0.35, 'sawtooth', 0.06);
       }
 
@@ -220,21 +221,30 @@
           st.step = Math.max(MIN_MS, START_MS - st.pollen * SPEEDUP);
           burst(nx + 0.5, ny + 0.5, ['#FDC506', '#FFE680', '#FFFFFF'], 12, 4.5);
           pop(nx + 0.5, ny, '+10');
+          ctx.fx.ring(ox + (nx + 0.5) * c, oy + (ny + 0.5) * c, '#FDC506', c * 1.6, 3, 320);
           st.bump = 1;
           ctx.tone(523 + Math.min(20, st.pollen) * 18, 784 + Math.min(20, st.pollen) * 18, 0.08, 'triangle', 0.05);
           st.food = spawn();
-          if (!st.gold && st.pollen % GOLD_EVERY === 0) { var gp = spawn(); if (gp) { gp.born = st.t; st.gold = gp; ctx.say('Goldblume! Schnell, bevor sie welkt.'); } }
+          if (!st.gold && st.pollen % GOLD_EVERY === 0) { var gp = spawn(); if (gp) {
+            gp.born = st.t; st.gold = gp; ctx.say('Goldblume! Schnell, bevor sie welkt.');
+            ctx.fx.ring(ox + (gp.x + 0.5) * c, oy + (gp.y + 0.5) * c, '#FFE680', c * 3, 5, 600);
+            ctx.fx.sparkle(ox + (gp.x + 0.5) * c, oy + (gp.y + 0.5) * c, ['#FFE680', '#FFFFFF'], 12, 150);
+          } }
         } else if (st.gold && st.gold.x === nx && st.gold.y === ny) {
           st.score += 50; st.goldCount++; st.grow++;
           burst(nx + 0.5, ny + 0.5, ['#FFE680', '#FFFFFF', '#FDC506', '#FFF6D6'], 26, 7);
           pop(nx + 0.5, ny, '+50', true, '#FFF1B8');
           st.bump = 1; shakeIt(0.18);
+          ctx.fx.boom(ox + (nx + 0.5) * c, oy + (ny + 0.5) * c, '#FFE680', '253,197,6', 1);
+          ctx.fx.text(ox + (nx + 0.5) * c, oy + ny * c - c, 'GOLD!', '#FFE680', 26);
           ctx.tone(659, 1319, 0.18, 'triangle', 0.06); ctx.tone(988, 1568, 0.18, 'triangle', 0.05, 0.08);
           st.gold = null;
         }
         ctx.setScore(st.score);
         var len = st.snake.length + st.grow;
-        Object.keys(MILESTONES).forEach(function (k) { if (len >= +k && !st.said[k]) { st.said[k] = 1; ctx.say(MILESTONES[k]); } });
+        Object.keys(MILESTONES).forEach(function (k) {
+          if (len >= +k && !st.said[k]) { st.said[k] = 1; ctx.say(MILESTONES[k]); ctx.fx.banner(len + ' Bienen!', '#FDC506'); ctx.fx.flash('253,197,6', 0.5); ctx.fx.shake(0.15, 5); }
+        });
         if (!st.food && !st.gold) { st.score += 500; ctx.setScore(st.score); ctx.say('Die ganze Wiese ist voll. Wahnsinn!'); st.dead = true; st.deadT = st.t - 600; st.fly = []; }
       }
 

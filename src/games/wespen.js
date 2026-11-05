@@ -348,6 +348,7 @@
         if (!st.on || st.paused || st.ammo === MAG) return;
         st.ammo = MAG;
         st.reloadFx = 1;
+        ctx.fx.shake(0.08, 3);
         st.recoil = 0;
         ctx.tone(300, 520, 0.05, 'square', 0.04);
         ctx.tone(520, 320, 0.05, 'square', 0.04, 0.07);
@@ -378,7 +379,7 @@
           burst(x, y, ['rgba(255,255,255,0.7)', 'rgba(255,240,180,0.7)'], 5, 120);
           return;
         }
-        var T = TYPES[hit.type];
+        var T = TYPES[hit.type], hx = hit.x * k, hy = hit.y * k;
         burst(hit.x, hit.y, COLORS[hit.type], T.foe ? 14 : 18, T.foe ? 260 : 300, hit.type === 'goldwasp' ? 'star' : 'wing');
         hit.dead = true; hit.vy = -170; hit.vr = (hit.vx > 0 ? 1 : -1) * rnd(5, 9);
         if (!T.foe) {
@@ -387,6 +388,8 @@
           st.score = Math.max(0, st.score - T.minus);
           pops.push({ x: hit.x, y: hit.y - 20, txt: '−' + T.minus, c: '#FF7A6B', t: 0, big: true });
           shakeIt(hit.type === 'queen' ? 12 : 8, 0.3);
+          ctx.fx.flash('255,74,61', 0.9); ctx.fx.ring(hx, hy, '#FF5A4A', 90, 6, 500);
+          if (hit.type === 'queen') ctx.fx.banner('Die Königin!', '#FF7A6B');
           ctx.say(pick(LINES[hit.type]));
           ctx.tone(170, 120, 0.28, 'sawtooth', 0.05);
         } else {
@@ -398,7 +401,14 @@
           st.score += pts + bonus;
           pops.push({ x: hit.x, y: hit.y - 20, txt: '+' + (pts + bonus), c: '#FDC506', t: 0, big: pts >= 25, sub: bonus ? 'Serie ×' + st.streak : '' });
           shakeIt(pts >= 25 ? 5 : 3, 0.14);
-          if (st.streak === 5 || st.streak === 10 || st.streak === 15) { ctx.say(st.streak + ' Treffer am Stück!'); ctx.tone(660, 1320, 0.15, 'triangle', 0.06, 0.05); }
+          /* Juice: Goldwespe und Hornisse knallen richtig, sonst ein kurzer Ring */
+          if (hit.type === 'goldwasp') ctx.fx.boom(hx, hy, '#FFE680', '253,197,6', 1.2);
+          else if (hit.type === 'hornet') ctx.fx.boom(hx, hy, '#E8902A', '232,144,42', 0.8);
+          else ctx.fx.ring(hx, hy, '#FFFFFF', 50, 4, 320);
+          if (st.streak === 5 || st.streak === 10 || st.streak === 15) {
+            ctx.fx.banner(st.streak + ' am Stück!', '#FDC506'); ctx.fx.flash('253,197,6', 0.5);
+            ctx.say(st.streak + ' Treffer am Stück!'); ctx.tone(660, 1320, 0.15, 'triangle', 0.06, 0.05);
+          }
           if (LINES[hit.type] && (hit.type === 'goldwasp' || Math.random() < 0.5)) ctx.say(pick(LINES[hit.type]));
           ctx.tone(900, 1300, 0.07, 'triangle', 0.05, 0.03);
         }

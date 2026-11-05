@@ -256,6 +256,7 @@
           puff(ox, oy, ['#FDC506', '#FFE680', '#FFFFFF', o.c[0]], 26, 300, 0, 0.6);
           shakeIt(0.25); st.flash = 0.6;
           pop(st.px, PY - 50 * sc, 'Schild weg!', '#FFE680');
+          ctx.fx.boom(ox * k, oy * k, '#FDC506', '253,197,6', 0.9);
           ctx.tone(700, 200, 0.25, 'square', 0.05);
           return;
         }
@@ -266,6 +267,8 @@
         var cx = (st.px + ox) / 2, cy = Math.max(o.y + o.len - 4, PY - CAR_L * sc / 2);
         puff(cx, cy, ['#FFE680', '#FDC506', '#FFFFFF', '#E8902A'], 30, 360, 300, 0.6);
         puff(cx, cy, ['rgba(60,60,70,0.6)', 'rgba(90,90,100,0.5)'], 10, 80, -40, 1);
+        ctx.fx.flash('255,74,61', 1); ctx.fx.ring(cx * k, cy * k, '#FF5A4A', 120, 7, 600); ctx.fx.ring(cx * k, cy * k, '#FFE680', 70, 4, 400);
+        ctx.fx.sparkle(cx * k, cy * k, ['#FFE680', '#FDC506', '#FFFFFF'], 18, 300, false);
         ctx.tone(200, 50, 0.4, 'sawtooth', 0.07);
         ctx.tone(90, 40, 0.3, 'square', 0.04, 0.05);
       }
@@ -296,6 +299,7 @@
               st.exit = ex;
               st.sign = { name: ex, km: km, t0: st.t };
               st.deco.push({ k: 'sign', x: roadR + 26, y: -70 });
+              ctx.fx.flash('30,79,160', 0.4);
               ctx.tone(660, 990, 0.12, 'triangle', 0.06); ctx.tone(990, 1320, 0.12, 'triangle', 0.05, 0.1);
             }
           }
@@ -317,6 +321,7 @@
             if (lat < laneW * 1.25 && st.t - st.lastMove < 700) {
               st.close++; st.bonus += CLOSE; st.bump = 1;
               pop((ox + st.px) / 2, PY - 10 * sc, 'Knapp! +' + CLOSE, '#FFFFFF');
+              ctx.fx.ring(((ox + st.px) / 2) * k, PY * k, '#FFFFFF', 60, 4, 350); ctx.fx.shake(0.1, 4);
               ctx.tone(1100, 1500, 0.07, 'triangle', 0.04);
             }
           }
@@ -333,11 +338,13 @@
               st.honey++; st.bonus += HONEY; st.bump = 1;
               pop(ix, it.y - 20 * sc, '+' + HONEY);
               puff(ix, it.y, ['#FDC506', '#FFE680', '#FFFFFF'], 14, 200, 0, 0.5);
+              ctx.fx.ring(ix * k, it.y * k, '#FDC506', 70, 5, 420); ctx.fx.sparkle(ix * k, it.y * k, null, 10, 180); ctx.fx.flash('253,197,6', 0.3);
               ctx.tone(880, 1320, 0.08, 'triangle', 0.05); ctx.tone(1320, 1760, 0.1, 'triangle', 0.04, 0.07);
             } else {
               st.shield = true;
               pop(ix, it.y - 20 * sc, 'Wabenschild!', '#FFE680');
               puff(ix, it.y, ['#FDC506', '#FFFFFF'], 18, 220, 0, 0.6);
+              ctx.fx.boom(ix * k, it.y * k, '#FDC506', '253,197,6', 0.8);
               ctx.tone(520, 1040, 0.2, 'triangle', 0.06);
             }
           }

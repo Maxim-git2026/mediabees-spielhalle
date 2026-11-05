@@ -218,6 +218,11 @@
         }
         debris(e.x + e.w / 2, e.y + e.h / 2, COLORS[e.kind], 16, 300);
         shakeIt(0.18);
+        /* Juice: Druckwelle, bei Kombo mehr Wumms */
+        var ex = (e.x + e.w / 2) * k, ey = (e.y + e.h / 2) * k;
+        ctx.fx.ring(ex, ey, mult > 1 ? '#FFE680' : '#FFFFFF', (40 + mult * 18) * Math.max(0.6, k), 5, 450);
+        if (mult >= 3) { ctx.fx.flash('253,197,6', 0.25 + mult * 0.06); ctx.fx.sparkle(ex, ey, null, 8 + mult * 3, 200); }
+        if (mult === 5 && st.t - (st.megaT || -9999) > 1200) { st.megaT = st.t; ctx.fx.text(ex, ey - 30, 'MEGA-KOMBO!', '#FFE680', 26); }
         ctx.tone(180, 60, 0.22, 'square', 0.05);
         ctx.tone(400, 120, 0.15, 'sawtooth', 0.03, 0.04);
         if (!alive().length) {
@@ -227,6 +232,9 @@
           st.score += b; ctx.setScore(st.score);
           pop(W / 2, H * 0.4, 'Seite platt! +' + b, '#FDC506', true);
           st.flash = 0.6;
+          ctx.fx.flash('255,255,255', 1); ctx.fx.shake(0.4, 12);
+          ctx.fx.ring(W / 2 * k, H * 0.4 * k, '#FDC506', 260 * k, 8, 700); ctx.fx.ring(W / 2 * k, H * 0.4 * k, '#FFFFFF', 160 * k, 4, 500);
+          ctx.fx.sparkle(W / 2 * k, H * 0.4 * k, ['#FDC506', '#E5322D', '#2F6FD0', '#FFFFFF', '#2E9E4A'], 40, 380);
           ctx.tone(523, 784, 0.12, 'triangle', 0.06); ctx.tone(784, 1046, 0.18, 'triangle', 0.06, 0.12);
         }
       }

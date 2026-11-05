@@ -162,6 +162,7 @@
         st.dead = true; st.deadT = st.t; st.flash = 1;
         st.shake = 0.35;
         puff(beeX, st.y, ['#F7B500', '#3A2410', '#FFFFFF'], 22, 280, false);
+        ctx.fx.flash('255,74,61', 0.9); ctx.fx.ring(beeX * k, st.y * k, '#FF5A4A', 90, 6, 500); ctx.fx.shake(0.3, 8);
         ctx.tone(220, 70, 0.3, 'sawtooth', 0.06);
       }
 
@@ -196,8 +197,13 @@
               ctx.tone(880, 1320, 0.07, 'triangle', 0.05);
               st.bump = 1;
               puff(beeX + 6, st.y, ['#FDC506', '#FFE680', '#FFFFFF'], 7, 160, false);
+              ctx.fx.ring(beeX * k, st.y * k, 'rgba(253,197,6,0.9)', 38, 3, 300);
               var stop = stopFor(st.score);
               if (stop) {
+                /* Juice: neue Stadt erreicht */
+                ctx.fx.flash('253,197,6', 0.6); ctx.fx.shake(0.15, 5);
+                ctx.fx.sparkle(beeX * k, st.y * k, ['#FDC506', '#FFE680', '#FFFFFF'], 22, 240);
+                ctx.fx.ring(beeX * k, st.y * k, '#FDC506', 110, 6, 600);
                 st.sign = { top: stop[0], name: stop[1], t0: st.t };
                 ctx.say(st.score === 100 ? 'Einmal ums ganze Revier. Respekt!' : stop[0] + ' ' + stop[1] + '!');
                 ctx.tone(660, 990, 0.12, 'triangle', 0.06, 0.08);
