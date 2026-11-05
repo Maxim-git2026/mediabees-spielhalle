@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Arcade (404)
  * Description: Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) mit Top-10-Rangliste pro Spiel. Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.11.0
+ * Version: 2.12.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.11.0' );
+define( 'MBBJ_VERSION', '2.12.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -55,6 +55,7 @@ function mbbj_games() {
 		'wacht'   => array( 'title' => 'Wabenwacht', 'min_age' => 3, 'max_score' => 99999, 'sec_per_point' => 0.003 ),
 		'pfad'    => array( 'title' => 'Pollenpfad', 'min_age' => 5, 'max_score' => 300000, 'sec_per_point' => 0.003 ),
 		'wabenbau' => array( 'title' => 'Wabenbau', 'min_age' => 5, 'max_score' => 999999, 'sec_per_point' => 0.002 ),
+		'solitaer' => array( 'title' => 'Bienen-Solitär', 'min_age' => 5, 'max_score' => 5000, 'sec_per_point' => 0.02 ),
 	);
 }
 
@@ -76,7 +77,7 @@ add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
 
 /**
  * Shortcode [mediabees_arcade]
- * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest, wacht = Wabenwacht, pfad = Pollenpfad, wabenbau = Wabenbau).
+ * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest, wacht = Wabenwacht, pfad = Pollenpfad, wabenbau = Wabenbau, solitaer = Bienen-Solitär).
  */
 function mbbj_render( $atts = array() ) {
 	// "intro" wird seit 2.7.0 ignoriert (kein 404-Kopf mehr), bleibt aber erlaubt, damit alte Shortcodes nicht brechen.

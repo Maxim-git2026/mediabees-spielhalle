@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.11.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.12.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -65,9 +65,10 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | wacht | Wabenwacht | Space-Invaders-Prinzip, Biene schießt Stacheln, Hornisse 30 (2 Treffer), Wespe 20, Feuerwespe 10, Goldwespe 100–300, Honigwaben als Deckung, 3 Leben, Doppelstachel, Welle geschafft = +100 × Welle. Handy: ziehen + Dauerfeuer |
 | pfad | Pollenpfad | Pac-Man-Prinzip mit eigenem Labyrinth (19 × 21, 176 Pollen), Pollen 10, Honigglas 50 (Wespen werden Beute), Biene schaut ganz in Flugrichtung mit Kau-Mund, Wespen fangen 200/400/800/1.600, Blume +100 × Level, Level geschafft +500 × Level, 3 Leben. Wespen: Rüpel jagt direkt, Lauer zielt vor die Biene, Zick kommt nah und weicht aus, Zufall streut. Handy: wischen oder neben die Biene tippen. Juice: `ring`, `shakeIt`, `hitstop` (Freeze), `punch` (Zoom), `sparkle`, goldener Rand im Honig-Rausch |
 | wabenbau | Wabenbau | Tetris-Prinzip mit Sechsecken: 9 senkrechte Wabenspalten × 16, Teile aus 4 Waben (7 Formen, axiale Koordinaten, Drehen in 60°-Schritten), volle Zickzack-Reihe verschwindet, 100/300/500/800 × Level, Sofort-Fallen +2 je Wabe, Level alle 10 Reihen. Handy: wischen schiebt, nach unten wischen lässt fallen, tippen dreht |
+| solitaer | Bienen-Solitär | Klondike, 1 Karte ziehen, eigene Farben (Blume + Wabe rot, Käfer + Klee dunkel), K = Königin, D = Hummel, B = Arbeitsbiene. Punkte: Ablage +10, aufdecken/vom Stapel anlegen +5, von Ablage zurück −15, Stapel neu −50, Sieg +500 + (600 − Sekunden) × 2. Antippen = bester Zug, Ziehen geht auch, Zurück-Knopf (stellt auch Punkte zurück), Aufgeben, Auto-Abschluss, Gewinn-Kaskade |
 
 ### Nächste Spiele (in dieser Reihenfolge)
-Solitär → Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
+Wimmelbild → Flipper → Bomberman (1 Spieler + Spaß-Modus zu zweit ohne Rangliste).
 Ideenliste: Doodle-Jump-Prinzip, Dino-Läufer (Chrome-offline-Prinzip), Crossy-Road-Prinzip.
 Gestrichen: Bubble Ball, Schach.
 
