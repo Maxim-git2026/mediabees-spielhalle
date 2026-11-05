@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.10.1
+Stable tag: 2.10.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,12 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.10.2 – 05.11.2026 =
+* Pollenpfad mit viel mehr Action: Honigglas lässt den Bildschirm golden aufleuchten und wackeln, mit Druckwelle und „HONIG-RAUSCH!“. Die Wespen zucken erschrocken zusammen, der Rand glüht, solange der Rausch läuft, und die Biene zieht eine Glitzerspur.
+* Die Bonus-Blume erscheint mit Lichtring und Strahlen, beim Fressen blitzt es rosa.
+* Wespen fangen mit kurzem Freeze-Moment und Druckwelle, jede weitere Wespe knallt stärker.
+* Pollen-Serien lassen den Ton ansteigen, Level-Ende mit Konfetti. Bei „weniger Bewegung“ bleiben Wackeln und Zoom aus.
 
 = 2.10.1 – 05.11.2026 =
 * Pollenpfad: Die Biene schaut jetzt immer ganz in Flugrichtung, auch nach oben und unten, und ihr Mund geht beim Fliegen auf und zu.
