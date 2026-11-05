@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: MediaBees Arcade (404)
- * Description: Spielhalle (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz, A40-Flitzer) mit Top-10-Rangliste pro Spiel. Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.16.0
+ * Plugin Name: MediaBees Spielhalle
+ * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
+ * Version: 2.17.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.16.0' );
+define( 'MBBJ_VERSION', '2.17.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -59,6 +59,7 @@ function mbbj_games() {
 		'hopser'   => array( 'title' => 'Hummelhopser', 'min_age' => 3, 'max_score' => 20000, 'sec_per_point' => 0.04 ),
 		'honigdieb' => array( 'title' => 'Honigdieb', 'min_age' => 3, 'max_score' => 50000, 'sec_per_point' => 0.03 ),
 		'knaller'  => array( 'title' => 'Honigknaller', 'min_age' => 5, 'max_score' => 200000, 'sec_per_point' => 0.004 ),
+		'flipper'  => array( 'title' => 'Honigflipper', 'min_age' => 5, 'max_score' => 2000000, 'sec_per_point' => 0.0002 ),
 	);
 }
 
@@ -80,7 +81,7 @@ add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
 
 /**
  * Shortcode [mediabees_arcade]
- * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest, wacht = Wabenwacht, pfad = Pollenpfad, wabenbau = Wabenbau, solitaer = Bienen-Solitär, hopser = Hummelhopser, honigdieb = Honigdieb, knaller = Honigknaller).
+ * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest, wacht = Wabenwacht, pfad = Pollenpfad, wabenbau = Wabenbau, solitaer = Bienen-Solitär, hopser = Hummelhopser, honigdieb = Honigdieb, knaller = Honigknaller, flipper = Honigflipper).
  */
 function mbbj_render( $atts = array() ) {
 	// "intro" wird seit 2.7.0 ignoriert (kein 404-Kopf mehr), bleibt aber erlaubt, damit alte Shortcodes nicht brechen.

@@ -1,8 +1,8 @@
-=== MediaBees Arcade (404) ===
+=== MediaBees Spielhalle ===
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.16.0
+Stable tag: 2.17.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -11,7 +11,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
-* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Honigknaller).
+* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Honigknaller), flipper (Honigflipper).
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.17.0 – 05.11.2026 =
+* Neues Spiel: Honigflipper. Ein eigener Bienenstock-Flippertisch mit drei Honigtopf-Bumpern, den BIENE-Zielen, drei Bahnen oben und dem Honigtopf zum Versenken. Wer alle BIENE-Ziele oder alle drei Bahnen trifft, bekommt einen höheren Multiplikator (bis ×5). Drei Kugeln, am Anfang jeder Kugel gibt es ein paar Sekunden Rettung. Am PC A/D oder Pfeiltasten, Abschuss mit der Leertaste. Auf dem Handy linke und rechte Hälfte tippen.
+* Das Plugin heißt im Backend jetzt „MediaBees Spielhalle“, die Beschreibung ist kürzer.
 
 = 2.16.0 – 05.11.2026 =
 * Neues Spiel: Honigknaller. Mit Honigbomben Wachsblöcke sprengen und Wespen erwischen, Level für Level. Extras für mehr Bomben, mehr Reichweite und mehr Tempo. Am PC auch zu zweit an einer Tastatur (Biene gegen Hummel, ohne Rangliste). Auf dem Handy mit Steuerkreuz und Bombenknopf.

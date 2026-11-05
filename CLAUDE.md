@@ -1,8 +1,8 @@
 # MediaBees Spielhalle – Projektwissen für Claude
 
-WordPress-Plugin „MediaBees Arcade (404)“ für mediabees.de (WordPress + Elementor Pro).
+WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.16.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.17.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -69,9 +69,10 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | hopser | Hummelhopser | Crossy-Road-Prinzip, 9 Spalten, endlos nach vorn: Wiese (Bäume blocken, Honigglas +5), Straße (Autos/Laster), S-Bahn (Warnlicht 1,2 s vorher), Emscher (Stämme/Kohlekähne, treiben mit, Rand = raus). +1 je neue Reihe. Kamera schiebt nach, wer zurückfällt wird von der Wespe geschnappt. Tippen = vor, Wischen = Richtung, WASD/Pfeile |
 | honigdieb | Honigdieb | Flucht-Runner von der Seite: Biene mit Honigglas flieht vor dem Kammerjäger. Springen (W/↑/Leertaste, halten = höher; Handy tippen) über Tonne/Zaun/Hydrant/Gully, ducken (S/↓; Handy nach unten wischen) unter Spinnweben/Banner. 1 Pkt je Meter, Honigtropfen +10. Stolpern statt sofort aus: Abstand zum Kammerjäger sinkt, erholt sich langsam, zweimal kurz hintereinander = geschnappt. Stadtschild alle 250 m |
 | knaller | Honigknaller | Bomberman-Prinzip. Feld quer 15 × 11, hochkant 11 × 13 (Rand + Säulen fest, Wachsblöcke zufällig). Allein: Level mit 2 + Level Wespen und Level/2 Hornissen, Wespe 100, Hornisse 200, mehrere in einer Explosion × Kette, Block 10, Extra 50, Level geschafft +500 × Level, 3 Leben. Extras: Bombe, Reichweite, Tempo. Zu zweit (nur PC, `finish(0, {headline})`, keine Rangliste): Biene WASD + Leertaste gegen Hummel Pfeile + Enter, wer zuerst 2 Runden gewinnt. Handy: nur allein, Steuerkreuz + Bombenknopf (`multiTouch: true` hebt den Ein-Finger-Filter auf) |
+| flipper | Honigflipper | Flipper-Prinzip, eigener Bienenstock-Tisch (logisch 400 × 700, 10 Teilschritte Physik). 3 Honigtopf-Bumper 100, Schleudern 10, BIENE-Ziele links je 250 (alle 5 = +2.500 und Multiplikator +1), 3 Bahnen oben je 50 (alle = Multiplikator +1, max. ×5), Honigtopf-Mulde 500 (hält die Kugel 1,1 s). Alle Punkte × Multiplikator, Multiplikator zurück bei Kugelverlust. 3 Kugeln, 7 s Rettung nach Abschuss, Kugel zurück in der Abschussbahn = neu abschießen, festhängende Kugel bekommt nach 2,5 s einen Schubs. Tasten: A/D, ←/→, Shift; Abschuss Leertaste/↓/S/Enter halten und loslassen. Handy: linke/rechte Hälfte (`multiTouch: true`), Abschuss halten und loslassen |
 
 ### Nächste Spiele (in dieser Reihenfolge)
-Flipper (eigener Bienenstock-Tisch) → Wurfduell (Prinzip Xiao Xiao/Worms, rundenbasiert, gegen CPU oder zu zweit) → Wimmelbild (oder „Finde die Unterschiede“).
+Wurfduell (Prinzip Xiao Xiao/Worms, rundenbasiert, gegen CPU oder zu zweit) → Wimmelbild (oder „Finde die Unterschiede“).
 Ideenliste: Doodle-Jump-Prinzip.
 Gestrichen: Bubble Ball, Schach.
 
