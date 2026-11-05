@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.17.0
+Stable tag: 2.18.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,13 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.18.0 – 05.11.2026 =
+* Honigknaller: Neue Spielarten „Gegen 3 Bots“ (auch auf dem Handy) und „Zu zweit + 2 Bots“. Die Bots legen selbst Bomben, sammeln Extras und jagen dich. Wird ein Duell zu lang, gibt es einen Endspurt mit mehr Wumms für alle.
+* Honigknaller: Bomben explodieren am Anfang nur 1 Feld weit, mehr gibt es über die Extras. Hornissen legen ab Level 3 selbst Bomben.
+* Honigknaller: Die Biene schaut jetzt auch nach oben und unten in Laufrichtung. Auf dem Handy gibt es statt Pfeilen einen Joystick: Daumen unten links auflegen und ziehen.
+* Honigflipper: Die Rettung gibt es nur noch einmal pro Kugel und nur 4 Sekunden lang, Spielende ist also wieder möglich. Neu: Abflüsse links und rechts mit Rettungslampe, eine fliegende Wespe als Ziel, ein Drehtor, Multiball nach drei Treffern im Honigtopf (alles doppelt) und ein Bonus am Ende jeder Kugel.
+* Honigdieb: Auf dem Handy ist das Bild etwas weiter herausgezoomt, die Biene läuft weiter links und der Kammerjäger ist näher dran. So sieht man die Hindernisse viel früher.
 
 = 2.17.0 – 05.11.2026 =
 * Neues Spiel: Honigflipper. Ein eigener Bienenstock-Flippertisch mit drei Honigtopf-Bumpern, den BIENE-Zielen, drei Bahnen oben und dem Honigtopf zum Versenken. Wer alle BIENE-Ziele oder alle drei Bahnen trifft, bekommt einen höheren Multiplikator (bis ×5). Drei Kugeln, am Anfang jeder Kugel gibt es ein paar Sekunden Rettung. Am PC A/D oder Pfeiltasten, Abschuss mit der Leertaste. Auf dem Handy linke und rechte Hälfte tippen.

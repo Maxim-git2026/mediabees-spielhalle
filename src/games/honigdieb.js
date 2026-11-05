@@ -71,7 +71,7 @@
       cv.setAttribute('aria-hidden', 'true');
       ctx.screen.appendChild(cv);
       var g = cv.getContext('2d');
-      var W = 960, k = 1, dpr = 1, sky = null, far = null, raf = 0, idleRaf = 0, ptr = null;
+      var W = 960, k = 1, dpr = 1, TOPW = 0, sky = null, far = null, raf = 0, idleRaf = 0, ptr = null;
       var st = fresh();
 
       function fresh() {
@@ -86,17 +86,17 @@
 
       function paint() {
         var c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height;
-        var x = c.getContext('2d'); x.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
-        var gr = x.createLinearGradient(0, 0, 0, GROUND);
+        var x = c.getContext('2d'); x.setTransform(k * dpr, 0, 0, k * dpr, 0, TOPW * k * dpr);
+        var gr = x.createLinearGradient(0, -TOPW, 0, GROUND);
         gr.addColorStop(0, '#0B0E1F'); gr.addColorStop(0.65, '#1F2142'); gr.addColorStop(1, '#4A2E45');
-        x.fillStyle = gr; x.fillRect(0, 0, W, H);
+        x.fillStyle = gr; x.fillRect(0, -TOPW, W, H + TOPW);
         var r = art.rng(8);
-        for (var i = 0; i < W / 9; i++) { x.globalAlpha = 0.2 + r() * 0.7; x.fillStyle = '#fff'; x.beginPath(); x.arc(r() * W, r() * GROUND * 0.6, 0.5 + r(), 0, TAU); x.fill(); }
+        for (var i = 0; i < W / 9; i++) { x.globalAlpha = 0.2 + r() * 0.7; x.fillStyle = '#fff'; x.beginPath(); x.arc(r() * W, r() * (GROUND * 0.6 + TOPW) - TOPW, 0.5 + r(), 0, TAU); x.fill(); }
         x.globalAlpha = 1;
         x.beginPath(); x.arc(W * 0.78, 90, 30, 0, TAU); x.fillStyle = '#F4EBC9'; x.fill();
         sky = c;
         var f = document.createElement('canvas'); f.width = Math.ceil(1400 * k * dpr); f.height = cv.height;
-        var fx = f.getContext('2d'); fx.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+        var fx = f.getContext('2d'); fx.setTransform(k * dpr, 0, 0, k * dpr, 0, TOPW * k * dpr);
         art.skyline(fx, 0, 1400, GROUND - 40, '#1C2140', art.rng(31), '#FDC506');
         far = f;
       }
@@ -105,7 +105,9 @@
         if (!r.width || !r.height) return;
         dpr = Math.min(window.devicePixelRatio || 1, 2);
         cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
-        k = r.height / H; W = r.width / k;
+        /* Hochkant (Handy): etwas herauszoomen, damit man weiter nach vorn sieht, Biene weiter links */
+        k = Math.min(r.height / H, r.width / 560); W = r.width / k; TOPW = Math.max(0, r.height / k - H);
+        PX = W < 900 ? Math.round(Math.max(110, W * 0.2)) : 230;
         paint(); render();
       }
 
@@ -186,8 +188,8 @@
           ctx.fx.banner('Geschnappt!', '#FF7A6B');
           ctx.tone(220, 50, 0.6, 'sawtooth', 0.07);
         } else {
-          ctx.fx.flash('255,74,61', 0.6); ctx.fx.ring(PX * k, (st.y - 20) * k, '#FF5A4A', 70 * k, 5, 450);
-          ctx.fx.text(PX * k, (st.y - 70) * k, 'Gestolpert!', '#FF7A6B', 24);
+          ctx.fx.flash('255,74,61', 0.6); ctx.fx.ring(PX * k, (st.y - 20 + TOPW) * k, '#FF5A4A', 70 * k, 5, 450);
+          ctx.fx.text(PX * k, (st.y - 70 + TOPW) * k, 'Gestolpert!', '#FF7A6B', 24);
           ctx.tone(260, 120, 0.25, 'sawtooth', 0.05);
         }
       }
@@ -227,7 +229,7 @@
           if (!o.passed && o.x + o.w < PX - 18) {
             o.passed = true;
             var near = o.hang ? (st.duck > 0) : (!st.ground && st.y > GROUND - (o.h || 0) - 30);
-            if (near && !ctx.reduce) { ctx.fx.text(PX * k, (st.y - 80) * k, 'Knapp!', '#FFFFFF', 18); }
+            if (near && !ctx.reduce) { ctx.fx.text(PX * k, (st.y - 80 + TOPW) * k, 'Knapp!', '#FFFFFF', 18); }
           }
         }
         /* Honigtropfen */
@@ -237,7 +239,7 @@
           if (d0.x < -30) { st.drops.splice(j, 1); continue; }
           if (Math.abs(d0.x - PX) < 26 && d0.y > me.y - 16 && d0.y < me.y + me.h + 16) {
             st.drops.splice(j, 1); st.honey++;
-            ctx.fx.ring(d0.x * k, d0.y * k, '#FDC506', 34 * k, 3, 300);
+            ctx.fx.ring(d0.x * k, (d0.y + TOPW) * k, '#FDC506', 34 * k, 3, 300);
             puff(d0.x, d0.y, ['#FDC506', '#FFE680', '#FFFFFF'], 6, 120, 0);
             ctx.tone(880 + (st.honey % 5) * 90, 1320, 0.06, 'triangle', 0.035);
           }
@@ -249,7 +251,7 @@
         if (c > st.city) {
           st.city = c;
           st.sign = { name: CITIES[c], t0: st.t };
-          ctx.fx.flash('253,197,6', 0.45); ctx.fx.sparkle(PX * k, (st.y - 40) * k, null, 18, 240);
+          ctx.fx.flash('253,197,6', 0.45); ctx.fx.sparkle(PX * k, (st.y - 40 + TOPW) * k, null, 18, 240);
           ctx.tone(660, 990, 0.12, 'triangle', 0.05); ctx.tone(990, 1320, 0.12, 'triangle', 0.05, 0.1);
         }
       }
@@ -308,7 +310,7 @@
         g.setTransform(1, 0, 0, 1, 0, 0);
         if (sky) g.drawImage(sky, 0, 0);
         if (far) { var fo = -((st.dist * 0.2) % 1400) * k * dpr; g.drawImage(far, fo, 0); g.drawImage(far, fo + far.width, 0); }
-        g.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+        g.setTransform(k * dpr, 0, 0, k * dpr, 0, TOPW * k * dpr);
         /* Straße */
         g.fillStyle = '#16171F'; g.fillRect(0, GROUND, W, H - GROUND);
         g.fillStyle = '#2A2D3A'; g.fillRect(0, GROUND, W, 6);
@@ -325,7 +327,7 @@
         st.obs.forEach(drawObs);
         st.drops.forEach(function (d) { drawJar(g, d.x, d.y, 1, st.t + d.x); });
         /* Kammerjäger: je kleiner der Abstand, desto näher */
-        var hx = PX - 62 - st.gap * 125;
+        var hx = W < 900 ? PX - 46 - st.gap * Math.min(125, PX - 66) : PX - 62 - st.gap * 125;
         g.save(); g.translate(hx, GROUND); g.scale(1.1, 1.1); drawHunter(g, st.t, st.speed > 30); g.restore();
         if (st.gap < 0.95 && !st.caught) {
           for (var sp = 0; sp < 3; sp++) {
@@ -341,21 +343,21 @@
         if (st.gap < 0.6 && !st.caught) {
           var va = (0.6 - st.gap) * 0.7 * (0.7 + 0.3 * Math.sin(st.t / 120));
           var vg = g.createLinearGradient(0, 0, W * 0.35, 0); vg.addColorStop(0, 'rgba(255,74,61,' + va + ')'); vg.addColorStop(1, 'rgba(255,74,61,0)');
-          g.fillStyle = vg; g.fillRect(0, 0, W * 0.35, H);
+          g.fillStyle = vg; g.fillRect(0, -TOPW, W * 0.35, H + TOPW);
         }
         /* Anzeige: Meter oben links, Stadt-Schild */
         g.textAlign = 'left'; g.textBaseline = 'top'; g.lineJoin = 'round';
         g.font = '900 34px Poppins, sans-serif'; g.lineWidth = 6; g.strokeStyle = 'rgba(17,17,17,0.8)';
         var mt = Math.floor(st.dist * M_PER_PX) + ' m';
-        g.strokeText(mt, 14, 12); g.fillStyle = '#FFFFFF'; g.fillText(mt, 14, 12);
-        g.font = '700 13px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.75)'; g.fillText('Honig: ' + st.honey, 16, 52);
+        g.strokeText(mt, 14, 12 - TOPW); g.fillStyle = '#FFFFFF'; g.fillText(mt, 14, 12 - TOPW);
+        g.font = '700 13px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.75)'; g.fillText('Honig: ' + st.honey, 16, 52 - TOPW);
         if (st.sign) {
           var age = (st.t - st.sign.t0) / 1000;
           if (age > 2.6) st.sign = null;
           else {
             var e = age < 0.3 ? age / 0.3 : age > 2.2 ? 1 - (age - 2.2) / 0.4 : 1;
             g.save(); g.globalAlpha = Math.max(0, e);
-            var sw = 190, sx0 = W - sw - 16, sy0 = 14 - (1 - e) * 20;
+            var sw = 190, sx0 = W - sw - 16, sy0 = 14 - TOPW - (1 - e) * 20;
             rr(g, sx0, sy0, sw, 58, 6); g.fillStyle = '#FDC506'; g.fill(); g.strokeStyle = '#111'; g.lineWidth = 3; g.stroke();
             g.lineWidth = 1.5; g.strokeRect(sx0 + 5, sy0 + 5, sw - 10, 48);
             g.fillStyle = '#111'; g.textAlign = 'center'; g.font = '600 11px Poppins, sans-serif'; g.fillText('Auf der Flucht durch', sx0 + sw / 2, sy0 + 10);
