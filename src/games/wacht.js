@@ -247,6 +247,21 @@
             var half = 24 * f.g.sc;
             if ((f.dir > 0 && maxX + half > W - 8) || (f.dir < 0 && minX - half < 8)) { f.dir *= -1; f.y += 16; f.ty = f.y; }
             if (maxY > PY - 40 && !st.dead) { st.lives = 1; st.inv = 0; hurt(); }
+            /* Wie beim Vorbild: Wespen, die die Deckung erreichen, fressen sie beim Durchfliegen weg */
+            if (st.bunkers.length && maxY > st.bunkers.reduce(function (m, b) { return Math.min(m, b.y); }, 1e9) - 30) {
+              var ehw = 16 * f.g.sc, ehh = 20 * f.g.sc, ate = 0;
+              alive.forEach(function (e) {
+                var ep = epos(e);
+                for (var bi = st.bunkers.length - 1; bi >= 0; bi--) {
+                  var bk = st.bunkers[bi];
+                  if (bk.x + bk.s > ep.x - ehw && bk.x < ep.x + ehw && bk.y + bk.s > ep.y - ehh && bk.y < ep.y + ehh) {
+                    st.bunkers.splice(bi, 1); ate++;
+                    puff(bk.x + bk.s / 2, bk.y + bk.s / 2, ['#FDC506', '#C98A00', '#FFE680'], 3, 110, 300);
+                  }
+                }
+              });
+              if (ate && (!st.eatT || st.t - st.eatT > 120)) { st.eatT = st.t; ctx.tone(220, 140, 0.05, 'square', 0.025); }
+            }
             /* Wespen schießen zurück */
             st.bombT -= dt;
             if (st.bombT <= 0 && alive.length && !st.dead) {

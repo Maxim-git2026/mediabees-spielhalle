@@ -22,6 +22,7 @@ Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, rein
 
 = 2.19.4 – 19.11.2026 =
 * Honigdieb auf dem Handy: neue Steuerung ohne Wischen. Linke Bildschirmhälfte halten duckt die Biene (im Sprung geht es schnell nach unten), rechte Hälfte tippen springt. Unten zeigen zwei Markierungen, welche Seite was macht. Vorher hat Runterwischen oft erst einen Sprung ausgelöst.
+* Wabenwacht: Wespen, die bis zu den Honigwaben herunterkommen, fliegen nicht mehr einfach hindurch. Sie fressen die Deckung weg, wo sie sie berühren.
 * Honigknaller: Ein Bot-Name wurde aus der Namensliste genommen.
 
 = 2.19.3 – 19.11.2026 =
