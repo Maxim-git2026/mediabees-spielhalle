@@ -4,7 +4,17 @@
   var TAU = Math.PI * 2, G = 420, TURN_S = 30, CHAR_R = 15;
   var art = MBArcade.art, rr = art.rrect;
   /* Gegner im Spiel gegen den Computer: Name, Hornisse? */
-  var FOES = [['Wespe Walli', 0], ['Wespe Ilse', 0], ['Hornisse Horst', 1], ['Wespe Uschi', 0], ['Wespe Waldo', 0], ['Hornisse Super Siggi', 1], ['Wespe Kalle', 0], ['Hornisse Hilde', 1], ['Wespe Ötte', 0], ['Hornisse Heinz', 1], ['Wespe Trude', 0], ['Hornisse Günni', 1]];
+  /* Gegner: Name zufällig (Waldo und Wayne deutlich öfter), ab Runde 3 öfter Hornissen */
+  var FOE_NAMES = ['Walli', 'Ilse', 'Horst', 'Uschi', 'Waldo', 'Wayne', 'Super Siggi', 'Kalle', 'Hilde', 'Ötte', 'Heinz', 'Trude', 'Günni'];
+  var NAME_WEIGHT = { Waldo: 5, Wayne: 5 };
+  var FOES = [['Wespe Walli', 0]];
+  function randomFoe(round, last) {
+    var pool = FOE_NAMES.filter(function (n) { return !last || last.indexOf(n) < 0; });
+    var sum = pool.reduce(function (a, n) { return a + (NAME_WEIGHT[n] || 1); }, 0), r = Math.random() * sum, nm = pool[0];
+    for (var i = 0; i < pool.length; i++) { r -= NAME_WEIGHT[pool[i]] || 1; if (r <= 0) { nm = pool[i]; break; } }
+    var hornet = round >= 3 && Math.random() < 0.45;
+    return [(hornet ? 'Hornisse ' : 'Wespe ') + nm, hornet ? 1 : 0];
+  }
   /* Wurfgeschosse: Honigtopf platzt beim Aufprall, Pollenbombe hüpft und zündet nach 3 s */
   var WEAPONS = [
     { name: 'Honigtopf', r: 40, dmg: 45, ammo: Infinity },
@@ -196,7 +206,8 @@
       function startRound(first) {
         genTerrain();
         var keepHp = !first && !st.duo && st.players[0] ? st.players[0].hp : null;
-        st.players = [makePlayer(0, false), makePlayer(1, !st.duo, FOES[(st.round - 1) % FOES.length])];
+        st.lastFoe = randomFoe(st.round, st.lastFoe && st.lastFoe[0]);
+        st.players = [makePlayer(0, false), makePlayer(1, !st.duo, st.lastFoe)];
         if (keepHp !== null) st.players[0].hp = Math.min(100, keepHp + 30);
         st.shots = []; st.parts = [];
         st.turn = st.duo ? st.starter : 0;

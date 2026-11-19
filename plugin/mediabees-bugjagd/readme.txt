@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.20.0
+Stable tag: 2.20.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.20.1 – 19.11.2026 =
+* Honigknaller und Wurfduell: Die Namen der Gegner sind jetzt immer zufällig, Waldo und Wayne kommen aber deutlich öfter vor. Neu dabei: Wayne.
+* Pollenpfad: Der Starttext passt jetzt zu den vier Wespen von Anfang an.
 
 = 2.20.0 – 19.11.2026 =
 * Pollenpfad: Schon in Level 1 sind 4 Wespen unterwegs, ab Level 2 alle 5.

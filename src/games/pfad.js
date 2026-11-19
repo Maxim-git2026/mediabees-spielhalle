@@ -122,7 +122,7 @@
     id: 'pfad',
     title: 'Pollenpfad',
     duration: 0,
-    startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit einem Honigglas drehst du den Spieß um. Drei Labyrinthe, und mit jedem Level kommt eine Wespe dazu.',
+    startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit einem Honigglas drehst du den Spieß um. Drei Labyrinthe, vier Wespen von Anfang an und ab Level 2 sogar fünf.',
     help: {
       legendTitle: 'Punkte',
       controls: [

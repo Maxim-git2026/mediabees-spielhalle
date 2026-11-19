@@ -14,7 +14,17 @@
     { name: 'Summbot', color: '#FF9F1A', bumble: false }
   ];
   function rnd(a, b) { return a + Math.random() * (b - a); }
-  var BOT_NAMES = ['Ilse', 'Uschi', 'Waldo', 'Super Siggi', 'Trude', 'Kalle', 'Moni', 'Günni', 'Elfriede', 'Hotte', 'Jupp'];
+  var BOT_NAMES = ['Ilse', 'Uschi', 'Waldo', 'Wayne', 'Super Siggi', 'Trude', 'Kalle', 'Moni', 'Günni', 'Elfriede', 'Hotte', 'Jupp'];
+  /* Zufällig, aber Waldo und Wayne kommen deutlich öfter */
+  var NAME_WEIGHT = { Waldo: 5, Wayne: 5 };
+  function pickNames(n) {
+    var pool = BOT_NAMES.slice(), out = [];
+    while (out.length < n && pool.length) {
+      var sum = pool.reduce(function (a, nm) { return a + (NAME_WEIGHT[nm] || 1); }, 0), r = Math.random() * sum;
+      for (var i = 0; i < pool.length; i++) { r -= NAME_WEIGHT[pool[i]] || 1; if (r <= 0) { out.push(pool.splice(i, 1)[0]); break; } }
+    }
+    return out;
+  }
   function nameOf(p) { return p.nick || SLOTS[p.n].name; }
 
   function drawBomb(g, x, y, r, t, fuse) {
@@ -157,7 +167,7 @@
         if (st.duo) {
           var total = st.humans + st.nbots;
           /* Bots behalten ihren Namen über alle Runden eines Duells */
-          if (!st.nicks) st.nicks = BOT_NAMES.slice().sort(function () { return Math.random() - 0.5; });
+          if (!st.nicks) st.nicks = [''].concat(pickNames(3));
           for (var i = 1; i < total; i++) { var np = newPlayer(i, i >= st.humans); if (np.bot) np.nick = st.nicks[i]; list.push(np); }
         }
         return list;
