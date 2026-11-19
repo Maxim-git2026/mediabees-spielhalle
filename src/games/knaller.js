@@ -14,7 +14,7 @@
     { name: 'Summbot', color: '#FF9F1A', bumble: false }
   ];
   function rnd(a, b) { return a + Math.random() * (b - a); }
-  var BOT_NAMES = ['Ilse', 'Uschi', 'Waldo', 'Super Siggi', 'Trude', 'Kalle', 'Moni', 'Günni', 'Elfriede', 'Hotte', 'Bärbel', 'Jupp'];
+  var BOT_NAMES = ['Ilse', 'Uschi', 'Waldo', 'Super Siggi', 'Trude', 'Kalle', 'Moni', 'Günni', 'Elfriede', 'Hotte', 'Jupp'];
   function nameOf(p) { return p.nick || SLOTS[p.n].name; }
 
   function drawBomb(g, x, y, r, t, fuse) {

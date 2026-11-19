@@ -49,8 +49,8 @@
       controls: [
         { icons: ['kbd:W', 'kbd:↑', 'kbd:Leertaste'], text: 'Springen (länger drücken = höher)', kb: true },
         { icons: ['kbd:S', 'kbd:↓'], text: 'Ducken', kb: true },
-        { icons: ['tap'], text: 'Tippen springt, länger halten springt höher', touch: true },
-        { icons: ['swipe'], text: 'Nach unten wischen duckt dich', touch: true },
+        { icons: ['tap'], text: 'Rechte Bildschirmhälfte tippen springt, länger halten springt höher', touch: true },
+        { icons: ['tap'], text: 'Linke Bildschirmhälfte halten duckt dich (im Sprung: schnell runter)', touch: true },
         { icons: ['kbd:Esc'], text: 'Pause und Menü', kb: true }
       ],
       legend: [
@@ -215,6 +215,7 @@
           }
         }
         st.duck = Math.max(0, st.duck - dt);
+        if (ptr && ptr.hold) st.duck = Math.max(st.duck, 0.12);
         /* Hindernisse */
         if (st.started && !st.caught) { st.nextObs -= dx; if (st.nextObs <= 0) spawn(); }
         var me = rect();
@@ -374,8 +375,21 @@
             g.restore();
           }
         }
+        /* Handy: Hälften unten markieren */
+        if (ctx.touch() && st.on) {
+          g.textBaseline = 'middle'; g.font = '800 15px Poppins, sans-serif';
+          var dk = ptr && ptr.hold, jp = ptr && !ptr.hold;
+          [[W * 0.25, '▼ ducken', dk], [W * 0.75, '▲ springen', jp]].forEach(function (z) {
+            var tw2 = 120, zy = H - 26;
+            g.globalAlpha = z[2] ? 0.95 : 0.4;
+            rr(g, z[0] - tw2 / 2, zy - 15, tw2, 30, 15); g.fillStyle = z[2] ? '#FDC506' : 'rgba(17,17,17,0.7)'; g.fill();
+            g.strokeStyle = '#FDC506'; g.lineWidth = 2; g.stroke();
+            g.fillStyle = z[2] ? '#111' : '#FFFFFF'; g.textAlign = 'center'; g.fillText(z[1], z[0], zy + 1);
+          });
+          g.globalAlpha = 0.25; g.fillStyle = '#FDC506'; g.fillRect(W / 2 - 1, GROUND + 8, 2, H - GROUND - 16); g.globalAlpha = 1;
+        }
         if (st.on && st.hint && !st.paused) {
-          var txt = ctx.touch() ? 'Tippen springt, nach unten wischen duckt' : 'W oder Leertaste springt, S duckt';
+          var txt = ctx.touch() ? 'Links halten = ducken, rechts tippen = springen' : 'W oder Leertaste springt, S duckt';
           g.font = '700 15px Poppins, sans-serif';
           var w = Math.min(W - 20, g.measureText(txt).width + 28), h = 32, hx2 = W / 2, hy = GROUND - 220;
           g.globalAlpha = 0.75 + Math.sin(performance.now() / 260) * 0.25;
@@ -405,9 +419,11 @@
         if (!st.on || st.paused) return;
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         e.preventDefault();
-        var p = local(e);
-        ptr = { id: e.pointerId, x: p.x, y: p.y, ducked: false };
+        var p = local(e), r = cv.getBoundingClientRect();
         try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+        /* Finger: linke Hälfte = ducken (solange gehalten), rechte Hälfte = springen. Maus: Klick springt */
+        if (e.pointerType !== 'mouse' && p.x < r.width / 2) { ptr = { id: e.pointerId, x: p.x, y: p.y, ducked: true, hold: true }; duck(); return; }
+        ptr = { id: e.pointerId, x: p.x, y: p.y, ducked: false };
         jump();
       });
       cv.addEventListener('pointermove', function (e) {

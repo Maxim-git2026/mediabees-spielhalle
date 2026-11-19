@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.19.3
+Stable tag: 2.19.4
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.19.4 – 19.11.2026 =
+* Honigdieb auf dem Handy: neue Steuerung ohne Wischen. Linke Bildschirmhälfte halten duckt die Biene (im Sprung geht es schnell nach unten), rechte Hälfte tippen springt. Unten zeigen zwei Markierungen, welche Seite was macht. Vorher hat Runterwischen oft erst einen Sprung ausgelöst.
+* Honigknaller: Ein Bot-Name wurde aus der Namensliste genommen.
 
 = 2.19.3 – 19.11.2026 =
 * Handy: Die Spielauswahl ist kein Karussell mehr. Alle Spiele stehen als kleines Raster mit drei Kacheln pro Reihe da. Nach der Wahl klappt das Raster auf eine Zeile zusammen („Alle 16 Spiele“), ein Tipp klappt es wieder auf.
