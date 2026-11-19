@@ -24,6 +24,28 @@
       text: 'Hier zeige ich meine Modellbahn im Keller. Spur H0, Epoche III, mit Zeche, Bahnhof und Kirmes. Die Seite wird ständig erweitert, also bald wiederkommen!',
       photo: 'Mein Bahnhof', links: ['Startseite', 'Anlage', 'Loks', 'Basteltipps', 'Gästebuch', 'Links'] }
   ];
+  /* Web-Sünden von früher: werden pro Seite neu gemischt, damit es nicht immer gleich aussieht */
+  var NOGO = {
+    news: ['Diese Seite ist optimiert für Internet Explorer 5', 'Seite ausdrucken für unterwegs', 'Bitte Lautsprecher einschalten', 'Hier klicken!!!', 'Letzte Aktualisierung: vor 3 Jahren', 'Jetzt mit Hintergrundmusik', 'Bitte Bildschirm auf 800 × 600 stellen', 'Rechtsklick ist verboten', 'Zu den Favoriten hinzufügen!', 'Diese Seite befindet sich im Aufbau', 'Mehr Infos gerne per Fax', 'Bitte Flash-Player installieren', 'Wir haben jetzt E-Mail!', 'Linkliste mit 400 Links', 'Neu! Neu! Neu!', 'Bitte Seite neu laden, falls nichts kommt', 'Intro dauert nur 2 Minuten', 'Gästebuch: 3 Einträge'],
+    titles: ['Herzlich Willkommen!!!', 'Willkommen auf meiner Homepage!', 'Hallo und Willkommen im Internet!', 'WILLKOMMEN!!!'],
+    buttons: ['Gästebuch', 'Webring', 'Seite ausdrucken', 'Zu Favoriten', 'Hier klicken!', 'Weiter >>', 'Intro überspringen', 'Sitemap', 'Download (12 MB)', 'Fax-Abruf', 'Neu laden', 'Startseite festlegen'],
+    footers: ['Optimiert für 800 × 600 · Netzkieker 4.0 · Letzte Änderung: 12.03.1999', 'Best viewed with Internet Explorer 5.0', '© 1999 · Kopieren verboten! Rechtsklick gesperrt', 'Diese Seite wurde mit FrontPage erstellt', 'Diese Seite drucken · Zu Favoriten · Als Startseite festlegen', 'Letzte Aktualisierung: 01.01.2000 · Jahr-2000-sicher!', 'Am besten mit 256 Farben ansehen'],
+    bau: ['Baustelle! Hier entsteht was Neues.', 'Under Construction!', 'Seite im Aufbau. Bitte bald wiederkommen!', 'Coming soon!!!', 'Hier kommt bald was hin.'],
+    counter: ['Sie sind Besucher Nr.', 'Du bist Besucher Nr.', 'Besucher seit 1998:'],
+    mail: ['Schreib mir!', 'Mail an den Webmaster', 'Mail mich an!', 'Schreib ins Gästebuch!']
+  };
+  function pickN(a, n) { return a.slice().sort(function () { return Math.random() - 0.5; }).slice(0, n); }
+  function pick1(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function makeSite(level) {
+    var b = SITES[level % SITES.length], own = b.news.split('+++').map(function (x) { return x.trim(); }).filter(Boolean);
+    var news = [pick1(own)].concat(pickN(NOGO.news, 2)).sort(function () { return Math.random() - 0.5; });
+    return Object.assign({}, b, {
+      title: Math.random() < 0.5 ? b.title : pick1(NOGO.titles),
+      news: '+++ ' + news.join(' +++ ') + ' +++',
+      footer: pick1(NOGO.footers), bau: pick1(NOGO.bau), counter: pick1(NOGO.counter), mail: pick1(NOGO.mail),
+      buttons: pickN(NOGO.buttons, 3)
+    });
+  }
   var WIDE = [
     [['title', 5, 62], ['neu', 1, 62]],
     [['marquee', 1, 28]],
@@ -114,7 +136,7 @@
 
       function fresh(level) {
         return {
-          on: false, paused: false, t: 0, last: 0, score: 0, level: level, site: SITES[level % SITES.length],
+          on: false, paused: false, t: 0, last: 0, score: 0, level: level, site: makeSite(level),
           els: [], chunks: [], parts: [], pops: [], cracks: [], scorch: [], bees: [],
           tool: 'hammer', mx: -99, my: -99, inside: false, firing: false, fireAcc: 0, lastScorch: null, flameSnd: 0,
           swing: 0, beeReady: 0, combo: 0, comboT: -9999, bestCombo: 0, destroyed: 0, pages: 0,
@@ -128,7 +150,7 @@
         var pb = pageBox(), rows = pb.w >= 640 ? WIDE : NARROW, gap = 8, pad = 10;
         var total = rows.reduce(function (s, r) { return s + r[0][2]; }, 0) + gap * (rows.length - 1);
         var f = Math.min(1.35, (pb.h - pad * 2) / total), y = pb.y + pad, lvl = 1 + st.level * 0.2;
-        var els = [];
+        var els = [], btnI = 0;
         g.save();
         rows.forEach(function (r) {
           var h = r[0][2] * f, sum = r.reduce(function (s, c) { return s + c[1]; }, 0);
@@ -137,6 +159,7 @@
             var w = free * c[1] / sum;
             var hp = Math.round(Math.max(3, Math.min(26, w * h / 1400)) * lvl);
             var e = { kind: c[0], x: x, y: y, w: w, h: h, hp: hp, max: hp, label: c[3] || '', jit: 0, dead: false, seed: Math.random() * 1000 };
+            if (e.kind === 'button') e.label = st.site.buttons[(btnI++) % st.site.buttons.length];
             if (e.kind === 'text') e.lines = wrap(st.site.text, w - 16, Math.max(11, Math.min(16, h / 7)));
             els.push(e);
             x += w + gap;
@@ -288,7 +311,7 @@
         if (st.clearAt && st.t >= st.clearAt) {
           st.clearAt = 0;
           st.level++;
-          st.site = SITES[st.level % SITES.length];
+          st.site = makeSite(st.level);
           st.cracks = []; st.scorch = [];
           layout();
           st.slide = 1;
@@ -437,7 +460,7 @@
           g.fillStyle = '#FF7A1A'; g.beginPath(); g.moveTo(cx2 - 9, cb); g.lineTo(cx2, cb - Math.min(26, h - 26)); g.lineTo(cx2 + 9, cb); g.closePath(); g.fill(); g.stroke();
           g.fillStyle = '#111'; g.textAlign = 'center'; g.textBaseline = 'middle';
           fitFont('Baustelle! Hier entsteht was Neues.', w - 60, Math.min(16, h * 0.28), RETRO, '700');
-          g.fillText('Baustelle! Hier entsteht was Neues.', x + w / 2 + 16, y + h / 2);
+          g.fillText(s.bau || 'Baustelle! Hier entsteht was Neues.', x + w / 2 + 16, y + h / 2);
         } else if (e.kind === 'globe') {
           var gx = x + w / 2, gy = y + h / 2, gr2 = Math.min(w, h) / 2 - 4;
           g.beginPath(); g.arc(gx, gy, gr2, 0, TAU);
@@ -453,7 +476,7 @@
         } else if (e.kind === 'counter') {
           g.fillStyle = '#C0C0C0'; g.fillRect(x, y, w, h); bevel(x, y, w, h, false);
           g.fillStyle = '#111'; g.textAlign = 'center'; g.textBaseline = 'middle';
-          g.font = '12px ' + SERIF; g.fillText('Sie sind Besucher Nr.', x + w / 2, y + 13);
+          g.font = '12px ' + SERIF; g.fillText(s.counter || 'Sie sind Besucher Nr.', x + w / 2, y + 13);
           var digits = String(417 + st.level * 83 + Math.floor(st.score / 50)).padStart(6, '0');
           var dw = Math.min(22, (w - 16) / 6), dh = Math.min(h - 30, dw * 1.5), dx0 = x + w / 2 - dw * 3;
           for (var di = 0; di < 6; di++) {
@@ -473,11 +496,11 @@
           g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex + ew / 2, ey + eh * 0.6); g.lineTo(ex + ew, ey); g.stroke();
           g.fillStyle = '#E5322D'; g.fillRect(ex + ew - 8, ey + 3, 5, 5);
           g.fillStyle = '#0000EE'; g.textAlign = 'left'; g.textBaseline = 'middle';
-          var ms = fitFont('Schreib mir!', w - ew - 22, Math.min(16, h * 0.42), SERIF, '700');
-          g.fillText('Schreib mir!', ex + ew + 8, y + h / 2); g.fillRect(ex + ew + 8, y + h / 2 + ms * 0.5, g.measureText('Schreib mir!').width, 1);
+          var mt = s.mail || 'Schreib mir!', ms = fitFont(mt, w - ew - 22, Math.min(16, h * 0.42), SERIF, '700');
+          g.fillText(mt, ex + ew + 8, y + h / 2); g.fillRect(ex + ew + 8, y + h / 2 + ms * 0.5, g.measureText(mt).width, 1);
         } else {
           g.fillStyle = '#404040'; g.textAlign = 'center'; g.textBaseline = 'middle';
-          var ft = 'Optimiert für 800 × 600 · Netzkieker 4.0 · Letzte Änderung: 12.03.1999';
+          var ft = s.footer || 'Optimiert für 800 × 600 · Netzkieker 4.0 · Letzte Änderung: 12.03.1999';
           fitFont(ft, w - 10, Math.min(12, h * 0.6), SERIF); g.fillText(ft, x + w / 2, y + h / 2);
         }
         g.restore();

@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.20.1**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.20.2**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -59,8 +59,8 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | wespen | Bienenstich | 60 s Moorhuhn-Prinzip, 8 Schuss, Leertaste lädt nach, Serie ab 3 = +5 |
 | revier | Revierflug | Flappy-Prinzip durchs Ruhrgebiet, Ortsschilder als Meilensteine |
 | polonaise | Bienentanz | Snake-Prinzip, Pollen +10, Goldblume +50, wird schneller, Start erst bei erster Eingabe |
-| flitzer | A40-Flitzer | Ausweich-Racer von oben, 4 Spuren, Dortmund → Venlo, Ausfahrten je km, Strecke 1 Pkt/40 px, Honig +50, knapp vorbei +10, Wabenschild = 1 Rempler frei. Handy: wischen, Maus: neben den Flitzer klicken. Anzeige oben links, kein Toast (verdeckt sonst die Straße) |
-| abriss | Website-Abriss | PC-zerstören-Prinzip, 45 s, Homepages von 1999 (Kalles Trinkhalle, Kaninchenzüchter, Taubenverein, Modellbahn), Hammer/Flammen/Bienen (Tasten 1–3), 1 Pkt je Schaden, Bonus fürs Zerlegen mit Kombo bis ×5, Seite platt = +100 × Seite |
+| flitzer | A40-Flitzer | Ausweich-Racer von oben, 4 Spuren, Dortmund → Venlo, Ausfahrten je km, Strecke 1 Pkt/40 px, Honig +50, knapp vorbei +10, Wabenschild = 1 Rempler frei. Leitplanke: am Rand weiter lenken = Kratzer (Funken, 1. Mal „NICHT DER LACK!“, dann wechselnde Sprüche, Anzeige „Kratzer n/3“ neben den Punkten, 0,45 s Sperre), 3 Kratzer = Totalschaden. Handy: wischen, Maus: neben den Flitzer klicken. Anzeige oben links, kein Toast (verdeckt sonst die Straße) |
+| abriss | Website-Abriss | PC-zerstören-Prinzip, 45 s, Homepages von 1999 (Kalles Trinkhalle, Kaninchenzüchter, Taubenverein, Modellbahn), pro Seite neu gemischte Web-Sünden (`NOGO`: Laufschrift, Titel, Knöpfe, Fußzeile, Baustelle, Zähler, Mail; `makeSite`), Hammer/Flammen/Bienen (Tasten 1–3), 1 Pkt je Schaden, Bonus fürs Zerlegen mit Kombo bis ×5, Seite platt = +100 × Seite |
 | nester | Wespennest | Minesweeper auf Waben (6 Nachbarn), erster Klick immer frei, Wabe = 2 × Level Pkt, Feld geräumt = Bonus + nächstes Level, Markieren per Rechtsklick/F, lange drücken oder Umschalter unten |
 | wacht | Wabenwacht | Space-Invaders-Prinzip, Biene schießt Stacheln, Hornisse 30 (2 Treffer), Wespe 20, Feuerwespe 10, Goldwespe 100–300, Honigwaben als Deckung (Wespen, die sie erreichen, fressen sie weg wie beim Vorbild), 3 Leben, Doppelstachel, Welle geschafft = +100 × Welle. Handy: ziehen + Dauerfeuer |
 | pfad | Pollenpfad | Pac-Man-Prinzip mit 3 eigenen Labyrinthen (19 × 21, Wiese gelb / Zeche orange / Kanal blau, Nest in der Mitte überall gleich, rotieren pro Level), Wespen: Level 1 = 4 (wie beim Vorbild), ab Level 2 alle 5 (Rüpel, Zufall, Lauer, Zick, Brumm), Pollen 10, Honigglas 50 (Wespen werden Beute), Biene schaut ganz in Flugrichtung mit Kau-Mund, Wespen fangen 200/400/800/1.600, Blume +100 × Level, Level geschafft +500 × Level, 3 Leben. Wespen: Rüpel jagt direkt, Lauer zielt vor die Biene, Zick kommt nah und weicht aus, Zufall streut. Handy: wischen oder neben die Biene tippen. Juice: `ring`, `shakeIt`, `hitstop` (Freeze), `punch` (Zoom), `sparkle`, goldener Rand im Honig-Rausch |

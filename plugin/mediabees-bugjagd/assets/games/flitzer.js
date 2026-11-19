@@ -112,6 +112,7 @@
         { draw: function (g) { drawHoney(g, 23, 25, 0.85, 0); }, text: 'Honigglas einsammeln', val: '+' + HONEY },
         { draw: function (g) { g.translate(23, 23); g.scale(0.5, 0.5); art.car(g, '#2F6FD0', '#4C86E0'); g.translate(-30, 18); art.flitzer(g, 0.5); }, text: 'In letzter Sekunde knapp vorbei', val: '+' + CLOSE },
         { draw: function (g) { drawShield(g, 23, 23, 0.9, 0); }, text: 'Wabenschild: Ein Rempler ist frei' },
+        { draw: function (g) { g.fillStyle = '#9AA2B4'; g.fillRect(8, 6, 6, 34); g.fillStyle = '#FFD24A'; [[18, 14], [24, 22], [19, 30]].forEach(function (p) { g.beginPath(); g.arc(p[0], p[1], 2.5, 0, Math.PI * 2); g.fill(); }); }, text: 'Gegen die Leitplanke: Kratzer im Lack. Beim dritten Mal ist Schluss', val: '3×', minus: true },
         { draw: function (g) { g.translate(23, 25); g.rotate(0.5); g.scale(0.5, 0.5); art.flitzer(g, 0.2); }, text: 'Auffahren oder seitlich rammen', val: 'Ende', minus: true }
       ]
     },
@@ -135,7 +136,7 @@
         return {
           on: false, paused: false, dead: false, deadT: 0, t: 0, last: 0,
           score: 0, bonus: 0, dist: 0, speed: START_SPEED, km: 0, exit: '',
-          lane: 1, px: null, lastMove: -9999, moved: false, nudge: 0, spin: 0, spinV: 0,
+          lane: 1, px: null, rail: 0, railT: -9999, lastMove: -9999, moved: false, nudge: 0, spin: 0, spinV: 0,
           traffic: [], items: [], deco: [], parts: [], pops: [],
           gap: 420, safe: 1, decoIn: 0, shield: false, inv: 0,
           honey: 0, close: 0, passed: 0, sign: null, flash: 0, shake: 0, bump: 0
@@ -239,7 +240,23 @@
         var nl = Math.max(0, Math.min(LANES - 1, st.lane + d));
         if (nl === st.lane) {
           st.nudge = d;
-          ctx.tone(120, 80, 0.08, 'square', 0.03);
+          /* Leitplanke: Kratzer im Lack, beim dritten Mal Totalschaden */
+          if (st.t - st.railT < 450) { ctx.tone(120, 80, 0.08, 'square', 0.03); return; }
+          st.railT = st.t; st.rail++;
+          var rx = d < 0 ? roadL : roadR, ry = PY;
+          puff(rx, ry, ['#FFD24A', '#FFF2B0', '#FF9F1A', '#FFFFFF'], 18, 260, 200, 0.5);
+          ctx.fx.ring(rx * k, ry * k, '#FFD24A', 50, 4, 320);
+          shakeIt(0.25); st.flash = 0.35;
+          ctx.tone(1400, 600, 0.18, 'sawtooth', 0.04); ctx.tone(90, 50, 0.15, 'square', 0.04, 0.03);
+          if (st.rail >= 3) {
+            pop(st.px, PY - 60 * sc, 'Totalschaden an der Leitplanke!', '#FF7A6B');
+            st.dead = true; st.deadT = st.t; st.flash = 1;
+            st.spinV = (d < 0 ? 1 : -1) * rnd(6, 9);
+            ctx.fx.flash('255,74,61', 1); ctx.tone(200, 50, 0.4, 'sawtooth', 0.07);
+            return;
+          }
+          var lines = ['Leitplanke geknutscht!', 'Funkenflug!', 'Das gibt Kratzer!', 'Mama, guck mal, Funken!', 'Die Werkstatt freut sich!'];
+          pop(st.px, PY - 60 * sc, st.rail === 1 ? 'NICHT DER LACK!' : lines[Math.floor(Math.random() * lines.length)], '#FF7A6B');
           return;
         }
         st.lane = nl;
@@ -563,6 +580,12 @@
           g.fillStyle = st.bump > 0.5 ? '#FDC506' : '#FFFFFF'; g.fillText(String(st.score), 0, 0);
           g.restore();
           if (st.shield) art.hex(g, txtW + 22, 20, 11, 'rgba(253,197,6,0.35)', '#FDC506', 2.5);
+          if (st.rail) {
+            g.font = '800 12px Poppins, sans-serif'; g.lineWidth = 4; g.strokeStyle = 'rgba(17,17,17,0.8)';
+            var rt = 'Kratzer ' + st.rail + '/3';
+            var rxx = txtW + (st.shield ? 42 : 14);
+            g.strokeText(rt, rxx, 26); g.fillStyle = st.rail >= 2 && Math.floor(st.t / 250) % 2 ? '#FF5A4A' : '#FF9F1A'; g.fillText(rt, rxx, 26);
+          }
           g.font = '700 13px Poppins, sans-serif';
           g.lineWidth = 4; g.strokeStyle = 'rgba(17,17,17,0.8)';
           var info = 'km ' + fmtKm(st.dist / KM) + ' · ' + Math.round(st.speed / 4) + ' km/h';
