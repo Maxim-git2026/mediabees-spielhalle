@@ -8,8 +8,13 @@
   /* Wurfgeschosse: Honigtopf platzt beim Aufprall, Pollenbombe hüpft und zündet nach 3 s */
   var WEAPONS = [
     { name: 'Honigtopf', r: 40, dmg: 45, ammo: Infinity },
-    { name: 'Pollenbombe', r: 34, dmg: 40, fuse: 3, ammo: 2 }
+    { name: 'Pollenbombe', r: 34, dmg: 40, fuse: 3, ammo: 2 },
+    { name: 'Wabenmauer', wall: true, ammo: 1 }
   ];
+  var WALL_W = 18, WALL_H = 74, WALL_D = 44;
+  function drawWallIcon(g, x, y, s) {
+    for (var r = 0; r < 3; r++) for (var c = 0; c < 2; c++) art.hex(g, x + (c - 0.5) * 9 * s + (r % 2 ? 4.5 * s : 0) - 2 * s, y + (r - 1) * 8 * s, 5 * s, '#E9A800', '#7A5410', 1.2);
+  }
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function gauss() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v); }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
@@ -47,6 +52,7 @@
       legend: [
         { draw: function (g) { drawPot(g, 23, 25, 1.6, 0.3); }, text: 'Honigtopf: platzt beim Aufprall' },
         { draw: function (g) { drawPollen(g, 23, 23, 1.6, 0); }, text: 'Pollenbombe (2 pro Runde): hüpft und zündet nach 3 Sekunden, gut hinter Hügel' },
+        { draw: function (g) { drawWallIcon(g, 23, 23, 1.4); }, text: 'Wabenmauer (1 pro Runde): Deckung aus Wachs vor dir, hält mehr aus als Erde. Danach darfst du noch werfen' },
         { draw: function (g) { g.translate(25, 24); g.scale(0.55, 0.55); art.wasp(g, 0.4); }, text: 'Schaden an der Wespe, je Lebenspunkt', val: '5' },
         { draw: function (g) { g.beginPath(); g.arc(23, 23, 12, 0, TAU); g.strokeStyle = '#FDC506'; g.lineWidth = 3; g.stroke(); g.beginPath(); g.arc(23, 23, 3, 0, TAU); g.fillStyle = '#FDC506'; g.fill(); }, text: 'Volltreffer', val: '100' },
         { draw: function (g) { g.fillStyle = '#FDC506'; g.font = '900 22px Poppins, sans-serif'; g.textAlign = 'center'; g.fillText('★', 23, 31); }, text: 'Wespe besiegt: Bonus je Runde, du heilst 30 Punkte', val: '300 × Runde' }
@@ -116,17 +122,39 @@
             if (gnd[x2] > WATER - 90) gnd[x2] = gnd[x2] * (1 - w) + (WATER - 90) * w;
           }
         });
-        st.gnd = gnd; terr = null;
+        st.gnd = gnd; st.wax = new Float32Array(W); st.walls = []; terr = null;
       }
       function groundAt(x) { x = Math.floor(x); return x < 0 || x >= W ? H + 200 : st.gnd[x]; }
       function carve(cx, cy, r) {
         for (var x = Math.max(0, Math.floor(cx - r)); x <= Math.min(W - 1, Math.ceil(cx + r)); x++) {
-          var dx = x - cx, h = Math.sqrt(Math.max(0, r * r - dx * dx)), bottom = cy + h;
+          /* Wachs hält mehr aus: kleinerer Krater in der Wabenmauer */
+          var rr2 = st.wax[x] && st.gnd[x] < st.wax[x] ? r * 0.5 : r;
+          var dx = x - cx, h = Math.sqrt(Math.max(0, rr2 * rr2 - dx * dx)), bottom = cy + h;
+          if (rr2 < r && bottom > st.wax[x]) bottom = st.wax[x];
           if (st.gnd[x] < bottom && st.gnd[x] < H + 60) st.gnd[x] = Math.min(H + 60, bottom);
         }
         terr = null;
       }
 
+      /* Wabenmauer: Wachs-Spalten vor der Figur, verhält sich wie Gelände, hält aber mehr aus */
+      function wallX(p) { var dir = Math.cos(p.a) >= 0 ? 1 : -1; return p.x + dir * WALL_D; }
+      function placeWall(p) {
+        var cx = Math.round(wallX(p)), base = groundAt(cx);
+        if (cx - WALL_W / 2 < 2 || cx + WALL_W / 2 > W - 3 || base > WATER - 5) { ctx.fx.text(SX(p.x), SY(p.y - 70), 'Da hält keine Mauer', '#FF7A6B', 16); return false; }
+        var top = base - WALL_H;
+        for (var x = cx - WALL_W / 2; x <= cx + WALL_W / 2; x++) {
+          var b = groundAt(x);
+          if (!st.wax[x]) st.wax[x] = b;
+          st.gnd[x] = Math.min(st.gnd[x], top + Math.abs(x - cx) * 0.4);
+        }
+        st.walls.push({ x0: cx - WALL_W / 2, x1: cx + WALL_W / 2 });
+        p.ammo[2]--; p.weapon = 0; terr = null;
+        ctx.fx.ring(SX(cx), SY(top + WALL_H / 2), '#FDC506', 50 * k, 4, 400); ctx.fx.sparkle(SX(cx), SY(top), ['#FDC506', '#FFE680', '#FFFFFF'], 16, 200);
+        ctx.fx.text(SX(cx), SY(top - 20), 'Wabenmauer!', '#FFE680', 20);
+        burst(cx, top, ['#E9A800', '#FDC506'], 10, 160);
+        ctx.tone(330, 990, 0.2, 'triangle', 0.05); ctx.tone(660, 1320, 0.12, 'triangle', 0.04, 0.1);
+        return true;
+      }
       function makePlayer(i, cpu, foe) {
         var x = W * (i ? 0.85 : 0.15) + rnd(-12, 12);
         var kind = i === 0 ? 'bee' : cpu ? (foe[1] ? 'hornet' : 'wasp') : 'bumble';
@@ -222,11 +250,13 @@
         if (bestB && bestB.sc < 30 && (best.sc > 45 || Math.random() < 0.3)) pick = bestB;
         var lvl = st.round - 1, errA = Math.max(0.012, 0.1 * Math.pow(0.8, lvl)), errP = Math.max(0.012, 0.08 * Math.pow(0.8, lvl));
         if (pick.w) { errA *= 0.6; errP *= 0.6; }
-        return { a: pick.a + gauss() * errA, P: clamp(pick.P * (1 + gauss() * errP), 0.2, 1), w: pick.w };
+        var wall = p.ammo[2] > 0 && p.hp <= p.maxHp * 0.6 && Math.random() < 0.7;
+        return { a: pick.a + gauss() * errA, P: clamp(pick.P * (1 + gauss() * errP), 0.2, 1), w: pick.w, wall: wall };
       }
 
       function throwShot(p) {
         if (!(p.ammo[p.weapon] > 0)) p.weapon = 0;
+        if (WEAPONS[p.weapon].wall) { placeWall(p); return; }
         var wpn = WEAPONS[p.weapon];
         p.ammo[p.weapon]--;
         st.shots.push({ x: p.x + Math.cos(p.a) * 18, y: p.y - 18 + Math.sin(p.a) * 18, vx: Math.cos(p.a) * V * p.p, vy: Math.sin(p.a) * V * p.p, kind: p.weapon, t: 0, owner: p, spin: 0, w: wpn });
@@ -257,8 +287,8 @@
           if (d >= reach) return;
           var f = 1 - d / reach, dmg = Math.max(1, Math.round(w.dmg * Math.pow(f, 0.8))) + (p === direct ? 10 : 0);
           p.hp = Math.max(0, p.hp - dmg); p.hurt = st.t;
-          var nx = d > 1 ? (cx - s.x) / d : (Math.random() < 0.5 ? -1 : 1), ny = d > 1 ? (cy - s.y) / d : -1, sp = 120 + 260 * f;
-          p.vx = nx * sp; p.vy = Math.min(-140, ny * sp - 140); p.air = true;
+          var nx = d > 1 ? (cx - s.x) / d : (Math.random() < 0.5 ? -1 : 1), ny = d > 1 ? (cy - s.y) / d : -1, sp = 70 + 170 * f;
+          p.vx = nx * sp; p.vy = Math.min(-90, ny * sp - 90); p.air = true;
           ctx.fx.text(SX(p.x), SY(p.y - 50), '-' + dmg, '#FF7A6B', p === direct ? 30 : 24);
           if (s.owner && !s.owner.cpu && p !== s.owner && !st.duo) {
             st.dmg += dmg; addScore(dmg * 5);
@@ -386,6 +416,12 @@
           var e = Math.min(1, (st.t - st.phaseT) / 1100);
           p.a += (st.plan.a - p.a) * Math.min(1, dt * 5); p.p += (st.plan.P - p.p) * Math.min(1, dt * 5);
           p.face = Math.cos(p.a) >= 0 ? 1 : -1;
+          if (e > 0.25 && st.plan.wall && p.ammo[2] > 0) {
+            var foe2 = st.players[1 - st.turn];
+            p.a = foe2.x > p.x ? -0.3 : -Math.PI + 0.3;
+            if (placeWall(p)) { st.plan = cpuPlan(p, foe2); st.phaseT = st.t - 300; return; }
+            st.plan.wall = false;
+          }
           if (e < 0.05 && st.plan.w && p.weapon !== st.plan.w) { p.weapon = st.plan.w; ctx.fx.text(SX(p.x), SY(p.y - 92), WEAPONS[p.weapon].name + '!', '#FFD24A', 18); }
           if (e >= 1) { p.a = st.plan.a; p.p = st.plan.P; p.weapon = st.plan.w || 0; throwShot(p); }
         }
@@ -437,6 +473,19 @@
         x.beginPath(); for (var j = 0; j < W; j += 2) { if (j === 0) x.moveTo(j, st.gnd[j]); else x.lineTo(j, st.gnd[j]); }
         x.strokeStyle = '#8DB04A'; x.lineWidth = 4; x.lineJoin = 'round'; x.stroke();
         x.strokeStyle = 'rgba(253,197,6,0.5)'; x.lineWidth = 1.5; x.stroke();
+        /* Wabenmauern aus Wachs */
+        st.walls.forEach(function (wl) {
+          var x0 = Math.max(0, Math.floor(wl.x0)), x1 = Math.min(W - 1, Math.ceil(wl.x1)), any = false;
+          x.beginPath(); x.moveTo(x0, st.wax[x0] || st.gnd[x0]);
+          for (var xx = x0; xx <= x1; xx++) { var top = st.wax[xx] ? Math.min(st.gnd[xx], st.wax[xx]) : st.gnd[xx]; if (st.wax[xx] && st.gnd[xx] < st.wax[xx] - 1) any = true; x.lineTo(xx, top); }
+          for (var xb = x1; xb >= x0; xb--) x.lineTo(xb, st.wax[xb] || st.gnd[xb]);
+          x.closePath();
+          if (!any) return;
+          x.save(); x.fillStyle = '#E9A800'; x.fill(); x.clip();
+          for (var hy = 0; hy < H; hy += 8) for (var hx = x0 - 6 + (Math.floor(hy / 8) % 2 ? 4.5 : 0); hx < x1 + 6; hx += 9) art.hex(x, hx, hy, 5, null, 'rgba(122,84,16,0.7)', 1);
+          x.restore();
+          x.lineWidth = 2; x.strokeStyle = '#7A5410'; x.stroke();
+        });
         terr = c;
       }
       function drawChar(p) {
@@ -496,7 +545,13 @@
         if (st.gnd) {
           st.players.forEach(drawChar);
           var p = cur();
-          if (p && !p.dead && (st.phase === 'aim' || st.phase === 'think')) drawAim(p);
+          if (p && !p.dead && (st.phase === 'aim' || st.phase === 'think')) {
+            if (WEAPONS[p.weapon].wall) {
+              var wxp = wallX(p), bb = groundAt(wxp);
+              g.globalAlpha = 0.45 + Math.sin(st.t / 150) * 0.15; rr(g, wxp - WALL_W / 2, bb - WALL_H, WALL_W, WALL_H, 4); g.fillStyle = '#FDC506'; g.fill(); g.globalAlpha = 1;
+              g.setLineDash([4, 4]); g.strokeStyle = '#FFFFFF'; g.lineWidth = 1.5; g.stroke(); g.setLineDash([]);
+            } else drawAim(p);
+          }
           st.shots.forEach(function (s) {
             if (s.kind) drawPollen(g, s.x, s.y, 1.1, st.t, s.w.fuse - s.t); else drawPot(g, s.x, s.y, 1.1, s.spin);
           });
@@ -534,10 +589,10 @@
           if (cp && !cp.cpu && (st.phase === 'aim' || st.phase === 'wait')) {
             var b = weaponBtn();
             rr(g, b.x, b.y, b.w, b.h, 14); g.fillStyle = 'rgba(17,17,17,0.85)'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#FDC506'; g.stroke();
-            if (cp.weapon) drawPollen(g, b.x + b.w / 2, b.y + b.h * 0.42, b.w / 36, st.t); else drawPot(g, b.x + b.w / 2, b.y + b.h * 0.44, b.w / 34, 0);
+            if (cp.weapon === 1) drawPollen(g, b.x + b.w / 2, b.y + b.h * 0.42, b.w / 36, st.t); else if (cp.weapon === 2) drawWallIcon(g, b.x + b.w / 2, b.y + b.h * 0.42, b.w / 48); else drawPot(g, b.x + b.w / 2, b.y + b.h * 0.44, b.w / 34, 0);
             g.font = '700 9px Poppins, sans-serif'; g.textAlign = 'center'; g.fillStyle = '#FFFFFF'; g.fillText(WEAPONS[cp.weapon].name, b.x + b.w / 2, b.y + b.h - 9, b.w - 6);
-            var left = cp.ammo[1];
-            g.beginPath(); g.arc(b.x + b.w - 4, b.y + 4, 10, 0, TAU); g.fillStyle = left > 0 ? '#FFD24A' : '#555'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#111'; g.stroke();
+            var left = cp.ammo[cp.weapon] === Infinity ? '∞' : cp.ammo[cp.weapon];
+            g.beginPath(); g.arc(b.x + b.w - 4, b.y + 4, 10, 0, TAU); g.fillStyle = left === '∞' || left > 0 ? '#FFD24A' : '#555'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#111'; g.stroke();
             g.fillStyle = '#111'; g.font = '900 11px Poppins, sans-serif'; g.textBaseline = 'middle'; g.fillText(String(left), b.x + b.w - 4, b.y + 5);
           }
           if (st.hint && st.phase === 'aim' && cp && !cp.cpu) {
@@ -607,7 +662,7 @@
         var p = cur(); if (!p || p.cpu || !(st.phase === 'aim' || st.phase === 'wait')) return;
         var next = p.weapon;
         for (var n = 1; n <= WEAPONS.length; n++) { var c = (p.weapon + n) % WEAPONS.length; if (p.ammo[c] > 0) { next = c; break; } }
-        if (next === p.weapon) { ctx.fx.text(SX(p.x), SY(p.y - 70), 'Keine Pollenbomben mehr', '#FF7A6B', 16); ctx.tone(160, 140, 0.05, 'square', 0.02); return; }
+        if (next === p.weapon) { ctx.fx.text(SX(p.x), SY(p.y - 70), 'Nur noch Honigtöpfe', '#FF7A6B', 16); ctx.tone(160, 140, 0.05, 'square', 0.02); return; }
         p.weapon = next;
         ctx.tone(700, 900, 0.05, 'triangle', 0.03);
         ctx.fx.text(SX(p.x), SY(p.y - 70), WEAPONS[p.weapon].name + (p.ammo[p.weapon] < Infinity ? ' (noch ' + p.ammo[p.weapon] + ')' : ''), '#FFE680', 18);

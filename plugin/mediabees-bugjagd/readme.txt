@@ -23,6 +23,8 @@ Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, rein
 = 2.19.2 – 19.11.2026 =
 * Rangliste: Klappt das Eintragen beim Spielstart nicht sofort, versucht es das Spiel während der Runde noch einmal. Geht es gar nicht, steht im Endbildschirm der Grund, statt dass das Namensfeld einfach fehlt.
 * Wurfduell: Die Wespen werfen jetzt auch Pollenbomben, vor allem wenn ein Hügel im Weg ist. Pollenbomben gibt es nur noch 2 pro Runde (für beide Seiten), den Honigtopf unbegrenzt. Der Knopf unten rechts zeigt, wie viele noch übrig sind.
+* Wurfduell: Neue Waffe Wabenmauer (1 pro Runde). Sie setzt eine Deckung aus Wachs vor deine Figur, die mehr aushält als Erde. Danach darfst du im selben Zug noch werfen. Angeschlagene Wespen bauen sich auch eine.
+* Wurfduell: Explosionen schubsen die Figuren nicht mehr so weit weg, man fällt seltener ins Wasser.
 
 = 2.19.1 – 19.11.2026 =
 * „Spiel starten“ steht jetzt immer direkt unter dem Spieltext, die Anleitung darunter. Auf Tablet und Handy muss man den Knopf nicht mehr im Kasten suchen.
