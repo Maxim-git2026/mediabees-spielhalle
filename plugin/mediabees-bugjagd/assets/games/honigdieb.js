@@ -320,8 +320,17 @@
         var lo = (st.dist * 1) % 380;
         for (var lx = -lo; lx < W + 380; lx += 380) {
           g.fillStyle = '#2B2F3A'; g.fillRect(lx, GROUND - 210, 6, 210); g.fillRect(lx, GROUND - 210, 34, 5);
-          var lg = g.createRadialGradient(lx + 32, GROUND - 200, 2, lx + 32, GROUND - 120, 140); lg.addColorStop(0, 'rgba(255,214,120,0.35)'); lg.addColorStop(1, 'rgba(255,214,120,0)');
-          g.fillStyle = lg; g.fillRect(lx - 110, GROUND - 210, 290, 210);
+          /* Lichtkegel nach unten, weich auslaufend, mit Lichtfleck auf dem Boden */
+          var cx = lx + 32, ty = GROUND - 198;
+          [[86, 0.1], [62, 0.13], [40, 0.14]].forEach(function (c) {
+            var lg = g.createLinearGradient(0, ty, 0, GROUND);
+            lg.addColorStop(0, 'rgba(255,214,120,' + c[1] * 1.6 + ')'); lg.addColorStop(1, 'rgba(255,214,120,' + c[1] * 0.35 + ')');
+            g.beginPath(); g.moveTo(cx - 5, ty); g.lineTo(cx + 5, ty); g.lineTo(cx + c[0], GROUND); g.lineTo(cx - c[0], GROUND); g.closePath();
+            g.fillStyle = lg; g.fill();
+          });
+          var pool = g.createRadialGradient(cx, GROUND, 4, cx, GROUND, 95);
+          pool.addColorStop(0, 'rgba(255,214,120,0.35)'); pool.addColorStop(1, 'rgba(255,214,120,0)');
+          g.save(); g.translate(cx, GROUND); g.scale(1, 0.18); g.beginPath(); g.arc(0, 0, 95, 0, TAU); g.restore(); g.fillStyle = pool; g.fill();
           g.beginPath(); g.arc(lx + 32, GROUND - 202, 5, 0, TAU); g.fillStyle = '#FFE9A8'; g.fill();
         }
         st.obs.forEach(drawObs);

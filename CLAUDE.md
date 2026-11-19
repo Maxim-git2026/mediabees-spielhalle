@@ -76,7 +76,7 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 - **Wurfduell** (2.19.x): Feedback 1 eingearbeitet (KI wirft auch Pollenbomben, Pollenbombe 2 pro Runde). 3. Waffe Wabenmauer gebaut. Offen: Wabenmauer testen, Zielen am Handy.
 - **Honigknaller** (2.18.x): Bots (Gegen 3 Bots, Zu zweit + 2 Bots), Joystick am Handy, Wespen/Hornissen legen ab Level 1 Bomben, Reichweite startet bei 1, Blickrichtung hoch/runter.
 - **Honigflipper** (2.18.0): Rettung nur einmal pro Kugel, Abflüsse mit Rettungslampe, Wespe, Drehtor, Multiball, Bonus.
-- **Honigdieb** (2.18.0): Handy herausgezoomt, Kammerjäger näher. Am PC noch kein eigenes Feedback.
+- **Honigdieb** (2.18.0/2.19.3): Handy herausgezoomt, Kammerjäger näher, Laternen mit weichem Lichtkegel (Feedback). Sonst am PC noch kein Feedback.
 - **Wespennest**: nie gezieltes Feedback bekommen.
 - Frühe Spiele (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz): kein Feedback seit dem Juice-Update notiert.
 Feedback bisher abgeschlossen: Hummelhopser (passt), A40-Flitzer, Pollenpfad, Wabenbau, Bienen-Solitär, Wabenwacht, Website-Abriss.

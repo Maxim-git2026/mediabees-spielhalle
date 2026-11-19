@@ -21,6 +21,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
 
 = 2.19.3 – 19.11.2026 =
+* Honigdieb: Die Straßenlaternen werfen jetzt einen weichen Lichtkegel nach unten mit Lichtfleck auf der Straße, statt eines kantigen Lichtkastens.
 * Wurfduell: Figuren rutschen nicht mehr durch die Wabenmauer oder steile Wände, wenn eine Explosion sie dagegen schleudert. Sie prallen jetzt ab.
 
 = 2.19.2 – 19.11.2026 =
