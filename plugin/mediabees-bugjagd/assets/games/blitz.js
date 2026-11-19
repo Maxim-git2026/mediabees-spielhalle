@@ -249,7 +249,9 @@
         var gm = st.bag.shift(); st.prev = gm;
         var m = { bg: pick(BG) };
         /* Gemeine Falle: umgedrehte Aufgabe, ab der vierten Aufgabe ab und zu */
-        m.trap = (gm.trappable || gm.trapSelf) && st.wins >= 3 && Math.random() < Math.min(0.35, 0.18 + lvl() * 0.03);
+        /* Selten und nie zweimal hintereinander, damit es wirklich überrascht */
+        m.trap = (gm.trappable || gm.trapSelf) && st.wins >= 3 && !st.lastTrap && Math.random() < Math.min(0.2, 0.1 + lvl() * 0.02);
+        st.lastTrap = m.trap;
         gm.init(m, W, H, u, lvl(), playTime());
         st.gm = gm; st.m = m; st.phase = 'intro'; st.pt = st.t;
         ctx.tone(520, 780, 0.08, 'triangle', 0.04);
@@ -447,8 +449,8 @@
         st.parts.forEach(function (p) { g.globalAlpha = Math.max(0, 1 - p.t / p.life); g.fillStyle = p.c; g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
         g.globalAlpha = 1;
         if (st.nuke) { drawNuke((st.t - st.nuke) / 1000); return; }
-        /* Aufgabe groß oben, beim Start in der Mitte */
-        if (m) {
+        /* Aufgabe nur ganz kurz am Anfang groß in der Mitte, danach steht nichts mehr da */
+        if (m && st.phase === 'intro') {
           var txt = st.gm.text(m), intro = st.phase === 'intro';
           var sz = Math.min(W / Math.max(8, txt.length * 0.62), (intro ? 54 : 30) * u);
           var y = intro ? H * 0.45 : 40 * u + 20;

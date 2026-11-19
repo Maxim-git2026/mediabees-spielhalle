@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.21.1
+Stable tag: 2.22.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -11,7 +11,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
-* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Honigknaller), flipper (Honigflipper), wurf (Wurfduell), blitz (Bienen-Blitz).
+* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Honigknaller), flipper (Honigflipper), wurf (Wurfduell), blitz (Bienen-Blitz), wimmel (Wimmelpott).
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.22.0 – 19.11.2026 =
+* Neues Spiel: Wimmelpott. Ein Wimmelbild aus dem Ruhrpott (Kirmes, Wiese, Zeche), jede Runde neu zusammengewürfelt. Finde die drei gesuchten Dinge im Gewimmel, zum Beispiel „Biene mit Sonnenbrille“, „Blauer Ballon“ oder „Pommes Schranke“, bevor die Zeit abläuft. Falsch tippen kostet 3 Sekunden, ein Tipp kostet 5. Mit jedem Level wird es voller.
+* Bienen-Blitz: Die Aufgabe steht nur noch ganz kurz am Anfang da, beim Spielen musst du sie dir merken. Fallen wie „SCHNEIDE KEIN KABEL!“ kommen jetzt seltener und nie zweimal hintereinander.
 
 = 2.21.1 – 19.11.2026 =
 * Bienen-Blitz: Wer den roten Knopf drückt, löst jetzt eine riesige Explosion mit Pilzwolke aus. KABOOOM!
