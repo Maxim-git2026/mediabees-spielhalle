@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.21.0
+Stable tag: 2.21.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.21.1 – 19.11.2026 =
+* Bienen-Blitz: Wer den roten Knopf drückt, löst jetzt eine riesige Explosion mit Pilzwolke aus. KABOOOM!
+* Bienen-Blitz: Zwischen den Aufgaben tanzt kurz eine Biene, darunter siehst du, wie viele Leben du noch hast. Sind alle weg, fällt die Biene auf den Rücken, mit Kreuzaugen und einem verlegenen „Oh nein!“.
+* Bienen-Blitz: Gemeine Fallen! Ab und zu kommt die Aufgabe umgedreht, zum Beispiel „SCHNEIDE KEIN KABEL!“, „NICHT PUMPEN!“ oder sogar „JETZT DRÜCKEN!“ beim roten Knopf. Genau lesen lohnt sich.
 
 = 2.21.0 – 19.11.2026 =
 * Neues Spiel: Bienen-Blitz. 10 Mini-Aufgaben von wenigen Sekunden, bunt gemischt: den roten Knopf NICHT drücken, Wespe erwischen, Honig auffangen, Blumen antippen, Honig pumpen, das richtige Kabel schneiden, Kohlebrocken ausweichen, Bienen zählen, die Biene zwischen Wespen finden und im gelben Feld stoppen. Alle 5 geschafften Aufgaben wird es schneller. Drei Fehler und es ist vorbei.

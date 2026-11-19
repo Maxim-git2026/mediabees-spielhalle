@@ -38,18 +38,19 @@
      timeout: Was passiert, wenn die Zeit abläuft (true = geschafft) */
   var GAMES = [
     {
-      id: 'nopush', text: function () { return 'NICHT DRÜCKEN!'; }, timeout: true,
+      id: 'nopush', text: function (m) { return m.trap ? 'JETZT DRÜCKEN!' : 'NICHT DRÜCKEN!'; }, timeout: true, trapSelf: true, trapFail: 'Zu zaghaft!',
       init: function (m, W, H, u) { m.r = 95 * u; m.x = W / 2; m.y = H * 0.56; m.lines = ['Nicht drücken!', 'Wirklich nicht!', 'Drück mich doch!', 'Nur ganz kurz?', 'Keiner guckt!']; },
-      tap: function (m, x, y) { if (Math.hypot(x - m.x, y - m.y) < m.r * 1.1) { m.fail = 'KABOOM!'; m.boom = true; } },
-      key: function (m, k) { if (k === ' ' || k === 'Enter') { m.fail = 'KABOOM!'; m.boom = true; } },
+      tap: function (m, x, y) { if (Math.hypot(x - m.x, y - m.y) < m.r * 1.1) { m.pressed = true; if (m.trap) m.win = true; else { m.fail = 'KABOOM!'; m.boom = true; } } },
+      key: function (m, k) { if (k === ' ' || k === 'Enter') { m.pressed = true; if (m.trap) m.win = true; else { m.fail = 'KABOOM!'; m.boom = true; } } },
       draw: function (m, g, t, u) {
-        drawButton(g, m.x, m.y, m.r, m.fail, '');
+        drawButton(g, m.x, m.y, m.r, m.pressed, '');
+        if (m.trap) m.lines = ['Na los!', 'Drück schon!', 'Worauf wartest du?'];
         g.fillStyle = '#FFFFFF'; g.font = '800 ' + Math.round(18 * u) + 'px Poppins, sans-serif'; g.textAlign = 'center';
         g.fillText(m.lines[Math.floor(t / 700) % m.lines.length], m.x, m.y + m.r * 0.95);
       }
     },
     {
-      id: 'wasp', text: function () { return 'WESPE ERWISCHEN!'; }, timeout: false, failText: 'Gestochen!',
+      id: 'wasp', text: function (m) { return m.trap ? 'WESPE NICHT ANFASSEN!' : 'WESPE ERWISCHEN!'; }, timeout: false, failText: 'Gestochen!', trappable: true,
       init: function (m, W, H, u, lvl) { var a = rnd(0, TAU), sp = (220 + lvl * 50) * u; m.x = rnd(W * 0.2, W * 0.8); m.y = rnd(H * 0.3, H * 0.75); m.vx = Math.cos(a) * sp; m.vy = Math.sin(a) * sp; m.r = 42 * u; m.W = W; m.H = H; },
       update: function (m, dt) {
         m.x += m.vx * dt; m.y += m.vy * dt;
@@ -60,7 +61,7 @@
       draw: function (m, g, t, u) { g.save(); g.translate(m.x, m.y); if (m.vx < 0) g.scale(-1, 1); g.scale(u * 1.3, u * 1.3); art.wasp(g, Math.sin(t / 20)); g.restore(); }
     },
     {
-      id: 'catch', text: function () { return 'HONIG AUFFANGEN!'; }, timeout: false, failText: 'Daneben gekleckert!',
+      id: 'catch', text: function (m) { return m.trap ? 'HONIG NICHT FANGEN!' : 'HONIG AUFFANGEN!'; }, timeout: false, failText: 'Daneben gekleckert!', trappable: true, trapFailIsWin: true,
       init: function (m, W, H, u, lvl, T) { m.x = rnd(W * 0.15, W * 0.85); m.y = H * 0.18; m.jy = H * 0.84; m.vy = (m.jy - m.y) / (T * 0.82); m.jx = W / 2; m.jw = 60 * u; m.W = W; m.sway = rnd(-1, 1) * W * 0.12; m.x0 = m.x; m.t = 0; m.T = T; },
       update: function (m, dt, keys, u) {
         m.t += dt; m.y += m.vy * dt; m.x = m.x0 + Math.sin(m.t / m.T * Math.PI) * m.sway;
@@ -74,7 +75,7 @@
       }
     },
     {
-      id: 'flowers', text: function (m) { return 'ALLE BLUMEN ANTIPPEN!'; }, timeout: false, failText: 'Zu langsam!',
+      id: 'flowers', text: function (m) { return m.trap ? 'KEINE BLUME ANTIPPEN!' : 'ALLE BLUMEN ANTIPPEN!'; }, timeout: false, failText: 'Zu langsam!', trappable: true,
       init: function (m, W, H, u, lvl) {
         var n = 3 + Math.min(3, lvl); m.f = []; m.r = 34 * u;
         for (var i = 0; i < n * 30 && m.f.length < n; i++) {
@@ -82,14 +83,14 @@
           if (m.f.every(function (q) { return Math.hypot(q.x - p.x, q.y - p.y) > m.r * 2.6; })) m.f.push(p);
         }
       },
-      tap: function (m, x, y) { for (var i = 0; i < m.f.length; i++) if (!m.f[i].done && Math.hypot(x - m.f[i].x, y - m.f[i].y) < m.r * 1.3) { m.f[i].done = true; m.pop = m.f[i]; break; } if (m.f.every(function (q) { return q.done; })) m.win = true; },
+      tap: function (m, x, y) { if (m.trap) { if (m.f.some(function (q) { return Math.hypot(x - q.x, y - q.y) < m.r * 1.3; })) m.fail = 'Reingefallen!'; return; } for (var i = 0; i < m.f.length; i++) if (!m.f[i].done && Math.hypot(x - m.f[i].x, y - m.f[i].y) < m.r * 1.3) { m.f[i].done = true; m.pop = m.f[i]; break; } if (m.f.every(function (q) { return q.done; })) m.win = true; },
       draw: function (m, g, t, u) { m.f.forEach(function (p) { if (!p.done) drawFlower(g, p.x, p.y, m.r, t + p.x); }); }
     },
     {
-      id: 'pump', text: function () { return 'HONIG PUMPEN!'; }, timeout: false, failText: 'Zu wenig Honig!',
+      id: 'pump', text: function (m) { return m.trap ? 'NICHT PUMPEN!' : 'HONIG PUMPEN!'; }, timeout: false, failText: 'Zu wenig Honig!', trappable: true,
       init: function (m, W, H, u, lvl) { m.need = 8 + lvl * 2; m.n = 0; m.x = W / 2; m.y = H * 0.6; m.kick = 0; },
-      tap: function (m) { m.n++; m.kick = 1; if (m.n >= m.need) m.win = true; },
-      key: function (m, k) { if (k === ' ' || k === 'Enter') { m.n++; m.kick = 1; if (m.n >= m.need) m.win = true; } },
+      tap: function (m) { if (m.trap) { m.n++; m.fail = 'Reingefallen!'; return; } m.n++; m.kick = 1; if (m.n >= m.need) m.win = true; },
+      key: function (m, k) { if (k === ' ' || k === 'Enter') GAMES[4].tap(m); },
       update: function (m, dt) { m.kick = Math.max(0, m.kick - dt * 6); },
       draw: function (m, g, t, u) {
         drawJar(g, m.x, m.y, u * 3 * (1 + m.kick * 0.06), m.n / m.need);
@@ -97,16 +98,17 @@
       }
     },
     {
-      id: 'wire', text: function (m) { return 'SCHNEIDE DAS ' + m.want[0] + ' KABEL!'; }, timeout: false, failText: 'Falsches Kabel!',
+      id: 'wire', text: function (m) { return m.trap ? 'SCHNEIDE KEIN KABEL!' : 'SCHNEIDE DAS ' + m.want[0] + ' KABEL!'; }, timeout: false, failText: 'Falsches Kabel!', trappable: true,
+      cutAt: function (m, i) { m.cut = i; if (m.trap) { m.fail = 'Reingefallen!'; m.boom = true; } else if (m.wires[i] === m.want) m.win = true; else { m.fail = 'Falsches Kabel!'; m.boom = true; } },
       init: function (m, W, H, u) {
         m.wires = WIRES.slice().sort(function () { return Math.random() - 0.5; }).slice(0, 3);
         m.want = pick(m.wires); m.W = W; m.H = H; m.u = u;
       },
       wx: function (m, i) { return m.W * (0.3 + i * 0.2); },
       tap: function (m, x, y) {
-        for (var i = 0; i < 3; i++) if (Math.abs(x - GAMES[5].wx(m, i)) < m.W * 0.08 && y > m.H * 0.28) { m.cut = i; if (m.wires[i] === m.want) m.win = true; else { m.fail = 'Falsches Kabel!'; m.boom = true; } return; }
+        for (var i = 0; i < 3; i++) if (Math.abs(x - GAMES[5].wx(m, i)) < m.W * 0.08 && y > m.H * 0.28) { GAMES[5].cutAt(m, i); return; }
       },
-      key: function (m, k) { var i = '123'.indexOf(k); if (i >= 0) { m.cut = i; if (m.wires[i] === m.want) m.win = true; else { m.fail = 'Falsches Kabel!'; m.boom = true; } } },
+      key: function (m, k) { var i = '123'.indexOf(k); if (i >= 0) GAMES[5].cutAt(m, i); },
       draw: function (m, g, t, u) {
         rr(g, m.W * 0.2, m.H * 0.3, m.W * 0.6, m.H * 0.12, 10 * u); g.fillStyle = '#3A3A3A'; g.fill();
         g.fillStyle = '#E5322D'; g.font = '900 ' + Math.round(20 * u) + 'px "Courier New", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -162,7 +164,7 @@
       }
     },
     {
-      id: 'findbee', text: function () { return 'FINDE DIE BIENE!'; }, timeout: false, failText: 'Die war gut versteckt!',
+      id: 'findbee', text: function (m) { return m.trap ? 'NICHTS ANTIPPEN!' : 'FINDE DIE BIENE!'; }, timeout: false, failText: 'Die war gut versteckt!', trappable: true,
       init: function (m, W, H, u, lvl) {
         m.list = []; m.W = W; m.H = H; m.u = u; var n = 5 + Math.min(5, lvl * 2), sp = (60 + lvl * 25) * u;
         for (var i = 0; i < n; i++) { var a = rnd(0, TAU); m.list.push({ x: rnd(W * 0.12, W * 0.88), y: rnd(H * 0.26, H * 0.86), vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, bee: i === 0 }); }
@@ -172,15 +174,16 @@
         var best = null, bd = 40 * m.u;
         m.list.forEach(function (o) { var d = Math.hypot(x - o.x, y - o.y); if (d < bd) { bd = d; best = o; } });
         if (!best) return;
+        if (m.trap) { m.fail = 'Reingefallen!'; return; }
         if (best.bee) m.win = true; else m.fail = 'Das war eine Wespe!';
       },
       draw: function (m, g, t, u) { m.list.forEach(function (o, i) { g.save(); g.translate(o.x, o.y); if (o.vx < 0) g.scale(-1, 1); g.scale(u * 0.75, u * 0.75); if (o.bee) art.bee(g, Math.sin(t / 20 + i)); else art.wasp(g, Math.sin(t / 20 + i)); g.restore(); }); }
     },
     {
-      id: 'stop', text: function () { return 'IM GELBEN STOPPEN!'; }, timeout: false, failText: 'Zu spät!',
+      id: 'stop', text: function (m) { return m.trap ? 'NICHT STOPPEN!' : 'IM GELBEN STOPPEN!'; }, timeout: false, failText: 'Zu spät!', trappable: true,
       init: function (m, W, H, u, lvl) { m.W = W; m.H = H; m.p = 0; m.dir = 1; m.sp = 0.9 + lvl * 0.25; m.zone = Math.max(0.1, 0.2 - lvl * 0.015); m.z0 = rnd(0.2, 0.8 - m.zone); m.u = u; },
       update: function (m, dt) { if (m.stopped) return; m.p += m.dir * m.sp * dt; if (m.p > 1) { m.p = 1; m.dir = -1; } if (m.p < 0) { m.p = 0; m.dir = 1; } },
-      hit: function (m) { if (m.stopped) return; m.stopped = true; if (m.p >= m.z0 && m.p <= m.z0 + m.zone) m.win = true; else m.fail = 'Knapp daneben!'; },
+      hit: function (m) { if (m.stopped) return; m.stopped = true; if (m.trap) { m.fail = 'Reingefallen!'; return; } if (m.p >= m.z0 && m.p <= m.z0 + m.zone) m.win = true; else m.fail = 'Knapp daneben!'; },
       tap: function (m) { GAMES[9].hit(m); },
       key: function (m, k) { if (k === ' ' || k === 'Enter') GAMES[9].hit(m); },
       draw: function (m, g, t, u) {
@@ -237,6 +240,7 @@
       }
       function lvl() { return st.speed - 1; }
       function playTime() { return Math.max(2.1, 4.4 - lvl() * 0.32); }
+      function cardTime() { return (st.cardSpeed ? 1.6 : Math.max(0.8, 1.25 - lvl() * 0.08)); }
       function introTime() { return Math.max(0.6, 1.1 - lvl() * 0.07); }
 
       /* Nächste Aufgabe: aus einem gemischten Beutel, damit alles regelmäßig drankommt */
@@ -244,6 +248,8 @@
         if (!st.bag.length) { st.bag = GAMES.slice().sort(function () { return Math.random() - 0.5; }); if (st.prev && st.bag[0] === st.prev) st.bag.push(st.bag.shift()); }
         var gm = st.bag.shift(); st.prev = gm;
         var m = { bg: pick(BG) };
+        /* Gemeine Falle: umgedrehte Aufgabe, ab der vierten Aufgabe ab und zu */
+        m.trap = (gm.trappable || gm.trapSelf) && st.wins >= 3 && Math.random() < Math.min(0.35, 0.18 + lvl() * 0.03);
         gm.init(m, W, H, u, lvl(), playTime());
         st.gm = gm; st.m = m; st.phase = 'intro'; st.pt = st.t;
         ctx.tone(520, 780, 0.08, 'triangle', 0.04);
@@ -269,9 +275,15 @@
           st.lives--;
           var boom = st.m.boom;
           ctx.fx.shake(boom ? 0.5 : 0.25, boom ? 14 : 7); ctx.fx.flash('255,74,61', boom ? 1 : 0.6);
-          if (boom) { ctx.fx.boom(W / 2, H * 0.55, '#FF9F1A', '255,159,26', 1.2); burst(W / 2, H * 0.55, ['#FF9F1A', '#FDC506', '#E5322D', '#FFFFFF', '#333'], 40, 520); ctx.tone(120, 30, 0.6, 'sawtooth', 0.08); ctx.tone(70, 25, 0.5, 'square', 0.06, 0.05); }
+          if (boom && st.gm.id === 'nopush') {
+            /* Der rote Knopf: richtig große Explosion mit Pilzwolke */
+            st.nuke = st.t;
+            ctx.fx.shake(1.3, 24);
+            ctx.tone(90, 20, 1.6, 'sawtooth', 0.09); ctx.tone(55, 18, 1.8, 'square', 0.07, 0.05); ctx.tone(180, 40, 0.8, 'sawtooth', 0.05, 0.1);
+            burst(W / 2, H * 0.62, ['#FFFFFF', '#FFE680', '#FF9F1A', '#E5322D', '#333'], 70, 700);
+          } else if (boom) { ctx.fx.boom(W / 2, H * 0.55, '#FF9F1A', '255,159,26', 1.2); burst(W / 2, H * 0.55, ['#FF9F1A', '#FDC506', '#E5322D', '#FFFFFF', '#333'], 40, 520); ctx.tone(120, 30, 0.6, 'sawtooth', 0.08); ctx.tone(70, 25, 0.5, 'square', 0.06, 0.05); }
           else ctx.tone(330, 110, 0.35, 'sawtooth', 0.05);
-          ctx.fx.text(W / 2, H * 0.3, why || 'Daneben!', '#FF7A6B', 32);
+          if (!st.nuke) ctx.fx.text(W / 2, H * 0.3, why || 'Daneben!', '#FF7A6B', 32);
         }
       }
 
@@ -285,23 +297,142 @@
           var m = st.m, gm = st.gm;
           if (gm.update) gm.update(m, dt, { left: keys.ArrowLeft || keys.a || keys.A, right: keys.ArrowRight || keys.d || keys.D }, u);
           if (m.pop) { burst(m.pop.x, m.pop.y, ['#FF8AD8', '#FDC506', '#FFFFFF'], 10, 200); ctx.tone(880, 1320, 0.06, 'triangle', 0.04); m.pop = null; }
-          if (m.win) resolve(true);
+          if (m.trap && !gm.trapSelf) {
+            /* Falle: Wer die normale Aufgabe erfüllt, ist reingefallen. Nichts tun = geschafft */
+            if (m.win) resolve(false, 'Reingefallen!');
+            else if (m.fail) { if (gm.trapFailIsWin) resolve(true); else resolve(false, m.fail); }
+            else if (age >= playTime()) resolve(true);
+            if (st.phase === 'result' && st.m.res) ctx.fx.text(W / 2, H * 0.38, 'Nicht reingefallen!', '#FFE680', 22);
+          } else if (m.win) resolve(true);
           else if (m.fail) resolve(false, m.fail);
-          else if (age >= playTime()) resolve(!!gm.timeout, gm.timeout ? null : gm.failText);
-          if (st.phase === 'result' && st.m.res && gm.id === 'nopush') ctx.fx.text(W / 2, H * 0.38, 'Stark geblieben!', '#FFE680', 20);
-        } else if (st.phase === 'result' && age >= 0.9) {
-          if (st.lives <= 0) { st.over = true; return; }
-          if (st.speedUp) {
-            st.speedUp = false; st.phase = 'speed'; st.pt = st.t;
-            ctx.fx.banner('SCHNELLER! Stufe ' + st.speed, '#FDC506', 40); ctx.fx.flash('253,197,6', 0.5);
-            ctx.tone(392, 784, 0.15, 'square', 0.05); ctx.tone(523, 1046, 0.2, 'square', 0.05, 0.12);
-          } else next();
-        } else if (st.phase === 'speed' && age >= 1.3) next();
+          else if (age >= playTime()) resolve(m.trap ? false : !!gm.timeout, m.trap ? gm.trapFail : gm.timeout ? null : gm.failText);
+          if (st.phase === 'result' && st.m.res && gm.id === 'nopush' && !m.trap) ctx.fx.text(W / 2, H * 0.38, 'Stark geblieben!', '#FFE680', 20);
+        } else if (st.phase === 'result' && age >= (st.nuke && st.t - st.nuke < 3000 ? 2.2 : 0.8)) {
+          st.nuke = 0;
+          if (st.lives <= 0) {
+            st.phase = 'dead'; st.pt = st.t;
+            ctx.tone(392, 370, 0.35, 'triangle', 0.05); ctx.tone(370, 349, 0.35, 'triangle', 0.05, 0.38); ctx.tone(349, 330, 0.35, 'triangle', 0.05, 0.76); ctx.tone(330, 220, 0.9, 'triangle', 0.05, 1.14);
+            return;
+          }
+          st.phase = 'card'; st.pt = st.t; st.cardSpeed = st.speedUp; st.speedUp = false;
+          if (st.cardSpeed) { ctx.tone(392, 784, 0.15, 'square', 0.05); ctx.tone(523, 1046, 0.2, 'square', 0.05, 0.12); }
+          else if (st.m.res) { ctx.tone(523, 659, 0.08, 'triangle', 0.035); ctx.tone(659, 784, 0.08, 'triangle', 0.035, 0.1); }
+        } else if (st.phase === 'card' && age >= cardTime()) next();
+        else if (st.phase === 'dead' && age >= 2.8) st.over = true;
       }
 
+      /* Zwischenbild: Biene tanzt, darunter die Leben */
+      function drawCard(age) {
+        var lastOk = st.m && st.m.res, cx = W / 2, cy = H * 0.42;
+        g.fillStyle = st.cardSpeed ? '#3A2A08' : lastOk ? '#1C2A22' : '#2E1A1A'; g.fillRect(0, 0, W, H);
+        /* Lichtstrahlen */
+        g.save(); g.translate(cx, cy); g.rotate(st.t / 2000); g.globalAlpha = 0.12;
+        for (var i = 0; i < 12; i++) { g.rotate(TAU / 12); g.beginPath(); g.moveTo(0, 0); g.lineTo(W, -60 * u); g.lineTo(W, 60 * u); g.closePath(); g.fillStyle = '#FDC506'; g.fill(); }
+        g.restore();
+        var hop = Math.abs(Math.sin(st.t / 160)) * 26 * u, tilt = Math.sin(st.t / 160) * 0.35;
+        g.beginPath(); g.ellipse(cx, cy + 62 * u, 46 * u * (1 - hop / (60 * u)), 9 * u, 0, 0, TAU); g.fillStyle = 'rgba(0,0,0,0.35)'; g.fill();
+        g.save(); g.translate(cx, cy - hop); g.rotate(tilt); g.scale(u * 2.2, u * 2.2); art.bee(g, Math.sin(st.t / 18)); g.restore();
+        /* Noten */
+        for (var n = 0; n < 4; n++) {
+          var nt = ((st.t / 900) + n * 0.25) % 1, nx = cx + Math.sin(n * 2.1 + st.t / 500) * 110 * u + (n % 2 ? 1 : -1) * 70 * u, ny = cy + 40 * u - nt * 150 * u;
+          g.globalAlpha = 1 - nt; g.fillStyle = '#FDC506'; g.font = '900 ' + Math.round(28 * u) + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(n % 2 ? '♪' : '♫', nx, ny);
+        }
+        g.globalAlpha = 1;
+        var title = st.cardSpeed ? 'SCHNELLER! Stufe ' + st.speed : lastOk ? 'Weiter geht’s!' : 'Autsch!';
+        g.font = '900 ' + Math.round(34 * u) + 'px Poppins, sans-serif'; g.lineWidth = 6; g.lineJoin = 'round'; g.strokeStyle = '#111';
+        g.strokeText(title, cx, H * 0.14, W - 20); g.fillStyle = st.cardSpeed ? '#FDC506' : lastOk ? '#8DD45A' : '#FF7A6B'; g.fillText(title, cx, H * 0.14, W - 20);
+        /* Leben */
+        var lw = 70 * u, lx0 = cx - lw * (LIVES - 1) / 2, ly = H * 0.74;
+        for (var l = 0; l < LIVES; l++) {
+          var alive = l < st.lives, justLost = !alive && l === st.lives && !lastOk && age < 0.6;
+          g.save(); g.translate(lx0 + l * lw, ly + (alive ? Math.sin(st.t / 200 + l) * 4 * u : 0));
+          if (justLost) { var jl = age / 0.6; g.rotate(jl * 2); g.scale(1 + jl * 0.6, 1 + jl * 0.6); g.globalAlpha = 1 - jl * 0.8; }
+          else if (!alive) g.globalAlpha = 0.18;
+          g.scale(u * 0.95, u * 0.95); art.bee(g, alive ? Math.sin(st.t / 20 + l) : 0);
+          g.restore();
+        }
+        g.globalAlpha = 1;
+        g.font = '800 ' + Math.round(18 * u) + 'px Poppins, sans-serif'; g.fillStyle = '#FFFFFF';
+        g.fillText(st.lives === 1 ? 'Noch 1 Leben!' : 'Noch ' + st.lives + ' Leben', cx, ly + 52 * u);
+        g.font = '700 ' + Math.round(14 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.7)';
+        g.fillText(st.score.toLocaleString('de-DE') + ' Punkte  ·  ' + st.wins + ' geschafft', cx, ly + 80 * u);
+      }
+      /* Ende: Biene liegt auf dem Rücken, Kreuzaugen, verlegenes „Oh nein“-Lächeln */
+      function drawDead(age) {
+        var cx = W / 2, cy = H * 0.5;
+        g.fillStyle = '#1A1A1A'; g.fillRect(0, 0, W, H);
+        var fall = Math.min(1, age / 0.6), bounce = fall < 1 ? 0 : Math.abs(Math.sin((age - 0.6) * 9)) * Math.max(0, 1 - (age - 0.6) * 2) * 12 * u;
+        var y = cy - (1 - fall) * H * 0.4 - bounce;
+        g.beginPath(); g.ellipse(cx, cy + 34 * u, 70 * u, 12 * u, 0, 0, TAU); g.fillStyle = 'rgba(0,0,0,0.5)'; g.fill();
+        g.save(); g.translate(cx, y); g.scale(u * 2.6, u * 2.6); g.rotate(fall * Math.PI * 0.08);
+        g.scale(1, -1);
+        /* Beinchen zappeln nach oben */
+        art.bee(g, Math.sin(st.t / 300) * 0.2);
+        g.strokeStyle = '#111'; g.lineWidth = 2.8; g.lineCap = 'round'; g.lineJoin = 'round';
+        [-20, -11, -2].forEach(function (lx, i) { var wig = Math.sin(st.t / 60 + i * 1.7) * 4; g.beginPath(); g.moveTo(lx, 13); g.lineTo(lx + wig, 27); g.lineTo(lx + 5 + wig, 31); g.stroke(); });
+        /* Kopf neu: Kreuzaugen und verlegenes Lächeln */
+        g.beginPath(); g.arc(11, 2, 10, 0, TAU); g.fillStyle = '#3A2410'; g.fill(); g.lineWidth = 2.5; g.strokeStyle = '#111'; g.stroke();
+        g.strokeStyle = '#FFFFFF'; g.lineWidth = 1.8;
+        [[8, -1], [16, -1]].forEach(function (e) { g.beginPath(); g.moveTo(e[0] - 2.4, e[1] - 2.4); g.lineTo(e[0] + 2.4, e[1] + 2.4); g.moveTo(e[0] + 2.4, e[1] - 2.4); g.lineTo(e[0] - 2.4, e[1] + 2.4); g.stroke(); });
+        g.strokeStyle = '#F7B500'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(7, 7); g.quadraticCurveTo(9, 5, 11, 7); g.quadraticCurveTo(13, 9, 15, 7); g.quadraticCurveTo(16.5, 5.5, 18, 6.5); g.stroke();
+        g.restore();
+        /* Sternchen über dem Kopf */
+        for (var i = 0; i < 3; i++) {
+          var a = st.t / 300 + i * TAU / 3;
+          g.fillStyle = '#FDC506'; g.font = '900 ' + Math.round(18 * u) + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+          g.fillText('★', cx + 30 * u + Math.cos(a) * 34 * u, y + 30 * u + Math.sin(a) * 10 * u);
+        }
+        if (age > 0.5) {
+          g.globalAlpha = Math.min(1, (age - 0.5) * 3);
+          g.font = '900 ' + Math.round(44 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.lineJoin = 'round'; g.strokeStyle = '#111';
+          g.strokeText('Oh nein!', cx, H * 0.2); g.fillStyle = '#FF7A6B'; g.fillText('Oh nein!', cx, H * 0.2);
+          g.font = '700 ' + Math.round(16 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.8)';
+          g.fillText('Alle Leben aufgebraucht. ' + st.wins + ' Aufgaben geschafft.', cx, H * 0.8, W - 20);
+          g.globalAlpha = 1;
+        }
+      }
+      /* Atompilz nach dem roten Knopf */
+      function drawNuke(k) {
+        var gx = W / 2, gy = H * 0.9, top = H * 0.62 - Math.min(1, k / 1.2) * H * 0.34, grow = Math.min(1, k * 1.6);
+        g.save();
+        g.globalAlpha = Math.min(0.75, k * 2) * Math.max(0, 1 - (k - 1.6) * 2); g.fillStyle = '#5A1A08'; g.fillRect(0, 0, W, H);
+        g.globalAlpha = 1;
+        /* Druckwelle am Boden */
+        g.beginPath(); g.ellipse(gx, gy, k * W * 0.9, k * 40 * u, 0, 0, TAU); g.strokeStyle = 'rgba(255,230,180,' + Math.max(0, 0.8 - k * 0.5) + ')'; g.lineWidth = 6 * u; g.stroke();
+        /* Stamm */
+        var sw = 34 * u * grow + 10 * u;
+        var sg = g.createLinearGradient(0, top, 0, gy); sg.addColorStop(0, '#FFB13B'); sg.addColorStop(0.5, '#C8501A'); sg.addColorStop(1, '#4A2A1A');
+        g.beginPath(); g.moveTo(gx - sw, gy); g.quadraticCurveTo(gx - sw * 0.5, (gy + top) / 2, gx - sw * 0.7, top + 20 * u); g.lineTo(gx + sw * 0.7, top + 20 * u); g.quadraticCurveTo(gx + sw * 0.5, (gy + top) / 2, gx + sw, gy); g.closePath(); g.fillStyle = sg; g.fill();
+        /* Pilzhut aus mehreren Wolkenkugeln */
+        var cr = H * 0.17 * grow + 10 * u, glow = Math.max(0, 1 - k * 0.6);
+        for (var i = 0; i < 9; i++) {
+          var a = i / 9 * TAU + k * 0.8, rx = gx + Math.cos(a) * cr * 0.9, ry = top + Math.sin(a) * cr * 0.4, r = cr * (0.55 + (i % 3) * 0.08);
+          var cg = g.createRadialGradient(rx, ry - r * 0.3, 2, rx, ry, r);
+          cg.addColorStop(0, 'rgba(255,' + Math.round(230 * glow + 120 * (1 - glow)) + ',' + Math.round(150 * glow + 60) + ',1)'); cg.addColorStop(0.6, glow > 0.3 ? '#FF6A1A' : '#8A4A2A'); cg.addColorStop(1, 'rgba(60,30,20,0)');
+          g.beginPath(); g.arc(rx, ry, r, 0, TAU); g.fillStyle = cg; g.fill();
+        }
+        var core = g.createRadialGradient(gx, top, 2, gx, top, cr * 0.8); core.addColorStop(0, 'rgba(255,255,230,' + glow + ')'); core.addColorStop(1, 'rgba(255,180,60,0)');
+        g.beginPath(); g.arc(gx, top, cr * 0.8, 0, TAU); g.fillStyle = core; g.fill();
+        /* Grelles Weiß am Anfang */
+        var fl = Math.max(0, 1 - k * 2.2) * (ctx.reduce ? 0.4 : 1);
+        if (fl > 0) { g.globalAlpha = fl; g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
+        if (k > 0.35) {
+          g.font = '900 ' + Math.round(64 * u) + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+          var zs = 1 + Math.max(0, 0.5 - (k - 0.35)) * 0.8;
+          g.translate(W / 2, H * 0.22); g.scale(zs, zs); g.lineWidth = 9; g.lineJoin = 'round'; g.strokeStyle = '#111'; g.strokeText('KABOOOM!', 0, 0, W - 20); g.fillStyle = '#FDC506'; g.fillText('KABOOOM!', 0, 0, W - 20);
+        }
+        g.restore();
+      }
       function render() {
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         var m = st.m;
+        if (st.phase === 'card' || st.phase === 'dead') {
+          var ag = (st.t - st.pt) / 1000;
+          if (st.phase === 'card') drawCard(ag); else drawDead(ag);
+          st.parts.forEach(function (p) { g.globalAlpha = Math.max(0, 1 - p.t / p.life); g.fillStyle = p.c; g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
+          g.globalAlpha = 1;
+          return;
+        }
         g.fillStyle = m ? m.bg : '#1A1A1A'; g.fillRect(0, 0, W, H);
         /* Waben im Hintergrund */
         g.save(); g.globalAlpha = 0.06;
@@ -315,8 +446,9 @@
         }
         st.parts.forEach(function (p) { g.globalAlpha = Math.max(0, 1 - p.t / p.life); g.fillStyle = p.c; g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
         g.globalAlpha = 1;
+        if (st.nuke) { drawNuke((st.t - st.nuke) / 1000); return; }
         /* Aufgabe groß oben, beim Start in der Mitte */
-        if (m && st.phase !== 'speed') {
+        if (m) {
           var txt = st.gm.text(m), intro = st.phase === 'intro';
           var sz = Math.min(W / Math.max(8, txt.length * 0.62), (intro ? 54 : 30) * u);
           var y = intro ? H * 0.45 : 40 * u + 20;
