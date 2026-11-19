@@ -68,21 +68,20 @@ html.mb4-noscroll,html.mb4-noscroll body{overflow:hidden!important}
 #mb404 .mb4-carousel{position:relative}
 #mb404 .mb4-car-btn{display:none}
 #mb404 .mb4-car-dots{display:none}
+#mb404 .mb4-pick{display:none}
 @media (max-width:640px){
   #mb404 .mb4-arcade{padding:20px 16px}
-  #mb404 .mb4-tiles{position:relative;display:flex;gap:12px;margin:0 0 10px;padding:0 0 4px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
-  #mb404 .mb4-tiles::-webkit-scrollbar{display:none}
-  #mb404 .mb4-tile{flex:0 0 calc((100% - 12px) / 2);scroll-snap-align:start}
-  #mb404 .mb4-tile-name{padding:9px 10px 0;font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #mb404 .mb4-tile-rec{padding:1px 10px 9px;font-size:11.5px}
-  #mb404 .mb4-car-btn{position:absolute;top:calc((100% - 4px) * .3);z-index:2;display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0;padding:0;border:2px solid var(--mb-yellow);border-radius:50%;background:rgba(17,17,17,.92);color:var(--mb-yellow);box-shadow:0 4px 14px rgba(0,0,0,.5);cursor:pointer;transform:translateY(-50%)}
-  #mb404 .mb4-car-btn svg{width:20px;height:20px}
-  #mb404 .mb4-car-btn.is-prev{left:-10px}
-  #mb404 .mb4-car-btn.is-next{right:-10px}
-  #mb404 .mb4-car-btn:hover{background:var(--mb-yellow);color:#111}
-  #mb404 .mb4-car-dots{display:flex;justify-content:center;gap:7px;margin:0 0 20px}
-  #mb404 .mb4-car-dots span{width:8px;height:8px;border-radius:50%;background:#4A4A4A;transition:background-color .2s,width .2s}
-  #mb404 .mb4-car-dots span.is-on{width:22px;border-radius:4px;background:var(--mb-yellow)}
+  /* Handy: alle Spiele als kompaktes Raster, nach der Wahl eingeklappt */
+  #mb404 .mb4-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 14px}
+  #mb404 .mb4-tile{border-radius:12px}
+  #mb404 .mb4-tile-name{padding:6px 7px 7px;font-size:11.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mb404 .mb4-tile-rec{display:none}
+  #mb404 .mb4-car-btn,#mb404 .mb4-car-dots{display:none!important}
+  #mb404 .mb4-pick{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:0 0 14px;padding:12px 14px;border:2px solid var(--mb-line);border-radius:14px;background:var(--mb-black);color:var(--mb-white);font-family:inherit;font-size:14px;font-weight:700;text-align:left;text-transform:none;letter-spacing:normal;box-shadow:none;cursor:pointer}
+  #mb404 .mb4-pick:hover{background:var(--mb-black);color:var(--mb-white)}
+  #mb404 .mb4-pick-cur{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--mb-yellow);font-weight:800}
+  #mb404 .mb4-pick-all{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--mb-yellow);color:#111;font-size:13px;font-weight:800}
+  #mb404 .mb4-carousel.is-collapsed .mb4-tiles{display:none}
 }
 
 /* Spieler: Leiste + Bühne */

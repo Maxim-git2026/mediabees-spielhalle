@@ -4,7 +4,7 @@
   var TAU = Math.PI * 2, G = 420, TURN_S = 30, CHAR_R = 15;
   var art = MBArcade.art, rr = art.rrect;
   /* Gegner im Spiel gegen den Computer: Name, Hornisse? */
-  var FOES = [['Wespe Walli', 0], ['Wespe Kalle', 0], ['Hornisse Horst', 1], ['Wespe Uschi', 0], ['Hornisse Hilde', 1], ['Wespe Ötte', 0], ['Hornisse Heinz', 1], ['Wespe Mia', 0]];
+  var FOES = [['Wespe Walli', 0], ['Wespe Ilse', 0], ['Hornisse Horst', 1], ['Wespe Uschi', 0], ['Wespe Waldo', 0], ['Hornisse Super Siggi', 1], ['Wespe Kalle', 0], ['Hornisse Hilde', 1], ['Wespe Ötte', 0], ['Hornisse Heinz', 1], ['Wespe Trude', 0], ['Hornisse Günni', 1]];
   /* Wurfgeschosse: Honigtopf platzt beim Aufprall, Pollenbombe hüpft und zündet nach 3 s */
   var WEAPONS = [
     { name: 'Honigtopf', r: 40, dmg: 45, ammo: Infinity },

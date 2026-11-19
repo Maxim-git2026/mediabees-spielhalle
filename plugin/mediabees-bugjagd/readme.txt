@@ -21,6 +21,8 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
 
 = 2.19.3 – 19.11.2026 =
+* Handy: Die Spielauswahl ist kein Karussell mehr. Alle Spiele stehen als kleines Raster mit drei Kacheln pro Reihe da. Nach der Wahl klappt das Raster auf eine Zeile zusammen („Alle 16 Spiele“), ein Tipp klappt es wieder auf.
+* Honigknaller: Die Bots haben jetzt echte Namen wie Ilse, Uschi, Waldo oder Super Siggi. Im Wurfduell gibt es neue Gegner wie Wespe Ilse, Wespe Waldo und Hornisse Super Siggi.
 * Honigdieb: Die Straßenlaternen werfen jetzt einen weichen Lichtkegel nach unten mit Lichtfleck auf der Straße, statt eines kantigen Lichtkastens.
 * Wurfduell: Figuren rutschen nicht mehr durch die Wabenmauer oder steile Wände, wenn eine Explosion sie dagegen schleudert. Sie prallen jetzt ab.
 

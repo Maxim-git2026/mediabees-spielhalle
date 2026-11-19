@@ -14,7 +14,8 @@
     { name: 'Summbot', color: '#FF9F1A', bumble: false }
   ];
   function rnd(a, b) { return a + Math.random() * (b - a); }
-  function nameOf(p) { return SLOTS[p.n].name + (p.bot && p.n === 1 ? 'bot' : ''); }
+  var BOT_NAMES = ['Ilse', 'Uschi', 'Waldo', 'Super Siggi', 'Trude', 'Kalle', 'Moni', 'Günni', 'Elfriede', 'Hotte', 'Bärbel', 'Jupp'];
+  function nameOf(p) { return p.nick || SLOTS[p.n].name; }
 
   function drawBomb(g, x, y, r, t, fuse) {
     var p = 1 + Math.sin(t / (fuse < 0.8 ? 40 : 110)) * 0.08;
@@ -144,7 +145,9 @@
         var list = [newPlayer(0)];
         if (st.duo) {
           var total = st.humans + st.nbots;
-          for (var i = 1; i < total; i++) list.push(newPlayer(i, i >= st.humans));
+          /* Bots behalten ihren Namen über alle Runden eines Duells */
+          if (!st.nicks) st.nicks = BOT_NAMES.slice().sort(function () { return Math.random() - 0.5; });
+          for (var i = 1; i < total; i++) { var np = newPlayer(i, i >= st.humans); if (np.bot) np.nick = st.nicks[i]; list.push(np); }
         }
         return list;
       }
@@ -248,7 +251,7 @@
 
       /* mode: 1 allein, 2 gegen 3 Bots, 3 zu zweit, 4 zu zweit + 2 Bots */
       function startGame(mode) {
-        st.duo = mode > 1; st.menu = false;
+        st.duo = mode > 1; st.menu = false; st.nicks = null;
         st.humans = mode >= 3 ? 2 : 1; st.nbots = mode === 2 ? 3 : mode === 4 ? 2 : 0;
         shape(); layout();
         st.players = makePlayers();

@@ -933,7 +933,7 @@
       b.setAttribute('aria-pressed', 'false');
       b.innerHTML = '<span class="mb4-tile-pic" aria-hidden="true"><canvas></canvas></span><span class="mb4-tile-name"></span><span class="mb4-tile-rec"> </span>';
       b.querySelector('.mb4-tile-name').textContent = g.title;
-      b.addEventListener('click', function () { select(g.id, true); });
+      b.addEventListener('click', function () { select(g.id, true); updPick(); if (mobile()) setCollapsed(true); });
       ['pointerenter', 'focus', 'touchstart'].forEach(function (ev) { b.addEventListener(ev, function () { loadGame(g.id); }, { passive: true }); });
       tilesEl.appendChild(b);
       g._tile = b;
@@ -953,6 +953,22 @@
       return b;
     }
     var carPrev = arrow(-1), carNext = arrow(1);
+    /* Handy: Raster mit allen Spielen, nach der Wahl auf eine Zeile eingeklappt */
+    function mobile() { return window.matchMedia && window.matchMedia('(max-width: 640px)').matches; }
+    var pick = document.createElement('button'); pick.type = 'button'; pick.className = 'mb4-pick';
+    pick.innerHTML = '<span class="mb4-pick-cur"></span><span class="mb4-pick-all"></span>';
+    car.parentNode.insertBefore(pick, car);
+    var pickCur = pick.querySelector('.mb4-pick-cur'), pickAll = pick.querySelector('.mb4-pick-all');
+    function setCollapsed(on) {
+      car.classList.toggle('is-collapsed', on);
+      pick.setAttribute('aria-expanded', String(!on));
+      pickAll.textContent = on ? 'Alle ' + tiles.length + ' Spiele ▾' : 'Zuklappen ▴';
+      /* Vorschaubilder neu zeichnen, eingeklappt hatten sie keine Größe */
+      if (!on && S.booted) requestAnimationFrame(function () { tiles.forEach(function (g) { drawThumb(g); }); });
+    }
+    function updPick() { var t = tiles.filter(function (x) { return x.id === S.sel; })[0]; pickCur.textContent = t ? '▶ ' + t.title : ''; }
+    pick.addEventListener('click', function () { setCollapsed(!car.classList.contains('is-collapsed')); });
+    setCollapsed(false);
     var dots = document.createElement('div'); dots.className = 'mb4-car-dots'; dots.setAttribute('aria-hidden', 'true');
     car.parentNode.insertBefore(dots, car.nextSibling);
     function carState() {
@@ -971,6 +987,8 @@
     var first = root.getAttribute('data-start-game');
     if (!first || !tiles.some(function (t) { return t.id === first; })) first = tiles[0].id;
     select(first, false);
+    updPick();
+    if (root.getAttribute('data-start-game') && mobile()) setCollapsed(true);
     if (first !== tiles[0].id) setTimeout(function () { var el = tiles.filter(function (t) { return t.id === first; })[0]._tile; tilesEl.scrollLeft = el.offsetLeft - (tilesEl.clientWidth - el.offsetWidth) / 2; }, 300);
     tiles.forEach(function (g) { drawThumb(g); loadTop(g.id); });
     S.booted = true;
