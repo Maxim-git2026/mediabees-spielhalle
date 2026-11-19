@@ -9,7 +9,7 @@
   var WEAPONS = [
     { name: 'Honigtopf', r: 40, dmg: 45, ammo: Infinity },
     { name: 'Pollenbombe', r: 34, dmg: 40, fuse: 3, ammo: 2 },
-    { name: 'Wabenmauer', wall: true, ammo: 1 }
+    { name: 'Wabenmauer', wall: true, ammo: Infinity }
   ];
   var WALL_W = 18, WALL_H = 74, WALL_D = 44;
   function drawWallIcon(g, x, y, s) {
@@ -52,7 +52,7 @@
       legend: [
         { draw: function (g) { drawPot(g, 23, 25, 1.6, 0.3); }, text: 'Honigtopf: platzt beim Aufprall' },
         { draw: function (g) { drawPollen(g, 23, 23, 1.6, 0); }, text: 'Pollenbombe (2 pro Runde): hüpft und zündet nach 3 Sekunden, gut hinter Hügel' },
-        { draw: function (g) { drawWallIcon(g, 23, 23, 1.4); }, text: 'Wabenmauer (1 pro Runde): Deckung aus Wachs vor dir, hält mehr aus als Erde. Danach darfst du noch werfen' },
+        { draw: function (g) { drawWallIcon(g, 23, 23, 1.4); }, text: 'Wabenmauer: Deckung aus Wachs vor dir, hält mehr aus als Erde. Kostet den ganzen Zug, eine neue gibt es erst, wenn deine alte kaputt ist' },
         { draw: function (g) { g.translate(25, 24); g.scale(0.55, 0.55); art.wasp(g, 0.4); }, text: 'Schaden an der Wespe, je Lebenspunkt', val: '5' },
         { draw: function (g) { g.beginPath(); g.arc(23, 23, 12, 0, TAU); g.strokeStyle = '#FDC506'; g.lineWidth = 3; g.stroke(); g.beginPath(); g.arc(23, 23, 3, 0, TAU); g.fillStyle = '#FDC506'; g.fill(); }, text: 'Volltreffer', val: '100' },
         { draw: function (g) { g.fillStyle = '#FDC506'; g.font = '900 22px Poppins, sans-serif'; g.textAlign = 'center'; g.fillText('★', 23, 31); }, text: 'Wespe besiegt: Bonus je Runde, du heilst 30 Punkte', val: '300 × Runde' }
@@ -147,13 +147,31 @@
           if (!st.wax[x]) st.wax[x] = b;
           st.gnd[x] = Math.min(st.gnd[x], top + Math.abs(x - cx) * 0.4);
         }
-        st.walls.push({ x0: cx - WALL_W / 2, x1: cx + WALL_W / 2 });
-        p.ammo[2]--; p.weapon = 0; terr = null;
+        st.walls.push({ x0: cx - WALL_W / 2, x1: cx + WALL_W / 2, owner: p });
+        p.weapon = 0; terr = null;
+        /* Mauer bauen kostet den ganzen Zug */
+        st.phase = 'settle'; st.phaseT = st.t + 700; drag = null;
         ctx.fx.ring(SX(cx), SY(top + WALL_H / 2), '#FDC506', 50 * k, 4, 400); ctx.fx.sparkle(SX(cx), SY(top), ['#FDC506', '#FFE680', '#FFFFFF'], 16, 200);
         ctx.fx.text(SX(cx), SY(top - 20), 'Wabenmauer!', '#FFE680', 20);
         burst(cx, top, ['#E9A800', '#FDC506'], 10, 160);
         ctx.tone(330, 990, 0.2, 'triangle', 0.05); ctx.tone(660, 1320, 0.12, 'triangle', 0.04, 0.1);
         return true;
+      }
+      /* Eine eigene Mauer gleichzeitig: neu bauen erst, wenn sie kaputt ist */
+      function wallAlive(wl) {
+        for (var x = Math.max(0, Math.floor(wl.x0)); x <= Math.min(W - 1, Math.ceil(wl.x1)); x++) if (st.wax[x] && st.wax[x] - st.gnd[x] > 10) return true;
+        return false;
+      }
+      function hasWall(p) { return st.walls.some(function (wl) { return wl.owner === p && !wl.broken; }); }
+      function canUse(p, w) { return w === 2 ? !hasWall(p) : p.ammo[w] > 0; }
+      function checkWalls() {
+        st.walls.forEach(function (wl) {
+          if (wl.broken || wallAlive(wl)) return;
+          wl.broken = true;
+          var cx = (wl.x0 + wl.x1) / 2;
+          ctx.fx.text(SX(cx), SY(groundAt(cx) - 30), 'Mauer kaputt!', '#FFE680', 18);
+          burst(cx, groundAt(cx) - 10, ['#E9A800', '#FDC506', '#7A5410'], 14, 200);
+        });
       }
       function makePlayer(i, cpu, foe) {
         var x = W * (i ? 0.85 : 0.15) + rnd(-12, 12);
@@ -250,13 +268,13 @@
         if (bestB && bestB.sc < 30 && (best.sc > 45 || Math.random() < 0.3)) pick = bestB;
         var lvl = st.round - 1, errA = Math.max(0.012, 0.1 * Math.pow(0.8, lvl)), errP = Math.max(0.012, 0.08 * Math.pow(0.8, lvl));
         if (pick.w) { errA *= 0.6; errP *= 0.6; }
-        var wall = p.ammo[2] > 0 && p.hp <= p.maxHp * 0.6 && Math.random() < 0.7;
+        var wall = !hasWall(p) && p.hp <= p.maxHp * 0.6 && Math.random() < 0.5;
         return { a: pick.a + gauss() * errA, P: clamp(pick.P * (1 + gauss() * errP), 0.2, 1), w: pick.w, wall: wall };
       }
 
       function throwShot(p) {
         if (!(p.ammo[p.weapon] > 0)) p.weapon = 0;
-        if (WEAPONS[p.weapon].wall) { placeWall(p); return; }
+        if (WEAPONS[p.weapon].wall) { if (hasWall(p)) { p.weapon = 0; return; } placeWall(p); return; }
         var wpn = WEAPONS[p.weapon];
         p.ammo[p.weapon]--;
         st.shots.push({ x: p.x + Math.cos(p.a) * 18, y: p.y - 18 + Math.sin(p.a) * 18, vx: Math.cos(p.a) * V * p.p, vy: Math.sin(p.a) * V * p.p, kind: p.weapon, t: 0, owner: p, spin: 0, w: wpn });
@@ -275,7 +293,7 @@
 
       function explode(s, direct) {
         var w = s.w, R = w.r;
-        carve(s.x, s.y, R);
+        carve(s.x, s.y, R); checkWalls();
         ctx.fx.boom(SX(s.x), SY(s.y), s.kind ? '#FFD24A' : '#FFB13B', '255,177,59', 0.9);
         ctx.fx.shake(0.3, 8);
         burst(s.x, s.y, ['#6B4A2A', '#8A6236', '#4A3218'], 22, 260);
@@ -416,10 +434,10 @@
           var e = Math.min(1, (st.t - st.phaseT) / 1100);
           p.a += (st.plan.a - p.a) * Math.min(1, dt * 5); p.p += (st.plan.P - p.p) * Math.min(1, dt * 5);
           p.face = Math.cos(p.a) >= 0 ? 1 : -1;
-          if (e > 0.25 && st.plan.wall && p.ammo[2] > 0) {
+          if (e > 0.25 && st.plan.wall && !hasWall(p)) {
             var foe2 = st.players[1 - st.turn];
             p.a = foe2.x > p.x ? -0.3 : -Math.PI + 0.3;
-            if (placeWall(p)) { st.plan = cpuPlan(p, foe2); st.phaseT = st.t - 300; return; }
+            if (placeWall(p)) return;
             st.plan.wall = false;
           }
           if (e < 0.05 && st.plan.w && p.weapon !== st.plan.w) { p.weapon = st.plan.w; ctx.fx.text(SX(p.x), SY(p.y - 92), WEAPONS[p.weapon].name + '!', '#FFD24A', 18); }
@@ -591,7 +609,7 @@
             rr(g, b.x, b.y, b.w, b.h, 14); g.fillStyle = 'rgba(17,17,17,0.85)'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#FDC506'; g.stroke();
             if (cp.weapon === 1) drawPollen(g, b.x + b.w / 2, b.y + b.h * 0.42, b.w / 36, st.t); else if (cp.weapon === 2) drawWallIcon(g, b.x + b.w / 2, b.y + b.h * 0.42, b.w / 48); else drawPot(g, b.x + b.w / 2, b.y + b.h * 0.44, b.w / 34, 0);
             g.font = '700 9px Poppins, sans-serif'; g.textAlign = 'center'; g.fillStyle = '#FFFFFF'; g.fillText(WEAPONS[cp.weapon].name, b.x + b.w / 2, b.y + b.h - 9, b.w - 6);
-            var left = cp.ammo[cp.weapon] === Infinity ? '∞' : cp.ammo[cp.weapon];
+            var left = cp.weapon === 2 ? (hasWall(cp) ? 0 : 1) : cp.ammo[cp.weapon] === Infinity ? '∞' : cp.ammo[cp.weapon];
             g.beginPath(); g.arc(b.x + b.w - 4, b.y + 4, 10, 0, TAU); g.fillStyle = left === '∞' || left > 0 ? '#FFD24A' : '#555'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#111'; g.stroke();
             g.fillStyle = '#111'; g.font = '900 11px Poppins, sans-serif'; g.textBaseline = 'middle'; g.fillText(String(left), b.x + b.w - 4, b.y + 5);
           }
@@ -661,11 +679,11 @@
       function switchWeapon() {
         var p = cur(); if (!p || p.cpu || !(st.phase === 'aim' || st.phase === 'wait')) return;
         var next = p.weapon;
-        for (var n = 1; n <= WEAPONS.length; n++) { var c = (p.weapon + n) % WEAPONS.length; if (p.ammo[c] > 0) { next = c; break; } }
-        if (next === p.weapon) { ctx.fx.text(SX(p.x), SY(p.y - 70), 'Nur noch Honigtöpfe', '#FF7A6B', 16); ctx.tone(160, 140, 0.05, 'square', 0.02); return; }
+        for (var n = 1; n <= WEAPONS.length; n++) { var c = (p.weapon + n) % WEAPONS.length; if (canUse(p, c)) { next = c; break; } }
+        if (next === p.weapon) { ctx.fx.text(SX(p.x), SY(p.y - 70), 'Gerade nur Honigtöpfe', '#FF7A6B', 16); ctx.tone(160, 140, 0.05, 'square', 0.02); return; }
         p.weapon = next;
         ctx.tone(700, 900, 0.05, 'triangle', 0.03);
-        ctx.fx.text(SX(p.x), SY(p.y - 70), WEAPONS[p.weapon].name + (p.ammo[p.weapon] < Infinity ? ' (noch ' + p.ammo[p.weapon] + ')' : ''), '#FFE680', 18);
+        ctx.fx.text(SX(p.x), SY(p.y - 70), WEAPONS[p.weapon].name + (p.weapon === 1 ? ' (noch ' + p.ammo[1] + ')' : p.weapon === 2 ? ' (kostet den Zug)' : ''), '#FFE680', 18);
       }
 
       /* Maus und Finger: wie eine Schleuder zurückziehen und loslassen */
