@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.18.1**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.19.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -70,9 +70,19 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 | honigdieb | Honigdieb | Flucht-Runner von der Seite: Biene mit Honigglas flieht vor dem Kammerjäger. Springen (W/↑/Leertaste, halten = höher; Handy tippen) über Tonne/Zaun/Hydrant/Gully, ducken (S/↓; Handy nach unten wischen) unter Spinnweben/Banner. 1 Pkt je Meter, Honigtropfen +10. Stolpern statt sofort aus: Abstand zum Kammerjäger sinkt, erholt sich langsam, zweimal kurz hintereinander = geschnappt. Stadtschild alle 250 m. Hochkant/Handy: sichtbare Breite mind. 560 Welt-Px (herausgezoomt, Himmel oben `TOPW`), Biene bei 20 % der Breite, Kammerjäger näher |
 | knaller | Honigknaller | Bomberman-Prinzip. Feld quer 15 × 11, hochkant 11 × 13 (Rand + Säulen fest, Wachsblöcke zufällig). Reichweite startet bei 1 (Extras erhöhen). Allein: Level mit 2 + Level Wespen und Level/2 Hornissen, Wespen und Hornissen legen ab Level 1 Bomben, wenn die Biene < 10 Felder weg ist (Hornisse alle 5–8 s, Wespe 8–13 s, nur mit Fluchtweg; `foe`-Bomben töten keine Wespen und geben keine Punkte), Wespe 100, Hornisse 200, mehrere in einer Explosion × Kette, Block 10, Extra 50, Level geschafft +500 × Level, 3 Leben. Menü (auch Handy): 1 Allein (Rangliste), 2 Gegen 3 Bots, am PC 3 Zu zweit, 4 Zu zweit + 2 Bots. Duelle ohne Rangliste (`finish(0, {headline})`), wer zuerst 2 Runden gewinnt, Endspurt nach 40/70 s (+2 Reichweite, +1 Bombe). Bots: Gefahrenkarte + Breitensuche, legen nur mit Fluchtweg, Schrecksekunde 0,15–0,45 s. Figuren schauen in Laufrichtung (auch hoch/runter). Handy: schwebender Joystick unten links + Bombenknopf (`multiTouch: true`) |
 | flipper | Honigflipper | Flipper-Prinzip, eigener Bienenstock-Tisch (logisch 400 × 700, 10 Teilschritte Physik, mehrere Kugeln in `st.list`). 3 Honigtopf-Bumper 100, Schleudern 10, BIENE-Ziele links je 250 (alle 5 = +2.500 und Multiplikator +1), 3 Bahnen oben je 50 (alle = Multiplikator +1, max. ×5), fliegende Wespe 750 (jede 3. = Multiplikator +1), Drehtor links 25 je Umdrehung, Honigtopf-Mulde 500 (3× = Multiball, alles doppelt, Kugelverlust im Multiball kostet kein Leben). Abflüsse links/rechts außen, Rückläufe innen +100 zünden die Rettungslampe im Abfluss daneben (kickt die Kugel einmal zurück). Bonus am Kugelende. Rettung nur einmal pro Kugel, 4 s. Multiplikator zurück bei Kugelverlust. 3 Kugeln. Tasten: A/D, ←/→, Shift; Abschuss Leertaste/↓/S/Enter halten und loslassen. Handy: linke/rechte Hälfte (`multiTouch: true`), Abschuss halten und loslassen |
+| wurf | Wurfduell | Artillerie-Prinzip (wie Worms), rundenbasiert. Gelände als Höhenlinie `gnd[x]` (quer 1000 × 560, hochkant 520 × 700), Krater per `carve`, Wasser (Emscher) unten = baden = raus. Wind je Zug (Pollen fliegen mit). Zielen: Schleuder (irgendwo zurückziehen und loslassen) oder ←/→ Winkel, ↑/↓ Kraft, Leertaste; Q = Honigtopf (Aufprall, R 40, 45 Schaden) / Pollenbombe (hüpft, 3 s, R 34). Vorschau nur kurz ohne Wind. 30 s pro Zug. Gegen Wespen (Rangliste): Gegner-HP 50 + 15 × Runde, rechnet alle Würfe durch und zielt mit Streuung (wird je Runde genauer), Schaden × 5 Pkt, Volltreffer +100, Sieg +300 × Runde, du heilst 30 je Runde. Zu zweit: Biene gegen Hummel, wer zuerst 2 Runden gewinnt, `finish(0, {headline})` |
+
+### Offene Playtests (Nutzer testet als Nächstes, danach Feedback einarbeiten)
+- **Wurfduell** (neu in 2.19.0): Zielen am Handy, Wind, Stärke der Wespen, Pollenbombe.
+- **Honigknaller** (2.18.x): Bots (Gegen 3 Bots, Zu zweit + 2 Bots), Joystick am Handy, Wespen/Hornissen legen ab Level 1 Bomben, Reichweite startet bei 1, Blickrichtung hoch/runter.
+- **Honigflipper** (2.18.0): Rettung nur einmal pro Kugel, Abflüsse mit Rettungslampe, Wespe, Drehtor, Multiball, Bonus.
+- **Honigdieb** (2.18.0): Handy herausgezoomt, Kammerjäger näher. Am PC noch kein eigenes Feedback.
+- **Wespennest**: nie gezieltes Feedback bekommen.
+- Frühe Spiele (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz): kein Feedback seit dem Juice-Update notiert.
+Feedback bisher abgeschlossen: Hummelhopser (passt), A40-Flitzer, Pollenpfad, Wabenbau, Bienen-Solitär, Wabenwacht, Website-Abriss.
 
 ### Nächste Spiele (in dieser Reihenfolge)
-Wurfduell (Prinzip Xiao Xiao/Worms, rundenbasiert, gegen CPU oder zu zweit) → Wimmelbild (oder „Finde die Unterschiede“).
+Wimmelbild (oder „Finde die Unterschiede“).
 Ideenliste: Doodle-Jump-Prinzip.
 Gestrichen: Bubble Ball, Schach.
 
