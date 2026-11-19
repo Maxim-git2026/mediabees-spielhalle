@@ -57,7 +57,7 @@
         if (m.x < m.r || m.x > m.W - m.r) { m.vx *= -1; m.x = Math.max(m.r, Math.min(m.W - m.r, m.x)); }
         if (m.y < m.H * 0.2 || m.y > m.H * 0.88) { m.vy *= -1; m.y = Math.max(m.H * 0.2, Math.min(m.H * 0.88, m.y)); }
       },
-      tap: function (m, x, y) { if (Math.hypot(x - m.x, y - m.y) < m.r * 1.25) m.win = true; },
+      tap: function (m, x, y) { if (Math.hypot(x - m.x, y - m.y) < m.r * 1.25) m.win = true; else if (!m.trap) m.fail = 'Daneben!'; },
       draw: function (m, g, t, u) { g.save(); g.translate(m.x, m.y); if (m.vx < 0) g.scale(-1, 1); g.scale(u * 1.3, u * 1.3); art.wasp(g, Math.sin(t / 20)); g.restore(); }
     },
     {
@@ -83,7 +83,7 @@
           if (m.f.every(function (q) { return Math.hypot(q.x - p.x, q.y - p.y) > m.r * 2.6; })) m.f.push(p);
         }
       },
-      tap: function (m, x, y) { if (m.trap) { if (m.f.some(function (q) { return Math.hypot(x - q.x, y - q.y) < m.r * 1.3; })) m.fail = 'Reingefallen!'; return; } for (var i = 0; i < m.f.length; i++) if (!m.f[i].done && Math.hypot(x - m.f[i].x, y - m.f[i].y) < m.r * 1.3) { m.f[i].done = true; m.pop = m.f[i]; break; } if (m.f.every(function (q) { return q.done; })) m.win = true; },
+      tap: function (m, x, y) { if (m.trap) { if (m.f.some(function (q) { return Math.hypot(x - q.x, y - q.y) < m.r * 1.3; })) m.fail = 'Reingefallen!'; return; } var hitF = false; for (var i = 0; i < m.f.length; i++) if (!m.f[i].done && Math.hypot(x - m.f[i].x, y - m.f[i].y) < m.r * 1.3) { m.f[i].done = true; m.pop = m.f[i]; hitF = true; break; } if (!hitF && !m.f.some(function (q) { return q.done && Math.hypot(x - q.x, y - q.y) < m.r * 1.3; })) { m.fail = 'Daneben!'; return; } if (m.f.every(function (q) { return q.done; })) m.win = true; },
       draw: function (m, g, t, u) { m.f.forEach(function (p) { if (!p.done) drawFlower(g, p.x, p.y, m.r, t + p.x); }); }
     },
     {
@@ -107,6 +107,7 @@
       wx: function (m, i) { return m.W * (0.3 + i * 0.2); },
       tap: function (m, x, y) {
         for (var i = 0; i < 3; i++) if (Math.abs(x - GAMES[5].wx(m, i)) < m.W * 0.08 && y > m.H * 0.28) { GAMES[5].cutAt(m, i); return; }
+        if (!m.trap) m.fail = 'Daneben!';
       },
       key: function (m, k) { var i = '123'.indexOf(k); if (i >= 0) GAMES[5].cutAt(m, i); },
       draw: function (m, g, t, u) {
@@ -153,7 +154,7 @@
       update: function (m, dt) { m.t += dt; m.ask = m.t > m.T * 0.4; },
       btn: function (m, i) { var w = m.W * 0.22; return { x: m.W / 2 + (i - 1) * (w + 14) - w / 2, y: m.H * 0.8, w: w, h: m.H * 0.11 }; },
       choose: function (m, i) { if (!m.ask) return; if (m.opts[i] === m.n) m.win = true; else m.fail = 'Es waren ' + m.n + '!'; },
-      tap: function (m, x, y) { for (var i = 0; i < 3; i++) { var b = GAMES[7].btn(m, i); if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) GAMES[7].choose(m, i); } },
+      tap: function (m, x, y) { if (!m.ask) return; for (var i = 0; i < 3; i++) { var b = GAMES[7].btn(m, i); if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) { GAMES[7].choose(m, i); return; } } m.fail = 'Daneben!'; },
       key: function (m, k) { var i = '123'.indexOf(k); if (i >= 0) GAMES[7].choose(m, i); },
       draw: function (m, g, t, u) {
         if (!m.ask) m.b.forEach(function (p, i) { g.save(); g.translate(p.x, p.y + Math.sin(t / 200 + i) * 4); g.scale(u * 0.8, u * 0.8); art.bee(g, Math.sin(t / 20 + i)); g.restore(); });
@@ -173,7 +174,7 @@
       tap: function (m, x, y) {
         var best = null, bd = 40 * m.u;
         m.list.forEach(function (o) { var d = Math.hypot(x - o.x, y - o.y); if (d < bd) { bd = d; best = o; } });
-        if (!best) return;
+        if (!best) { if (!m.trap) m.fail = 'Daneben!'; return; }
         if (m.trap) { m.fail = 'Reingefallen!'; return; }
         if (best.bee) m.win = true; else m.fail = 'Das war eine Wespe!';
       },
@@ -205,7 +206,7 @@
     help: {
       legendTitle: 'Punkte',
       controls: [
-        { icons: ['tap'], text: 'Tippen, antippen und ziehen, je nach Aufgabe. Die Aufgabe steht groß oben', touch: true },
+        { icons: ['tap'], text: 'Tippen, antippen und ziehen, je nach Aufgabe. Die Aufgabe steht nur kurz am Anfang da. Wer etwas antippen soll und danebentippt, verliert ein Leben', touch: true },
         { icons: ['mouse-left'], text: 'Klicken und mit der Maus fahren, je nach Aufgabe', kb: true },
         { icons: ['kbd:←', 'kbd:→'], text: 'Bewegen beim Auffangen und Ausweichen', kb: true },
         { icons: ['kbd:Leertaste'], text: 'Pumpen (und lieber nicht beim roten Knopf)', kb: true },

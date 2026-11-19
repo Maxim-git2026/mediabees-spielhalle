@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.22.0
+Stable tag: 2.22.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.22.1 – 19.11.2026 =
+* Bienen-Blitz: Wer etwas antippen soll (Wespe, Blumen, Kabel, Biene finden, Antwort beim Zählen), muss es auch treffen. Danebentippen kostet ein Leben.
 
 = 2.22.0 – 19.11.2026 =
 * Neues Spiel: Wimmelpott. Ein Wimmelbild aus dem Ruhrpott (Kirmes, Wiese, Zeche), jede Runde neu zusammengewürfelt. Finde die drei gesuchten Dinge im Gewimmel, zum Beispiel „Biene mit Sonnenbrille“, „Blauer Ballon“ oder „Pommes Schranke“, bevor die Zeit abläuft. Falsch tippen kostet 3 Sekunden, ein Tipp kostet 5. Mit jedem Level wird es voller.
