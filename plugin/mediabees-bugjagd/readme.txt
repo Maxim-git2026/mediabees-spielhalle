@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.20.2
+Stable tag: 2.21.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -11,7 +11,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
-* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Honigknaller), flipper (Honigflipper), wurf (Wurfduell).
+* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wabenwacht), pfad (Pollenpfad), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Honigknaller), flipper (Honigflipper), wurf (Wurfduell), blitz (Bienen-Blitz).
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.21.0 – 19.11.2026 =
+* Neues Spiel: Bienen-Blitz. 10 Mini-Aufgaben von wenigen Sekunden, bunt gemischt: den roten Knopf NICHT drücken, Wespe erwischen, Honig auffangen, Blumen antippen, Honig pumpen, das richtige Kabel schneiden, Kohlebrocken ausweichen, Bienen zählen, die Biene zwischen Wespen finden und im gelben Feld stoppen. Alle 5 geschafften Aufgaben wird es schneller. Drei Fehler und es ist vorbei.
 
 = 2.20.2 – 19.11.2026 =
 * A40-Flitzer: Wer am Rand weiter lenkt, schrammt an der Leitplanke entlang. Funken, „NICHT DER LACK!“ und ein Kratzer. Beim dritten Kratzer ist Schluss.
