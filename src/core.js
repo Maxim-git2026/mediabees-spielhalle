@@ -699,9 +699,19 @@
       var g = S.game;
       if (!g || !S.inst) return;
       if (S.running && S.inst.abort) S.inst.abort();
-      var round = { gid: g.id, token: null, score: 0, done: false };
-      round.p = api('start', { method: 'POST', body: JSON.stringify({ game: g.id }) })
-        .then(function (d) { if (d && d.ok) round.token = d.token; });
+      var round = { gid: g.id, token: null, score: 0, done: false, tries: 0, err: '' };
+      /* Ticket holen. Klappt es nicht, während der Runde bis zu 3-mal neu versuchen */
+      function ticket() {
+        round.tries++;
+        return api('start', { method: 'POST', body: JSON.stringify({ game: g.id }) }).then(function (d) {
+          if (d && d.ok) { round.token = d.token; round.err = ''; return; }
+          round.err = (d && d.message) || 'Der Server hat nicht geantwortet.';
+          if (round.tries < 4 && !round.done && S.round === round) {
+            return new Promise(function (res) { setTimeout(res, 4000); }).then(function () { if (!round.done && S.round === round) return ticket(); });
+          }
+        });
+      }
+      round.p = ticket();
       S.round = round;
       S.running = true; S.paused = false;
       form.hidden = true; setFeedback('');
@@ -763,14 +773,26 @@
           entryText.textContent = 'Das reicht für Platz ' + pl + '! Trag dich ein.';
           if (S.lastName && !inName.value) inName.value = S.lastName;
           renderPodium(gid, score);
+          entryBlocked(false);
           form.hidden = false;
           inName.focus({ preventScroll: true });
           announce(base + ' Das reicht für Platz ' + pl + ' der Rangliste.');
+        } else if (!round.token && qualifies(gid, score)) {
+          /* Kein Ticket vom Server: Grund zeigen statt das Feld still wegzulassen */
+          entryText.textContent = 'Das hätte für die Rangliste gereicht, aber Eintragen klappt gerade nicht: ' + round.err + ' Lade die Seite neu und versuch es nochmal.';
+          entryBlocked(true);
+          form.hidden = false;
+          renderPodium(gid, 0);
+          announce(base + ' Eintragen gerade nicht möglich.');
         } else {
           renderPodium(gid, 0);
           announce(base);
         }
       });
+    }
+    function entryBlocked(on) {
+      Array.prototype.forEach.call(form.querySelectorAll('.mb4-label, .mb4-entry-row, .mb4-note'), function (el) { el.style.display = on ? 'none' : ''; });
+      setFeedback('');
     }
 
     if (allBtn) allBtn.addEventListener('click', function () { toggleAll(allBox.hidden); });

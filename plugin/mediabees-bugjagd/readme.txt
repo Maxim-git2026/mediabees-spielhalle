@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.19.1
+Stable tag: 2.19.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.19.2 – 19.11.2026 =
+* Rangliste: Klappt das Eintragen beim Spielstart nicht sofort, versucht es das Spiel während der Runde noch einmal. Geht es gar nicht, steht im Endbildschirm der Grund, statt dass das Namensfeld einfach fehlt.
+* Wurfduell: Die Wespen werfen jetzt auch Pollenbomben, vor allem wenn ein Hügel im Weg ist. Pollenbomben gibt es nur noch 2 pro Runde (für beide Seiten), den Honigtopf unbegrenzt. Der Knopf unten rechts zeigt, wie viele noch übrig sind.
 
 = 2.19.1 – 19.11.2026 =
 * „Spiel starten“ steht jetzt immer direkt unter dem Spieltext, die Anleitung darunter. Auf Tablet und Handy muss man den Knopf nicht mehr im Kasten suchen.

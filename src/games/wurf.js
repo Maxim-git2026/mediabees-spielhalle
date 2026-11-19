@@ -7,8 +7,8 @@
   var FOES = [['Wespe Walli', 0], ['Wespe Kalle', 0], ['Hornisse Horst', 1], ['Wespe Uschi', 0], ['Hornisse Hilde', 1], ['Wespe Ötte', 0], ['Hornisse Heinz', 1], ['Wespe Mia', 0]];
   /* Wurfgeschosse: Honigtopf platzt beim Aufprall, Pollenbombe hüpft und zündet nach 3 s */
   var WEAPONS = [
-    { name: 'Honigtopf', r: 40, dmg: 45 },
-    { name: 'Pollenbombe', r: 34, dmg: 40, fuse: 3 }
+    { name: 'Honigtopf', r: 40, dmg: 45, ammo: Infinity },
+    { name: 'Pollenbombe', r: 34, dmg: 40, fuse: 3, ammo: 2 }
   ];
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function gauss() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v); }
@@ -46,7 +46,7 @@
       ],
       legend: [
         { draw: function (g) { drawPot(g, 23, 25, 1.6, 0.3); }, text: 'Honigtopf: platzt beim Aufprall' },
-        { draw: function (g) { drawPollen(g, 23, 23, 1.6, 0); }, text: 'Pollenbombe: hüpft und zündet nach 3 Sekunden, gut hinter Hügel' },
+        { draw: function (g) { drawPollen(g, 23, 23, 1.6, 0); }, text: 'Pollenbombe (2 pro Runde): hüpft und zündet nach 3 Sekunden, gut hinter Hügel' },
         { draw: function (g) { g.translate(25, 24); g.scale(0.55, 0.55); art.wasp(g, 0.4); }, text: 'Schaden an der Wespe, je Lebenspunkt', val: '5' },
         { draw: function (g) { g.beginPath(); g.arc(23, 23, 12, 0, TAU); g.strokeStyle = '#FDC506'; g.lineWidth = 3; g.stroke(); g.beginPath(); g.arc(23, 23, 3, 0, TAU); g.fillStyle = '#FDC506'; g.fill(); }, text: 'Volltreffer', val: '100' },
         { draw: function (g) { g.fillStyle = '#FDC506'; g.font = '900 22px Poppins, sans-serif'; g.textAlign = 'center'; g.fillText('★', 23, 31); }, text: 'Wespe besiegt: Bonus je Runde, du heilst 30 Punkte', val: '300 × Runde' }
@@ -135,7 +135,8 @@
           i: i, cpu: cpu, kind: kind, name: i === 0 ? (st.duo ? 'Biene' : 'Du') : cpu ? foe[0] : 'Hummel',
           color: i === 0 ? '#FDC506' : cpu ? '#FF7A6B' : '#FF8AD8',
           x: x, y: groundAt(x), vx: 0, vy: 0, hp: hp, maxHp: hp, face: i ? -1 : 1,
-          a: i ? -Math.PI * 0.75 : -Math.PI * 0.25, p: 0.65, weapon: 0, hurt: -9999, dead: false
+          a: i ? -Math.PI * 0.75 : -Math.PI * 0.25, p: 0.65, weapon: 0, hurt: -9999, dead: false,
+          ammo: WEAPONS.map(function (w) { return w.ammo; })
         };
       }
 
@@ -181,25 +182,56 @@
         }
         return { x: x, y: y, lost: true };
       }
+      /* Pollenbombe: hüpft wie im echten Wurf und zündet nach 3 s */
+      function simulateBomb(p, a, P) {
+        var x = p.x + Math.cos(a) * 18, y = p.y - 18 + Math.sin(a) * 18, vx = Math.cos(a) * V * P, vy = Math.sin(a) * V * P, dt = 1 / 120, wa = st.wind * 70, fuse = WEAPONS[1].fuse;
+        for (var t = 0; t < fuse; t += dt) {
+          vx += wa * dt; vy += G * dt; x += vx * dt; y += vy * dt;
+          for (var i = 0; i < st.players.length; i++) { var q = st.players[i]; if ((q !== p || t > 0.25) && Math.hypot(x - q.x, y - (q.y - CHAR_R)) < CHAR_R + 5) return { x: x, y: y, hit: q }; }
+          var gy = groundAt(x);
+          if (y >= gy) {
+            var dy = (groundAt(x + 2) - groundAt(x - 2)) / 4, nl = Math.hypot(dy, 1), nx = dy / nl, ny = -1 / nl, vn = vx * nx + vy * ny;
+            if (vn < 0) { vx -= 1.45 * vn * nx; vy -= 1.45 * vn * ny; vx *= 0.85; vy *= 0.85; }
+            y = gy - 0.5;
+          }
+          if (x < -80 || x > W + 80 || y > WATER + 4) return { x: x, y: y, lost: true };
+        }
+        return { x: x, y: y };
+      }
+      function rate(r, p, target, R) {
+        var d = r.hit === target ? 0 : Math.hypot(r.x - target.x, r.y - (target.y - CHAR_R));
+        var sc = r.hit === target ? -100 : d;
+        if (r.hit === p || Math.hypot(r.x - p.x, r.y - (p.y - CHAR_R)) < R + CHAR_R + 10) sc += 500;
+        if (r.lost) sc += 300;
+        return sc;
+      }
       function cpuPlan(p, target) {
-        var best = null;
+        var best = null, bestB = null, useBomb = p.ammo[1] > 0;
         for (var a = -Math.PI + 0.12; a < -0.12; a += 0.05) {
           for (var P = 0.3; P <= 1.001; P += 0.035) {
-            var r = simulate(p, a, P);
-            var sc = r.hit === target ? -100 : Math.hypot(r.x - target.x, r.y - target.y);
-            if (r.hit === p || Math.hypot(r.x - p.x, r.y - p.y) < 60) sc += 500;
-            if (r.lost) sc += 300;
-            if (!best || sc < best.sc) best = { a: a, P: P, sc: sc };
+            var sc = rate(simulate(p, a, P), p, target, WEAPONS[0].r);
+            if (!best || sc < best.sc) best = { a: a, P: P, sc: sc, w: 0 };
+            if (useBomb) {
+              var sb = rate(simulateBomb(p, a, P), p, target, WEAPONS[1].r);
+              if (!bestB || sb < bestB.sc) bestB = { a: a, P: P, sc: sb, w: 1 };
+            }
           }
         }
+        /* Pollenbombe nehmen, wenn der Topf nicht gut durchkommt (Hügel im Weg) oder ab und zu zur Abwechslung */
+        var pick = best;
+        if (bestB && bestB.sc < 30 && (best.sc > 45 || Math.random() < 0.3)) pick = bestB;
         var lvl = st.round - 1, errA = Math.max(0.012, 0.1 * Math.pow(0.8, lvl)), errP = Math.max(0.012, 0.08 * Math.pow(0.8, lvl));
-        return { a: best.a + gauss() * errA, P: clamp(best.P * (1 + gauss() * errP), 0.2, 1) };
+        if (pick.w) { errA *= 0.6; errP *= 0.6; }
+        return { a: pick.a + gauss() * errA, P: clamp(pick.P * (1 + gauss() * errP), 0.2, 1), w: pick.w };
       }
 
       function throwShot(p) {
+        if (!(p.ammo[p.weapon] > 0)) p.weapon = 0;
         var wpn = WEAPONS[p.weapon];
+        p.ammo[p.weapon]--;
         st.shots.push({ x: p.x + Math.cos(p.a) * 18, y: p.y - 18 + Math.sin(p.a) * 18, vx: Math.cos(p.a) * V * p.p, vy: Math.sin(p.a) * V * p.p, kind: p.weapon, t: 0, owner: p, spin: 0, w: wpn });
         st.phase = 'fly'; st.hint = false;
+        if (!(p.ammo[p.weapon] > 0)) p.weapon = 0;
         p.face = Math.cos(p.a) >= 0 ? 1 : -1;
         p.throwT = st.t;
         ctx.tone(260, 620, 0.12, 'triangle', 0.05);
@@ -354,7 +386,8 @@
           var e = Math.min(1, (st.t - st.phaseT) / 1100);
           p.a += (st.plan.a - p.a) * Math.min(1, dt * 5); p.p += (st.plan.P - p.p) * Math.min(1, dt * 5);
           p.face = Math.cos(p.a) >= 0 ? 1 : -1;
-          if (e >= 1) { p.a = st.plan.a; p.p = st.plan.P; p.weapon = 0; throwShot(p); }
+          if (e < 0.05 && st.plan.w && p.weapon !== st.plan.w) { p.weapon = st.plan.w; ctx.fx.text(SX(p.x), SY(p.y - 92), WEAPONS[p.weapon].name + '!', '#FFD24A', 18); }
+          if (e >= 1) { p.a = st.plan.a; p.p = st.plan.P; p.weapon = st.plan.w || 0; throwShot(p); }
         }
         if (st.phase === 'fly' && !st.shots.length) { st.phase = 'settle'; st.phaseT = st.t + 500; }
         if (st.phase === 'settle' && st.t >= st.phaseT && !moving()) {
@@ -503,6 +536,9 @@
             rr(g, b.x, b.y, b.w, b.h, 14); g.fillStyle = 'rgba(17,17,17,0.85)'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#FDC506'; g.stroke();
             if (cp.weapon) drawPollen(g, b.x + b.w / 2, b.y + b.h * 0.42, b.w / 36, st.t); else drawPot(g, b.x + b.w / 2, b.y + b.h * 0.44, b.w / 34, 0);
             g.font = '700 9px Poppins, sans-serif'; g.textAlign = 'center'; g.fillStyle = '#FFFFFF'; g.fillText(WEAPONS[cp.weapon].name, b.x + b.w / 2, b.y + b.h - 9, b.w - 6);
+            var left = cp.ammo[1];
+            g.beginPath(); g.arc(b.x + b.w - 4, b.y + 4, 10, 0, TAU); g.fillStyle = left > 0 ? '#FFD24A' : '#555'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#111'; g.stroke();
+            g.fillStyle = '#111'; g.font = '900 11px Poppins, sans-serif'; g.textBaseline = 'middle'; g.fillText(String(left), b.x + b.w - 4, b.y + 5);
           }
           if (st.hint && st.phase === 'aim' && cp && !cp.cpu) {
             var txt = ctx.touch() ? 'Irgendwo zurückziehen und loslassen' : '← → zielen, ↑ ↓ Kraft, Leertaste wirft (oder Maus ziehen)';
@@ -569,9 +605,12 @@
       }
       function switchWeapon() {
         var p = cur(); if (!p || p.cpu || !(st.phase === 'aim' || st.phase === 'wait')) return;
-        p.weapon = 1 - p.weapon;
+        var next = p.weapon;
+        for (var n = 1; n <= WEAPONS.length; n++) { var c = (p.weapon + n) % WEAPONS.length; if (p.ammo[c] > 0) { next = c; break; } }
+        if (next === p.weapon) { ctx.fx.text(SX(p.x), SY(p.y - 70), 'Keine Pollenbomben mehr', '#FF7A6B', 16); ctx.tone(160, 140, 0.05, 'square', 0.02); return; }
+        p.weapon = next;
         ctx.tone(700, 900, 0.05, 'triangle', 0.03);
-        ctx.fx.text(SX(p.x), SY(p.y - 70), WEAPONS[p.weapon].name, '#FFE680', 18);
+        ctx.fx.text(SX(p.x), SY(p.y - 70), WEAPONS[p.weapon].name + (p.ammo[p.weapon] < Infinity ? ' (noch ' + p.ammo[p.weapon] + ')' : ''), '#FFE680', 18);
       }
 
       /* Maus und Finger: wie eine Schleuder zurückziehen und loslassen */
@@ -639,7 +678,7 @@
           if (kk === 'q' || kk === 'Q' || kk === 'e' || kk === 'E') { switchWeapon(); return true; }
           return false;
         },
-        _debug: function () { return { st: st, W: W, H: H, k: k, ox: ox, oy: oy, startGame: startGame, cpuPlan: cpuPlan, simulate: simulate, throwShot: throwShot }; }
+        _debug: function () { return { st: st, W: W, H: H, k: k, ox: ox, oy: oy, startGame: startGame, cpuPlan: cpuPlan, simulate: simulate, simulateBomb: simulateBomb, throwShot: throwShot }; }
       };
     }
   });
