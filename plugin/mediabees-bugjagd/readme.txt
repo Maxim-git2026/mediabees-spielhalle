@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.19.2
+Stable tag: 2.19.3
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.19.3 – 19.11.2026 =
+* Wurfduell: Figuren rutschen nicht mehr durch die Wabenmauer oder steile Wände, wenn eine Explosion sie dagegen schleudert. Sie prallen jetzt ab.
 
 = 2.19.2 – 19.11.2026 =
 * Rangliste: Klappt das Eintragen beim Spielstart nicht sofort, versucht es das Spiel während der Runde noch einmal. Geht es gar nicht, steht im Endbildschirm der Grund, statt dass das Namensfeld einfach fehlt.

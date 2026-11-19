@@ -355,7 +355,10 @@
           if (p.dead) return;
           var gy = groundAt(p.x);
           if (p.air || p.y < gy - 0.5) {
-            p.air = true; p.vy += G * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+            p.air = true; p.vy += G * dt; p.y += p.vy * dt;
+            /* Wand (Mauer, steiler Hang) höher als die Füße: abprallen statt durchrutschen */
+            var ax = p.x + p.vx * dt;
+            if (groundAt(ax) < p.y - 10) p.vx = -p.vx * 0.2; else p.x = ax;
             var g2 = groundAt(p.x);
             if (p.vy > 0 && p.y >= g2) {
               p.y = g2; p.air = false;
@@ -365,7 +368,11 @@
           } else {
             p.y = gy;
             p.vx *= Math.pow(0.01, dt); if (Math.abs(p.vx) < 4) p.vx = 0;
-            if (p.vx) { var nx2 = p.x + p.vx * dt; if (groundAt(nx2) > p.y + 12) p.air = true; else p.y = groundAt(nx2); p.x = nx2; }
+            if (p.vx) {
+              var nx2 = p.x + p.vx * dt, g3 = groundAt(nx2);
+              if (g3 < p.y - 10) p.vx = 0;
+              else { if (g3 > p.y + 12) p.air = true; else p.y = g3; p.x = nx2; }
+            }
           }
           if (p.y > WATER + 6) {
             p.dead = true; p.drowned = true; p.hp = 0;
