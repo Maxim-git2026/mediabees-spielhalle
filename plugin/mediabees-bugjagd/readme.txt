@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.19.0
+Stable tag: 2.19.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.19.1 – 19.11.2026 =
+* „Spiel starten“ steht jetzt immer direkt unter dem Spieltext, die Anleitung darunter. Auf Tablet und Handy muss man den Knopf nicht mehr im Kasten suchen.
+* Der Chat-Knopf „Kann ich dir helfen?“ verschwindet, solange das Spiel im Bild ist, und verdeckt nichts mehr.
 
 = 2.19.0 – 19.11.2026 =
 * Neues Spiel: Wurfduell. Biene gegen Wespe auf den Halden im Ruhrgebiet: abwechselnd Honigtöpfe werfen, den Wind beachten und das Gelände wegsprengen. Wer ins Wasser fällt, geht baden. Allein gegen immer stärkere Wespen und Hornissen (mit Rangliste) oder zu zweit an einem Gerät. Zielen wie mit einer Schleuder: zurückziehen und loslassen. Zweites Wurfgeschoss: die hüpfende Pollenbombe.
