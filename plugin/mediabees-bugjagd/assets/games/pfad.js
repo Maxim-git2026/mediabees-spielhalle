@@ -80,7 +80,7 @@
   var KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', W: 'up', s: 'down', S: 'down', a: 'left', A: 'left', d: 'right', D: 'right' };
   /* Abwechselnd verteilen und jagen, in Sekunden */
   var MODES = [7, 20, 7, 20, 5, 1e9];
-  /* Level 1: 2 Wespen, jedes Level eine mehr, ab Level 4 alle fünf */
+  /* Level 1: 4 Wespen wie beim Vorbild, ab Level 2 alle fünf */
   var WASPS = [
     { name: 'Rüpel', kind: 'jagd', body: '#FF5A4A', stripe: '#2A0E0A', corner: { x: 17, y: -3 }, start: { x: 9, y: 7 }, out: 0 },
     { name: 'Zufall', kind: 'zufall', body: '#FFD400', stripe: '#111', corner: { x: 1, y: 23 }, start: { x: 10, y: 9 }, out: 2 },
@@ -187,7 +187,7 @@
       function resetActors() {
         var p = st.maze.rows.reduce(function (acc, row, y) { var x = row.indexOf('P'); return x >= 0 ? { x: x, y: y } : acc; }, null);
         st.bee = { x: p.x, y: p.y, dx: 0, dy: 0, want: null, face: { x: 1, y: 0 }, mouth: 0 };
-        st.ghosts = WASPS.slice(0, Math.min(WASPS.length, st.level + 1)).map(function (w, i) {
+        st.ghosts = WASPS.slice(0, Math.min(WASPS.length, st.level + 3)).map(function (w, i) {
           return { ghost: true, i: i, w: w, x: w.start.x, y: w.start.y, dx: i ? 0 : -1, dy: 0, state: i ? 'house' : 'chase', outAt: w.out, bob: Math.random() * TAU };
         });
         st.fright = 0; st.chain = 0;
@@ -411,9 +411,9 @@
         if (st.levelDone) {
           if (st.t >= st.levelDone) {
             st.levelDone = 0; st.level++; loadGrid(); resetActors(); paintWalls();
-            var nw = Math.min(WASPS.length, st.level + 1);
+            var nw = Math.min(WASPS.length, st.level + 3);
             ctx.fx.banner('Level ' + st.level + ': ' + st.maze.name, st.maze.line, 34);
-            if (st.level <= WASPS.length - 1) pop(cssW / 2, oy + T * 13, 'Eine Wespe mehr: ' + WASPS[nw - 1].name + '!', '#FF7A6B', true);
+            if (st.level + 3 <= WASPS.length) pop(cssW / 2, oy + T * 13, 'Eine Wespe mehr: ' + WASPS[nw - 1].name + '!', '#FF7A6B', true);
             ctx.fx.flash('255,255,255', 0.5);
           }
           return;

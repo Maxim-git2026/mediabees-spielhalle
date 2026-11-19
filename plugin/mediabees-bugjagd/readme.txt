@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.19.4
+Stable tag: 2.20.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,13 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.20.0 – 19.11.2026 =
+* Pollenpfad: Schon in Level 1 sind 4 Wespen unterwegs, ab Level 2 alle 5.
+* Bienen-Solitär: Das Spiel rechnet im Hintergrund nach, ob ein Sieg noch möglich ist. Wenn nicht, erscheint „Kein Gewinn mehr möglich!“ mit „Zug zurück“ und „Runde beenden“. Wer will, tippt daneben und spielt trotzdem weiter.
+* Honigknaller allein: Die Wespen starten in den drei anderen Ecken. Alle Bomben treffen jetzt auch Wespen, auch die eigenen der Wespen (dafür gibt es keine Punkte). Wachsblöcke fangen die Explosion ab, dahinter brennt nichts mehr. Wer stirbt, verliert alle Extras. Alle 5 Level gibt es ein Extra-Leben, höchstens 3. Wespen klauen auch Extras.
+* Honigflipper: Ein Tor oben an der Abschussbahn lässt die Kugel nicht mehr zurückrollen. Neu ist die Honigsaft-Anzeige: Jeder Flipperschlag kostet Saft, Treffer füllen ihn auf. Ist er leer, bewegen sich die Flipper nicht mehr. Dazu gibt es oben links eine kleine Kugel für 250 Punkte.
+* Wurfduell: Rechtsklick während des Ziehens bricht den Wurf ab (auf dem Handy: zurück zum Startpunkt ziehen). Die Wabenmauer setzt man jetzt einfach mit einem Klick auf die Seite, auf der sie stehen soll.
 
 = 2.19.4 – 19.11.2026 =
 * Honigdieb auf dem Handy: neue Steuerung ohne Wischen. Linke Bildschirmhälfte halten duckt die Biene (im Sprung geht es schnell nach unten), rechte Hälfte tippen springt. Unten zeigen zwei Markierungen, welche Seite was macht. Vorher hat Runterwischen oft erst einen Sprung ausgelöst.

@@ -61,7 +61,8 @@
         { draw: function (g) { g.translate(26, 24); g.scale(0.55, 0.55); art.hornet(g, 0.4); }, text: 'Hornisse, schneller und schlauer. Wespen und Hornissen legen auch selbst Bomben!', val: '200' },
         { draw: function (g) { drawPower(g, 'bomb', 23, 23, 15, 0); }, text: 'Extra: eine Bombe mehr' },
         { draw: function (g) { drawPower(g, 'fire', 23, 23, 15, 0); }, text: 'Extra: größere Reichweite' },
-        { draw: function (g) { drawPower(g, 'speed', 23, 23, 15, 0); }, text: 'Extra: schneller laufen' }
+        { draw: function (g) { drawPower(g, 'speed', 23, 23, 15, 0); }, text: 'Extra: schneller laufen. Wer stirbt, verliert alle Extras. Wespen klauen auch Extras' },
+        { draw: function (g) { g.translate(25, 24); g.scale(0.45, 0.45); art.bee(g, 0.3); }, text: 'Alle 5 Level ein Extra-Leben (höchstens 3)' }
       ]
     },
     cta: { path: 'unsere-leistungen/', text: 'Wir räumen auch auf deiner Website mit alten Baustellen auf. Sprich uns an.' },
@@ -112,7 +113,7 @@
       function buildLevel() {
         st.grid = []; st.bombs = []; st.flames = []; st.powers = []; st.enemies = [];
         var dens = Math.min(0.72, 0.5 + st.level * 0.03);
-        var n = st.duo ? st.players.length : 1;
+        var n = st.duo ? st.players.length : 4;
         var safe = function (x, y) {
           for (var i = 0; i < n; i++) { var c = corner(i); if (Math.abs(x - c[0]) + Math.abs(y - c[1]) <= 2) return true; }
           return false;
@@ -127,11 +128,21 @@
           st.grid.push(row);
         }
         if (!st.duo) {
-          var nW = 2 + st.level, nH = Math.floor(st.level / 2), free = [];
-          for (var yy = 1; yy < ROWS - 1; yy++) for (var xx = 1; xx < COLS - 1; xx++) if (!st.grid[yy][xx] && xx + yy > 6) free.push([xx, yy]);
+          /* Wespen starten in den drei anderen Ecken (abwechselnd), bei vielen Wespen auch weiter innen */
+          var nW = 2 + st.level, nH = Math.floor(st.level / 2), free = [], groups = [[], [], []];
+          for (var yy = 1; yy < ROWS - 1; yy++) for (var xx = 1; xx < COLS - 1; xx++) {
+            if (st.grid[yy][xx]) continue;
+            var placed = false;
+            for (var ci = 1; ci <= 3; ci++) { var cc = corner(ci); if (Math.abs(xx - cc[0]) + Math.abs(yy - cc[1]) <= 2) { groups[ci - 1].push([xx, yy, Math.abs(xx - cc[0]) + Math.abs(yy - cc[1])]); placed = true; } }
+            if (!placed && xx + yy > 8) free.push([xx, yy]);
+          }
+          groups.forEach(function (gr) { gr.sort(function (a, b) { return a[2] - b[2]; }); });
           free.sort(function () { return Math.random() - 0.5; });
-          for (var i = 0; i < nW + nH && free.length; i++) {
-            var f = free.pop();
+          var order = [];
+          for (var gi = 0; gi < 6; gi++) for (var gc = 0; gc < 3; gc++) if (groups[gc][gi]) order.push(groups[gc][gi]);
+          order = order.concat(free);
+          for (var i = 0; i < nW + nH && order.length; i++) {
+            var f = order.shift();
             st.enemies.push({ x: f[0], y: f[1], tx: f[0], ty: f[1], hornet: i >= nW, dir: [0, 0], dead: 0, bob: rnd(0, 6), nextBomb: st.t + rnd(3000, 9000) });
           }
         }
@@ -291,7 +302,7 @@
         /* Wespen und Hornissen legen schon ab Level 1 selbst Bomben, wenn die Biene in der Nähe ist */
         if (st.t > e.nextBomb && !st.respawn && !st.levelEnd) {
           e.nextBomb = st.t + (e.hornet ? rnd(5000, 8000) : rnd(8000, 13000)) - Math.min(3000, st.level * 250);
-          var p0 = st.players[0], hr = 1 + Math.floor(st.level / 5);
+          var p0 = st.players[0], hr = Math.max(1 + Math.floor(st.level / 5), e.range || 1);
           if (p0 && !p0.dead && Math.abs(p0.x - e.x) + Math.abs(p0.y - e.y) < 10 && !bombAt(e.x, e.y)) {
             var esc = escapeAfterBomb(e.x, e.y, hr, 3);
             if (esc && esc.dir) {
@@ -344,8 +355,9 @@
           for (var i = 1; i <= b.range; i++) {
             var x = b.x + d[0] * i, y = b.y + d[1] * i, c = cell(x, y);
             if (c === 2) break;
-            cells.push([x, y]);
+            /* Wachsblock fängt die Explosion ab: er zerbröselt, aber dort brennt kein Feuer */
             if (c === 1) { st.grid[y][x] = 0; crumble(x, y, b.foe); break; }
+            cells.push([x, y]);
             var other = bombAt(x, y); if (other) { other.t = FUSE - 0.05; break; }
           }
         });
@@ -365,7 +377,8 @@
           st.powers.push({ x: x, y: y, k: r < 0.4 ? 'bomb' : r < 0.8 ? 'fire' : 'speed', protect: true });
         }
       }
-      function inFlame(x, y, friendly) { for (var i = 0; i < st.flames.length; i++) if (st.flames[i].x === x && st.flames[i].y === y && !(friendly && st.flames[i].foe)) return true; return false; }
+      function inFlame(x, y) { return !!flameAt(x, y); }
+      function flameAt(x, y) { for (var i = 0; i < st.flames.length; i++) if (st.flames[i].x === x && st.flames[i].y === y) return st.flames[i]; return null; }
 
       function hurtPlayer(p) {
         if (p.dead || st.t < p.inv) return;
@@ -389,8 +402,15 @@
           st.respawn = st.t + 1400;
         }
       }
-      function killEnemy(e) {
+      function killEnemy(e, foe) {
         e.dead = st.t;
+        /* Von einer Wespenbombe erwischt: weg, aber ohne Punkte */
+        if (foe) {
+          ctx.fx.ring(px(e.x), py(e.y), '#FF7A6B', C * 1.3, 4, 380);
+          ctx.fx.text(px(e.x), py(e.y) - C * 0.6, 'Eigentor!', '#FF7A6B', 18);
+          ctx.tone(400, 150, 0.12, 'triangle', 0.04);
+          return;
+        }
         st.kills++;
         var pts = e.hornet ? 200 : 100;
         st.chain = (st.t - (st.lastKill || -9999) < 120) ? st.chain + 1 : 1;
@@ -420,13 +440,18 @@
           var keep = st.players[0];
           st.players = [newPlayer(0)]; st.players[0].bombs = keep.bombs; st.players[0].range = keep.range; st.players[0].speed = keep.speed;
           buildLevel();
-          ctx.fx.banner('Level ' + st.level, '#FDC506', 36); ctx.fx.flash('255,255,255', 0.5);
+          if (st.level % 5 === 0 && st.lives < LIVES) {
+            st.lives++;
+            ctx.fx.banner('Level ' + st.level + ': Extra-Leben!', '#8DD45A', 34); ctx.fx.flash('141,212,90', 0.5);
+            ctx.tone(523, 1046, 0.2, 'triangle', 0.06); ctx.tone(784, 1568, 0.2, 'triangle', 0.05, 0.12);
+          } else { ctx.fx.banner('Level ' + st.level, '#FDC506', 36); ctx.fx.flash('255,255,255', 0.5); }
         }
         if (st.respawn && st.t >= st.respawn) {
           st.respawn = 0;
           if (st.lives <= 0) { st.over = true; return; }
           var old = st.players[0], np = newPlayer(0);
-          np.bombs = old.bombs; np.range = Math.max(1, old.range - 1); np.speed = old.speed; np.inv = st.t + 2500;
+          /* Wer stirbt, verliert alle Extras */
+          np.inv = st.t + 2500;
           st.players[0] = np;
           [[1, 1], [2, 1], [1, 2]].forEach(function (c) { if (st.grid[c[1]][c[0]] === 1) st.grid[c[1]][c[0]] = 0; });
           st.enemies.forEach(function (e) { if (!e.dead && Math.abs(e.x - 1) + Math.abs(e.y - 1) < 4) { st.grid[ROWS - 2][COLS - 2] = 0; e.x = e.tx = COLS - 2; e.y = e.ty = ROWS - 2; } });
@@ -461,9 +486,21 @@
         /* Wespen */
         st.enemies.forEach(function (e) {
           if (e.dead) return;
-          stepEntity(e, e.hornet ? 3 + st.level * 0.1 : 2 + st.level * 0.08, dt, chooseEnemy);
+          stepEntity(e, (e.hornet ? 3 + st.level * 0.1 : 2 + st.level * 0.08) + (e.fast || 0), dt, chooseEnemy);
           var ex = Math.round(e.x), ey = Math.round(e.y);
-          if (inFlame(ex, ey, true)) { killEnemy(e); return; }
+          var fl = flameAt(ex, ey);
+          if (fl) { killEnemy(e, fl.foe); return; }
+          /* Wespen klauen Extras */
+          for (var pi = st.powers.length - 1; pi >= 0; pi--) {
+            var pw2 = st.powers[pi];
+            if (pw2.protect || pw2.x !== ex || pw2.y !== ey) continue;
+            st.powers.splice(pi, 1);
+            if (pw2.k === 'fire') e.range = Math.min(3, (e.range || 1) + 1);
+            else if (pw2.k === 'speed') e.fast = Math.min(1.5, (e.fast || 0) + 0.5);
+            else e.nextBomb -= 3000;
+            ctx.fx.text(px(ex), py(ey) - C * 0.7, 'Geklaut!', '#FF7A6B', 16);
+            ctx.tone(500, 250, 0.1, 'square', 0.03);
+          }
           st.players.forEach(function (p) { if (!p.dead && Math.abs(p.x - e.x) + Math.abs(p.y - e.y) < 0.7) hurtPlayer(p); });
         });
         st.enemies = st.enemies.filter(function (e) { return !e.dead || st.t - e.dead < 500; });

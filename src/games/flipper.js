@@ -28,7 +28,7 @@
     });
     return {
       walls: walls,
-      bumpers: [{ x: 140, y: 232, r: 25, hit: 0 }, { x: 260, y: 232, r: 25, hit: 0 }, { x: 200, y: 304, r: 25, hit: 0 }],
+      bumpers: [{ x: 140, y: 232, r: 25, hit: 0 }, { x: 260, y: 232, r: 25, hit: 0 }, { x: 200, y: 304, r: 25, hit: 0 }, { x: 74, y: 166, r: 15, hit: 0, pts: 250, small: true }],
       posts: [{ x: 125, y: 132, r: 5 }, { x: 175, y: 132, r: 5 }, { x: 225, y: 132, r: 5 }, { x: 275, y: 132, r: 5 }],
       lanes: [{ x: 150, lit: false }, { x: 200, lit: false }, { x: 250, lit: false }],
       targets: [0, 1, 2, 3, 4].map(function (i) { return { x: 34, y: 296 + i * 26, h: 20, up: true, hit: 0, letter: 'BIENE'[i] }; }),
@@ -56,6 +56,8 @@
       ],
       legend: [
         { draw: function (g) { g.beginPath(); g.arc(23, 23, 15, 0, TAU); g.fillStyle = '#E9A800'; g.fill(); g.lineWidth = 3; g.strokeStyle = '#FDC506'; g.stroke(); }, text: 'Honigtopf-Bumper', val: '100' },
+        { draw: function (g) { g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(4, 19, 38, 8); g.fillStyle = '#FDC506'; g.fillRect(5, 20, 24, 6); }, text: 'Honigsaft: Jeder Flipperschlag kostet Saft, Treffer füllen auf. Ist er leer, bewegen sich die Flipper nicht mehr' },
+        { draw: function (g) { g.beginPath(); g.arc(23, 23, 11, 0, TAU); g.fillStyle = '#E9A800'; g.fill(); g.lineWidth = 3; g.strokeStyle = '#FDC506'; g.stroke(); }, text: 'Kleine Kugel oben links', val: '250' },
         { draw: function (g) { g.translate(25, 24); g.scale(0.55, 0.55); art.wasp(g, 0.4); }, text: 'Fliegende Wespe treffen, jede dritte erhöht den Multiplikator', val: '750' },
         { draw: function (g) { for (var i = 0; i < 5; i++) { g.fillStyle = '#FDC506'; g.fillRect(6 + i * 7, 12, 5, 22); } }, text: 'Alle fünf BIENE-Ziele: Bonus und höherer Multiplikator', val: '2.500' },
         { draw: function (g) { g.beginPath(); g.arc(23, 23, 13, 0, TAU); g.fillStyle = '#2A1A08'; g.fill(); g.lineWidth = 3; g.strokeStyle = '#FF9F1A'; g.stroke(); }, text: 'Kugel im Honigtopf versenken, beim dritten Mal Multiball (alles doppelt)', val: '500' },
@@ -88,7 +90,7 @@
           on: false, paused: false, over: false, t: 0, last: 0,
           table: buildTable(), flippers: fl, list: [], ball: null, balls: BALLS, score: 0, mult: 1, maxMult: 1,
           plunger: 0, charging: false, waiting: true, saveUntil: 0, saveUsed: false, bumps: 0, biene: 0, wasps: 0, parts: [], drained: 0, hint: true,
-          sinks: 0, multi: false, ballStats: { bumps: 0, targets: 0, spins: 0, wasps: 0 }
+          sinks: 0, multi: false, ballStats: { bumps: 0, targets: 0, spins: 0, wasps: 0 }, juice: 100, gateT: -9999
         };
       }
       function newBall() {
@@ -126,7 +128,7 @@
           b.vx -= (1 + s.e) * vn * nx; b.vy -= (1 + s.e) * vn * ny;
           if (s.kind === 'sling' && vn < -80) {
             b.vx += nx * 620; b.vy += ny * 620;
-            addScore(10); st.slingHit = s; st.slingT = st.t;
+            addScore(10); juice(0.5); st.slingHit = s; st.slingT = st.t;
             ctx.fx.ring(SX(q.x), SY(q.y), '#FFFFFF', 30 * k, 3, 260);
             burst(q.x, q.y, ['#FF8AD8', '#FFFFFF'], 5, 180);
             ctx.tone(700, 400, 0.05, 'square', 0.03);
@@ -197,13 +199,19 @@
         b.vy += GRAV * dt;
         b.x += b.vx * dt; b.y += b.vy * dt;
         T.walls.forEach(function (s) { collideSeg(b, s, BR); });
+        /* Tor oben an der Abschussbahn: Die Kugel kommt raus, aber nicht mehr zurück */
+        if (b.x > 350 && b.x < 380 && oy0 <= 204 && b.y > 204 && b.vy > 0) {
+          b.y = 204; b.vy = -b.vy * 0.45; b.vx -= 140; st.gateT = st.t;
+          ctx.tone(260, 200, 0.05, 'triangle', 0.025);
+        }
         T.posts.forEach(function (p) { collideCircle(b, p, BR + p.r, 0.5); });
         T.bumpers.forEach(function (bp) {
           var hit = collideCircle(b, bp, BR + bp.r, 0.6);
           if (hit) {
-            b.vx += hit.nx * 700; b.vy += hit.ny * 700;
+            b.vx += hit.nx * (bp.small ? 560 : 700); b.vy += hit.ny * (bp.small ? 560 : 700);
             bp.hit = 1; st.bumps++; st.ballStats.bumps++;
-            addScore(100);
+            var gotB = addScore(bp.pts || 100); juice(bp.small ? 4 : 2);
+            if (bp.small) ctx.fx.text(SX(bp.x), SY(bp.y) - 24 * k, '+' + gotB, '#FF8AD8', 16);
             ctx.fx.ring(SX(bp.x), SY(bp.y), '#FDC506', (bp.r + 26) * k, 5, 360);
             ctx.fx.shake(0.08, 3);
             burst(bp.x, bp.y, ['#FDC506', '#FFE680', '#FFFFFF'], 8, 220);
@@ -215,7 +223,7 @@
           var s = { ax: tg.x, ay: tg.y, bx: tg.x, by: tg.y + tg.h, e: 0.4 };
           if (collideSeg(b, s, BR + 3)) {
             tg.up = false; tg.hit = 1; st.ballStats.targets++;
-            addScore(250);
+            addScore(250); juice(4);
             ctx.fx.ring(SX(tg.x), SY(tg.y + tg.h / 2), '#FFE680', 30 * k, 3, 300);
             ctx.tone(900, 1300, 0.07, 'triangle', 0.04);
             if (T.targets.every(function (x) { return !x.up; })) {
@@ -233,7 +241,7 @@
           var wh = collideCircle(b, w, BR + w.r, 0.7);
           if (wh) {
             b.vx += wh.nx * 300; b.vy += wh.ny * 300;
-            w.gone = st.t; st.wasps++; st.ballStats.wasps++;
+            w.gone = st.t; st.wasps++; st.ballStats.wasps++; juice(12);
             var got = addScore(750);
             ctx.fx.boom(SX(w.x), SY(w.y), '#FFE680', '253,197,6', 0.7);
             ctx.fx.text(SX(w.x), SY(w.y) - 26 * k, 'Wespe! +' + got, '#FFE680', 22);
@@ -247,7 +255,7 @@
         if (b.x > sp0.x - sp0.w / 2 && b.x < sp0.x + sp0.w / 2 && (oy0 - sp0.y) * (b.y - sp0.y) < 0) {
           sp0.v = Math.min(60, Math.abs(b.vy) / 25);
           var spins = Math.max(1, Math.round(Math.abs(b.vy) / 160));
-          st.ballStats.spins += spins;
+          st.ballStats.spins += spins; juice(spins * 0.5);
           var gotS = addScore(25 * spins);
           ctx.fx.text(SX(sp0.x), SY(sp0.y) - 18 * k, '+' + gotS, '#C7CDD9', 16);
           for (var q = 0; q < Math.min(spins, 6); q++) ctx.tone(1200 + q * 90, 1100, 0.03, 'square', 0.015, q * 0.04);
@@ -256,7 +264,7 @@
         /* Bahnen oben */
         if (b.y > 120 && b.y < 145 && b.vy > 0) T.lanes.forEach(function (ln) {
           if (Math.abs(b.x - ln.x) < 16 && !ln.lit) {
-            ln.lit = true; addScore(50);
+            ln.lit = true; addScore(50); juice(3);
             ctx.fx.ring(SX(ln.x), SY(132), '#FDC506', 22 * k, 3, 300); ctx.tone(1000, 1300, 0.06, 'triangle', 0.03);
             if (T.lanes.every(function (x) { return x.lit; })) {
               raiseMult();
@@ -267,7 +275,7 @@
         /* Rückläufe zu den Flippern: Rettung im Abfluss daneben zünden */
         T.inl.forEach(function (il, i) {
           if (Math.abs(b.x - il.x) < 12 && oy0 < 520 && b.y >= 520 && b.vy > 0) {
-            addScore(100); il.lit = true; il.t = st.t;
+            addScore(100); il.lit = true; il.t = st.t; juice(3);
             if (!T.kick[i].lit) { T.kick[i].lit = true; ctx.fx.text(SX(il.x), SY(500), 'Rettung an!', '#7FD3FF', 15); }
             ctx.fx.ring(SX(il.x), SY(520), '#7FD3FF', 22 * k, 3, 300); ctx.tone(1100, 1500, 0.06, 'triangle', 0.03);
           }
@@ -287,7 +295,7 @@
         var sc = T.saucer, ds = Math.hypot(b.x - sc.x, b.y - sc.y);
         if (ds < sc.r && Math.hypot(b.vx, b.vy) < 700 && !(b.cool > st.t) && !st.list.some(function (x) { return x.held; })) {
           b.held = st.t + 1100; b.x = sc.x; b.y = sc.y; b.vx = b.vy = 0;
-          st.sinks++;
+          st.sinks++; juice(8);
           var gotH = addScore(500);
           ctx.fx.boom(SX(sc.x), SY(sc.y), '#FF9F1A', '255,159,26', 0.8);
           ctx.fx.text(SX(sc.x), SY(sc.y) - 30 * k, 'Honigtopf! +' + gotH, '#FFE680', 20);
@@ -307,6 +315,12 @@
         if (sp < 25 && b.y < 590) { b.still += dt; if (b.still > 2.5) { b.vx = rnd(-200, 200); b.vy = -rnd(150, 300); b.still = 0; } } else b.still = 0;
         /* Kugel weg */
         if (b.y > TH + 30) drain(b);
+      }
+      /* Honigsaft: jeder Flipperschlag kostet, Treffer füllen auf. Leer = Flipper bewegen sich nicht */
+      function juice(n) {
+        var was = st.juice;
+        st.juice = Math.max(0, Math.min(100, st.juice + n));
+        if (was <= 0 && st.juice > 0) ctx.fx.text(SX(200), SY(560), 'Honigsaft wieder da!', '#FDC506', 18);
       }
       function startMulti() {
         st.multi = true; st.sinks = 0;
@@ -351,7 +365,7 @@
         st.ball = null;
         if (st.balls <= 0) { ctx.fx.banner('Letzte Kugel weg!' + (bonus ? ' ' + bonusTxt : ''), '#FF7A6B'); st.drained = st.t; return; }
         ctx.fx.banner('Kugel weg!' + (bonus ? ' ' + bonusTxt : ' Noch ' + st.balls), '#FF7A6B');
-        st.mult = 1; st.saveUsed = false;
+        st.mult = 1; st.saveUsed = false; juice(25);
         newBall();
       }
       function launch() {
@@ -380,9 +394,18 @@
         /* Flipper-Eingaben */
         var L = keys.a || keys.A || keys.ArrowLeft || keys.Shift_L || touches.left, R = keys.d || keys.D || keys.ArrowRight || keys.Shift_R || touches.right;
         var inPlay = st.list.some(function (b) { return !(b === st.ball && st.waiting); });
-        if (L && !st.flippers[0].up && inPlay) ctx.tone(180, 140, 0.04, 'square', 0.02);
-        if (R && !st.flippers[1].up && inPlay) ctx.tone(180, 140, 0.04, 'square', 0.02);
-        st.flippers[0].up = !!L && inPlay; st.flippers[1].up = !!R && inPlay;
+        var hasJuice = st.juice > 0;
+        [[L, 0], [R, 1]].forEach(function (q) {
+          var f = st.flippers[q[1]];
+          if (q[0] && !f.up && inPlay && hasJuice) {
+            ctx.tone(180, 140, 0.04, 'square', 0.02);
+            st.juice = Math.max(0, st.juice - 2);
+            if (st.juice <= 0) { ctx.fx.banner('Honigsaft leer!', '#FF7A6B', 30); ctx.tone(300, 90, 0.4, 'sawtooth', 0.04); }
+          }
+          if (q[0] && !f.up && inPlay && !hasJuice && !f.dry) { f.dry = true; ctx.tone(120, 100, 0.06, 'square', 0.02); }
+          if (!q[0]) f.dry = false;
+          f.up = !!q[0] && inPlay && (hasJuice || f.up);
+        });
         if (st.waiting && st.charging) st.plunger = Math.min(1, st.plunger + dt * 1.1);
         st.list.forEach(function (b) {
           if (b.held && st.t >= b.held) {
@@ -455,7 +478,7 @@
           g.beginPath(); g.arc(0, 0, bp.r, 0, TAU); g.fillStyle = bp.hit > 0.3 ? '#FFE680' : '#E9A800'; g.fill();
           g.lineWidth = 4; g.strokeStyle = '#FDC506'; g.stroke();
           g.beginPath(); g.arc(0, 0, bp.r * 0.55, 0, TAU); g.fillStyle = '#7A4A1A'; g.fill();
-          g.fillStyle = '#FDC506'; g.font = '900 12px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('100', 0, 1);
+          g.fillStyle = '#FDC506'; g.font = '900 ' + (bp.small ? 9 : 12) + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(bp.pts || 100), 0, 1);
           g.restore();
         });
         T.targets.forEach(function (tg) {
@@ -500,13 +523,22 @@
         });
         st.parts.forEach(function (pt) { g.globalAlpha = Math.max(0, 1 - pt.t / pt.life); g.beginPath(); g.arc(pt.x, pt.y, pt.size, 0, TAU); g.fillStyle = pt.c; g.fill(); });
         g.globalAlpha = 1;
+        /* Tor an der Abschussbahn */
+        var gl2 = st.t - st.gateT < 200;
+        g.strokeStyle = gl2 ? '#FFFFFF' : 'rgba(253,197,6,0.8)'; g.lineWidth = gl2 ? 4 : 3; g.setLineDash([5, 3]);
+        g.beginPath(); g.moveTo(352, 206); g.lineTo(378, 206); g.stroke(); g.setLineDash([]);
         /* Anzeige oben im Tisch */
         g.textAlign = 'center'; g.textBaseline = 'middle';
         g.font = '900 22px Poppins, sans-serif'; g.lineWidth = 5; g.lineJoin = 'round'; g.strokeStyle = 'rgba(17,17,17,0.85)';
         var sTxt = st.score.toLocaleString('de-DE'); g.strokeText(sTxt, 200, 62); g.fillStyle = '#FFFFFF'; g.fillText(sTxt, 200, 62);
         g.font = '700 11px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.75)';
         g.fillText('Kugel ' + Math.min(BALLS, BALLS - st.balls + 1) + '/' + BALLS + (st.mult > 1 ? '  ·  ×' + st.mult : '') + (st.multi ? '  ·  MULTIBALL' : ''), 200, 86);
-        if (st.t < st.saveUntil && !st.waiting && !st.saveUsed) { g.fillStyle = blink ? '#7FD3FF' : 'rgba(127,211,255,0.5)'; g.font = '800 9px Poppins, sans-serif'; g.fillText('RETTUNG AKTIV', 200, 103); }
+        /* Honigsaft-Anzeige */
+        var jw = 120, jx = 200 - jw / 2, jy = 99, jf = st.juice / 100;
+        rr(g, jx, jy, jw, 8, 4); g.fillStyle = 'rgba(0,0,0,0.6)'; g.fill();
+        if (jf > 0) { rr(g, jx + 1, jy + 1, (jw - 2) * jf, 6, 3); g.fillStyle = jf > 0.4 ? '#FDC506' : jf > 0.15 ? '#FF9F1A' : (blink ? '#FF5A4A' : '#992A20'); g.fill(); }
+        g.font = '800 8px Poppins, sans-serif'; g.fillStyle = st.juice > 0 ? 'rgba(255,255,255,0.7)' : '#FF7A6B'; g.fillText(st.juice > 0 ? 'HONIGSAFT' : 'HONIGSAFT LEER', 200, jy + 16);
+        if (st.t < st.saveUntil && !st.waiting && !st.saveUsed) { g.fillStyle = blink ? '#7FD3FF' : 'rgba(127,211,255,0.5)'; g.font = '800 9px Poppins, sans-serif'; g.fillText('RETTUNG AKTIV', 200, 127); }
         if (st.on && st.hint && st.waiting && !st.paused) {
           var txt = ctx.touch() ? 'Halten und loslassen schießt die Kugel ab' : 'Leertaste halten und loslassen';
           g.font = '700 12px Poppins, sans-serif';

@@ -275,8 +275,115 @@
         }
         return false;
       }
+      /* Löser im Hintergrund: Das Spiel kennt die verdeckten Karten und rechnet nach, ob ein Sieg noch möglich ist.
+         Stapel und Ablage zählen als frei wählbar (1 Karte ziehen, beliebig oft durchgehen). Nur wenn die Suche
+         vollständig durchläuft und nichts findet, heißt es „kein Gewinn mehr möglich“, sonst wird nichts behauptet. */
+      var solveTimer = 0;
+      function solverKick() {
+        clearTimeout(solveTimer); st.solver = null; st.lost = false; st.lostSeen = false;
+        if (!st.on || st.won || st.auto) return;
+        solveTimer = setTimeout(solverStart, 300);
+      }
+      function solverStart() {
+        if (!st.on || st.won || st.auto) return;
+        var s0 = {
+          t: st.tab.map(function (col) { var h = 0; while (h < col.length && !col[h].up) h++; return { h: h, c: col.map(function (c) { return c.s * 13 + c.r - 1; }) }; }),
+          f: st.found.map(function (f) { return f.length; }),
+          p: st.stock.concat(st.waste).map(function (c) { return c.s * 13 + c.r - 1; }).sort(function (a, b) { return a - b; })
+        };
+        var job = { stack: [s0], seen: new Set(), nodes: 0 };
+        st.solver = job;
+        (function chunk() {
+          if (st.solver !== job) return;
+          var res = solveSteps(job, 600);
+          if (res === 'win' || res === 'cap') { st.solver = null; return; }
+          if (res === 'lost') {
+            st.solver = null;
+            if (!st.stuck && !st.won) { st.lost = true; ctx.fx.flash('255,74,61', 0.35); ctx.tone(330, 160, 0.35, 'sawtooth', 0.035); }
+            return;
+          }
+          setTimeout(chunk, 16);
+        })();
+      }
+      function sRank(c) { return c % 13 + 1; }
+      function sRed(c) { return SUITS[Math.floor(c / 13)].red; }
+      function sFits(c, col) {
+        if (col.c.length === 0) return sRank(c) === 13;
+        if (col.c.length <= col.h) return false;
+        var t = col.c[col.c.length - 1];
+        return sRed(t) !== sRed(c) && sRank(t) === sRank(c) + 1;
+      }
+      function sKey(x) {
+        return x.f.join('.') + '|' + x.p.join(',') + '|' + x.t.map(function (col) { return col.h + ':' + col.c.join(','); }).sort().join('/');
+      }
+      function sClone(x) { return { t: x.t.slice(), f: x.f.slice(), p: x.p }; }
+      function sPop(x, i, n) {
+        var col = x.t[i], c = col.c.slice(0, col.c.length - n), h = col.h;
+        if (c.length === h && h > 0) h--;
+        x.t[i] = { h: h, c: c };
+      }
+      function solveSteps(job, budget) {
+        while (budget-- > 0) {
+          if (!job.stack.length) return 'lost';
+          if (job.nodes > 40000) return 'cap';
+          var x = job.stack.pop(), key = sKey(x);
+          if (job.seen.has(key)) continue;
+          job.seen.add(key); job.nodes++;
+          var sum = x.f[0] + x.f[1] + x.f[2] + x.f[3];
+          if (sum === 52 || (!x.p.length && x.t.every(function (col) { return col.h === 0; }))) return 'win';
+          var kids = [], i, j, k, c, y;
+          /* Ablage (Fundament) */
+          for (i = 0; i < 7; i++) {
+            var col = x.t[i];
+            if (col.c.length > col.h) {
+              c = col.c[col.c.length - 1];
+              if (x.f[Math.floor(c / 13)] === sRank(c) - 1) { y = sClone(x); y.f[Math.floor(c / 13)]++; sPop(y, i, 1); kids.push([3, y]); }
+            }
+          }
+          for (k = 0; k < x.p.length; k++) {
+            c = x.p[k];
+            if (x.f[Math.floor(c / 13)] === sRank(c) - 1) { y = sClone(x); y.f[Math.floor(c / 13)]++; y.p = x.p.slice(0, k).concat(x.p.slice(k + 1)); kids.push([3, y]); }
+          }
+          /* Tableau zu Tableau (auch Teilstapel) */
+          for (i = 0; i < 7; i++) {
+            var src = x.t[i];
+            for (k = src.h; k < src.c.length; k++) {
+              c = src.c[k];
+              for (j = 0; j < 7; j++) {
+                if (j === i || !sFits(c, x.t[j])) continue;
+                if (!x.t[j].c.length && k === 0) continue;
+                y = sClone(x);
+                y.t[j] = { h: x.t[j].h, c: x.t[j].c.concat(src.c.slice(k)) };
+                sPop(y, i, src.c.length - k);
+                kids.push([k === src.h && k > 0 ? 2 : 0, y]);
+              }
+            }
+          }
+          /* Stapel zu Tableau */
+          for (k = 0; k < x.p.length; k++) {
+            c = x.p[k];
+            for (j = 0; j < 7; j++) {
+              if (!sFits(c, x.t[j])) continue;
+              y = sClone(x); y.t[j] = { h: x.t[j].h, c: x.t[j].c.concat([c]) }; y.p = x.p.slice(0, k).concat(x.p.slice(k + 1)); kids.push([1, y]);
+            }
+          }
+          /* Zurück von der Ablage */
+          for (i = 0; i < 4; i++) {
+            if (!x.f[i]) continue;
+            c = i * 13 + x.f[i] - 1;
+            for (j = 0; j < 7; j++) {
+              if (!x.t[j].c.length || !sFits(c, x.t[j])) continue;
+              y = sClone(x); y.f[i]--; y.t[j] = { h: x.t[j].h, c: x.t[j].c.concat([c]) }; kids.push([-1, y]);
+            }
+          }
+          kids.sort(function (a, b) { return a[0] - b[0]; });
+          for (i = 0; i < kids.length; i++) job.stack.push(kids[i][1]);
+        }
+        return 'busy';
+      }
       function checkStuck() {
         var was = st.stuck;
+        solverKick();
         st.stuck = st.on && !st.won && !st.auto && !hasMoves();
         if (st.stuck && !was) {
           ctx.fx.flash('255,74,61', 0.5); ctx.fx.shake(0.2, 6);
@@ -408,15 +515,16 @@
         g.fillStyle = 'rgba(255,255,255,0.75)'; g.font = '700 14px Poppins, sans-serif'; g.textAlign = 'center';
         g.fillText(m + ':' + (s < 10 ? '0' : '') + s + '  ·  ' + foundCount() + '/52', cssW / 2, by + BAR / 2 + 1);
         /* Keine Züge mehr: blinkender Hinweis mit zwei Knöpfen */
-        if (st.stuck && !st.paused) {
+        if ((st.stuck || (st.lost && !st.lostSeen)) && !st.paused) {
           var bh2 = Math.min(170, cssH * 0.34), byy = (cssH - BAR) / 2 - bh2 / 2;
           g.fillStyle = 'rgba(10,10,10,0.88)'; g.fillRect(0, byy, cssW, bh2);
           g.fillStyle = '#FDC506'; g.fillRect(0, byy, cssW, 3); g.fillRect(0, byy + bh2 - 3, cssW, 3);
           g.textAlign = 'center'; g.textBaseline = 'middle';
           g.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(performance.now() / 300));
           g.font = '900 ' + Math.min(30, cssW / 12) + 'px Poppins, sans-serif'; g.fillStyle = '#FF7A6B';
-          g.fillText('Keine Züge mehr!', cssW / 2, byy + bh2 * 0.3);
+          g.fillText(st.stuck ? 'Keine Züge mehr!' : 'Kein Gewinn mehr möglich!', cssW / 2, byy + bh2 * 0.3);
           g.globalAlpha = 1;
+          if (!st.stuck) { g.font = '600 12px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.65)'; g.fillText('Woanders tippen: trotzdem weiterspielen', cssW / 2, byy + bh2 - 16); }
           stuckButtons().forEach(function (b) {
             rr(g, b.x, b.y, b.w, b.h, b.h / 2); g.fillStyle = b.main ? '#FDC506' : 'rgba(0,0,0,0)'; g.fill();
             g.lineWidth = 2; g.strokeStyle = b.main ? '#FDC506' : '#FFFFFF'; g.stroke();
@@ -502,10 +610,12 @@
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         e.preventDefault();
         var p = local(e);
-        if (st.stuck) {
+        if (st.stuck || (st.lost && !st.lostSeen)) {
+          var used = false;
           stuckButtons().forEach(function (b) {
-            if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h) { if (b.k === 'undo') undo(); else st.over = true; }
+            if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h) { used = true; if (b.k === 'undo') undo(); else st.over = true; }
           });
+          if (!used && !st.stuck) st.lostSeen = true;
           return;
         }
         if (p.y > cssH - BAR) {
@@ -587,7 +697,7 @@
           if (e.key === 'u' || e.key === 'U' || e.key === 'Backspace') { if (!e.repeat && !st.won) undo(); return true; }
           return false;
         },
-        _debug: function () { return { st: st, places: places, colX: colX, cw: cw, ch: ch, topY: topY, tabY: tabY, moveTo: moveTo, checkWin: checkWin }; }
+        _debug: function () { return { st: st, places: places, colX: colX, cw: cw, ch: ch, topY: topY, tabY: tabY, moveTo: moveTo, checkWin: checkWin, solveSteps: solveSteps, solverStart: solverStart }; }
       };
     }
   });

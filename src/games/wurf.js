@@ -46,7 +46,9 @@
         { icons: ['kbd:←', 'kbd:→'], text: 'Zielen (auch A/D), Maus: ziehen und loslassen', kb: true },
         { icons: ['kbd:↑', 'kbd:↓'], text: 'Wurfkraft (auch W/S)', kb: true },
         { icons: ['kbd:Leertaste'], text: 'Werfen', kb: true },
-        { icons: ['kbd:Q'], text: 'Wurfgeschoss wechseln (Knopf unten rechts)' },
+        { icons: ['kbd:Q'], text: 'Wurfgeschoss wechseln (Knopf unten rechts). Wabenmauer: auf die Seite klicken, wo sie hin soll' },
+        { icons: ['kbd:Rechtsklick'], text: 'Beim Ziehen mit der Maus: Wurf abbrechen', kb: true },
+        { icons: ['swipe'], text: 'Zurück zum Startpunkt ziehen und loslassen bricht den Wurf ab', touch: true },
         { icons: ['kbd:Esc'], text: 'Pause und Menü', kb: true }
       ],
       legend: [
@@ -697,6 +699,7 @@
       function local(e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
       cv.addEventListener('pointerdown', function (e) {
         if (!st.on || st.paused) return;
+        if (e.pointerType === 'mouse' && e.button === 2) { cancelDrag(); e.preventDefault(); return; }
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         e.preventDefault();
         var q = local(e);
@@ -705,11 +708,31 @@
         if (q.x >= b2.x && q.x <= b2.x + b2.w && q.y >= b2.y && q.y <= b2.y + b2.h) { switchWeapon(); return; }
         var p = cur();
         if (!p || p.cpu || st.phase !== 'aim') return;
+        /* Wabenmauer: einfach auf die Seite klicken, auf der sie stehen soll */
+        if (WEAPONS[p.weapon].wall) { sideTo(p, q); placeWall(p); return; }
         try { cv.setPointerCapture(e.pointerId); } catch (err) {}
-        drag = { id: e.pointerId, x0: q.x, y0: q.y, x: q.x, y: q.y, on: false };
+        drag = { id: e.pointerId, x0: q.x, y0: q.y, x: q.x, y: q.y, on: false, a0: p.a, p0: p.p };
       });
+      function sideTo(p, q) { var wx = (q.x - ox) / k; p.a = wx >= p.x ? -0.3 : -Math.PI + 0.3; p.face = wx >= p.x ? 1 : -1; }
+      /* Rechtsklick während des Ziehens: Wurf abbrechen, Pfeil zurück wie vorher */
+      function cancelDrag() {
+        if (!drag) return;
+        var p = cur();
+        if (p && !p.cpu) { p.a = drag.a0; p.p = drag.p0; p.face = Math.cos(p.a) >= 0 ? 1 : -1; ctx.fx.text(SX(p.x), SY(p.y - 70), 'Abgebrochen', '#FFFFFF', 16); ctx.tone(300, 200, 0.06, 'triangle', 0.025); }
+        try { cv.releasePointerCapture(drag.id); } catch (err) {}
+        drag = null;
+      }
+      cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+      cv.addEventListener('mousedown', function (e) { if (e.button === 2 && drag) { e.preventDefault(); cancelDrag(); } });
       cv.addEventListener('pointermove', function (e) {
-        if (!drag || drag.id !== e.pointerId) return;
+        if (!drag) {
+          /* Maus über dem Feld: Vorschau der Mauer folgt der Seite */
+          var hp = cur();
+          if (e.pointerType === 'mouse' && hp && !hp.cpu && st.phase === 'aim' && WEAPONS[hp.weapon].wall) sideTo(hp, local(e));
+          return;
+        }
+        if (drag.id !== e.pointerId) return;
+        if (e.pointerType === 'mouse' && (e.buttons & 2)) { cancelDrag(); return; }
         var q = local(e), p = cur();
         drag.x = q.x; drag.y = q.y;
         var dx = drag.x0 - q.x, dy = drag.y0 - q.y, len = Math.hypot(dx, dy);
