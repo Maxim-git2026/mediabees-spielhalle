@@ -122,6 +122,8 @@ Gibt es keine Elementor-404-Vorlage, zeigt die 404 als Rückfall nur die Spielha
 Die alte Option `intro` wird ignoriert.
 
 ## Hinweise zur Live-Seite
+- Auf mediabees.de läuft das Chat-Widget „Thor“ (`.thor-chat-host`). Die Spielhalle blendet es aus, solange das Spiel im Bild ist
+  (Klasse `mb4-game-near` auf `<html>`, Regeln am Ende von `arcade.css`). Weitere Schwebe-Widgets dort ergänzen.
 - Im Plugin „Admin Site Enhancements“ muss „Redirect 404 to Homepage“ **aus** sein.
 - Test-URL: jede nicht vorhandene Adresse, z. B. https://mediabees.de/pollen-test-404
 

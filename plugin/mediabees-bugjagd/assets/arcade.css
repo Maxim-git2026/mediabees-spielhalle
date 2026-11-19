@@ -132,6 +132,10 @@ html.mb4-noscroll,html.mb4-noscroll body{overflow:hidden!important}
 /* Overlays */
 #mb404 .mb4-overlay{position:absolute;inset:0;z-index:5;display:flex;padding:20px;overflow:auto;background:rgba(17,17,17,.88);text-align:center}
 #mb404 .mb4-view>*{order:1}
+/* „Spiel starten“ steht immer direkt unter dem Text, die Anleitung darunter. So ist der Knopf auch bei
+   kleinem Spielfeld (Handy, Tablet) sofort zu sehen, ohne im Kasten zu scrollen. */
+#mb404 .mb4-view [data-start]{order:2}
+#mb404 .mb4-view .mb4-help{order:3}
 #mb404 .mb4-view{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:720px;margin:auto}
 #mb404 .mb4-view p{margin:0}
 #mb404 .mb4-rank{font-size:clamp(24px,3vw,34px);font-weight:900;line-height:1.15;color:var(--mb-yellow)}
@@ -203,8 +207,6 @@ html.mb4-noscroll,html.mb4-noscroll body{overflow:hidden!important}
 
 @media (max-width:640px){
   #mb404 .mb4-overlay{padding:14px}
-  #mb404 .mb4-view [data-start]{order:2}
-  #mb404 .mb4-view .mb4-help{order:3}
   #mb404 .mb4-view{gap:10px}
   #mb404 .mb4-result{font-size:15px}
   #mb404 .mb4-help-txt{font-size:14px}
@@ -284,3 +286,9 @@ html.mb4-noscroll,html.mb4-noscroll body{overflow:hidden!important}
   #mb404 .mb4-all .mb4-h3{font-size:20px}
   #mb404 .mb4-all-btn{width:100%}
 }
+
+/* Schwebende Chat-Knöpfe anderer Plugins ausblenden, solange das Spiel im Bild ist (Klasse setzt arcade.js).
+   Weitere Widgets einfach hier mit Komma ergänzen. */
+html.mb4-game-near .thor-chat-host,
+html.mb4-noscroll .thor-chat-host{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.thor-chat-host{transition:opacity .2s ease,visibility .2s ease}

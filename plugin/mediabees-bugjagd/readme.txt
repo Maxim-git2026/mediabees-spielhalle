@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.18.1
+Stable tag: 2.18.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.18.2 – 19.11.2026 =
+* „Spiel starten“ steht jetzt immer direkt unter dem Spieltext, die Anleitung darunter. Auf Tablet und Handy muss man den Knopf nicht mehr im Kasten suchen.
+* Der Chat-Knopf „Kann ich dir helfen?“ verschwindet, solange das Spiel im Bild ist, und verdeckt nichts mehr.
 
 = 2.18.1 – 05.11.2026 =
 * Honigknaller allein: Schon ab Level 1 legen Wespen und Hornissen selbst Bomben, wenn die Biene in der Nähe ist. Hornissen öfter als Wespen. Ihre eigenen Bomben tun ihnen nichts, dir aber schon.
