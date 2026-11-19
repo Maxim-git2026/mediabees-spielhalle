@@ -99,6 +99,7 @@
     },
     {
       id: 'wire', text: function (m) { return m.trap ? 'SCHNEIDE KEIN KABEL!' : 'SCHNEIDE DAS ' + m.want[0] + ' KABEL!'; }, timeout: false, failText: 'Falsches Kabel!', trappable: true,
+      time: function (l) { return Math.max(3, 5 - l * 0.5); }, timeoutBoom: 'Zu spät! Die Bombe ist hoch.',
       cutAt: function (m, i) { m.cut = i; if (m.trap) { m.fail = 'Reingefallen!'; m.boom = true; } else if (m.wires[i] === m.want) m.win = true; else { m.fail = 'Falsches Kabel!'; m.boom = true; } },
       init: function (m, W, H, u) {
         m.wires = WIRES.slice().sort(function () { return Math.random() - 0.5; }).slice(0, 3);
@@ -113,7 +114,9 @@
       draw: function (m, g, t, u) {
         rr(g, m.W * 0.2, m.H * 0.3, m.W * 0.6, m.H * 0.12, 10 * u); g.fillStyle = '#3A3A3A'; g.fill();
         g.fillStyle = '#E5322D'; g.font = '900 ' + Math.round(20 * u) + 'px "Courier New", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
-        g.fillText('00:0' + Math.max(0, 9 - Math.floor(t / 300) % 10), m.W / 2, m.H * 0.36);
+        var left = Math.max(0, m.left === undefined ? 5 : m.left);
+        if (left < 1.5 && Math.floor(t / 120) % 2) g.fillStyle = '#FFE680';
+        g.fillText('00:0' + left.toFixed(1).replace('.', ','), m.W / 2, m.H * 0.36);
         for (var i = 0; i < 3; i++) {
           var x = GAMES[5].wx(m, i), c = m.wires[i][1];
           g.lineCap = 'round'; g.lineWidth = 12 * u; g.strokeStyle = '#111';
@@ -240,7 +243,8 @@
         u = Math.max(0.6, Math.min(W, H * 1.2) / 640);
       }
       function lvl() { return st.speed - 1; }
-      function playTime() { return Math.max(2.1, 4.4 - lvl() * 0.32); }
+      /* Spielzeit: allgemein 4,4 s bis 2,1 s, einzelne Aufgaben haben eine eigene (Bombe: 5 s bis 3 s) */
+      function playTime(gm) { gm = gm || st.gm; if (gm && gm.time) return gm.time(lvl()); return Math.max(2.1, 4.4 - lvl() * 0.32); }
       function cardTime() { return (st.cardSpeed ? 1.6 : Math.max(0.8, 1.25 - lvl() * 0.08)); }
       function introTime() { return Math.max(0.6, 1.1 - lvl() * 0.07); }
 
@@ -253,7 +257,7 @@
         /* Selten und nie zweimal hintereinander, damit es wirklich überrascht */
         m.trap = (gm.trappable || gm.trapSelf) && st.wins >= 3 && !st.lastTrap && Math.random() < Math.min(0.2, 0.1 + lvl() * 0.02);
         st.lastTrap = m.trap;
-        gm.init(m, W, H, u, lvl(), playTime());
+        gm.init(m, W, H, u, lvl(), playTime(gm));
         st.gm = gm; st.m = m; st.phase = 'intro'; st.pt = st.t;
         ctx.tone(520, 780, 0.08, 'triangle', 0.04);
       }
@@ -298,6 +302,8 @@
         if (st.phase === 'intro' && age >= introTime()) { st.phase = 'play'; st.pt = st.t; }
         else if (st.phase === 'play') {
           var m = st.m, gm = st.gm;
+          var lastLeft = m.left; m.left = playTime() - age;
+          if (gm.id === 'wire' && lastLeft !== undefined && Math.ceil(lastLeft) !== Math.ceil(m.left) && m.left > 0) ctx.tone(m.left < 1.5 ? 1500 : 1100, 900, 0.05, 'square', 0.03);
           if (gm.update) gm.update(m, dt, { left: keys.ArrowLeft || keys.a || keys.A, right: keys.ArrowRight || keys.d || keys.D }, u);
           if (m.pop) { burst(m.pop.x, m.pop.y, ['#FF8AD8', '#FDC506', '#FFFFFF'], 10, 200); ctx.tone(880, 1320, 0.06, 'triangle', 0.04); m.pop = null; }
           if (m.trap && !gm.trapSelf) {
@@ -308,7 +314,7 @@
             if (st.phase === 'result' && st.m.res) ctx.fx.text(W / 2, H * 0.38, 'Nicht reingefallen!', '#FFE680', 22);
           } else if (m.win) resolve(true);
           else if (m.fail) resolve(false, m.fail);
-          else if (age >= playTime()) resolve(m.trap ? false : !!gm.timeout, m.trap ? gm.trapFail : gm.timeout ? null : gm.failText);
+          else if (age >= playTime()) { if (gm.timeoutBoom && !m.trap) m.boom = true; resolve(m.trap ? false : !!gm.timeout, m.trap ? gm.trapFail : gm.timeoutBoom || (gm.timeout ? null : gm.failText)); }
           if (st.phase === 'result' && st.m.res && gm.id === 'nopush' && !m.trap) ctx.fx.text(W / 2, H * 0.38, 'Stark geblieben!', '#FFE680', 20);
         } else if (st.phase === 'result' && age >= (st.nuke && st.t - st.nuke < 3000 ? 2.2 : 0.8)) {
           st.nuke = 0;

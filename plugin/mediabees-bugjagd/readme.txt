@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.22.1
+Stable tag: 2.22.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.22.2 – 19.11.2026 =
+* Bienen-Blitz: Die Bombenuhr beim Kabelschneiden zählt jetzt echt herunter, mit Zehntelsekunden und Ticken. Anfangs hast du 5 Sekunden, mit jeder Stufe weniger, bis nur noch 3 Sekunden bleiben. Wer nicht schneidet, dem fliegt die Bombe um die Ohren.
 
 = 2.22.1 – 19.11.2026 =
 * Bienen-Blitz: Wer etwas antippen soll (Wespe, Blumen, Kabel, Biene finden, Antwort beim Zählen), muss es auch treffen. Danebentippen kostet ein Leben.
