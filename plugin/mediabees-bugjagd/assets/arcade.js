@@ -529,6 +529,14 @@
     document.addEventListener('webkitfullscreenchange', function () { afterFs(); if (!fsEl()) pause(true); });
     renderFs();
 
+    /* Fremde Schwebe-Knöpfe (z. B. der Chat „Kann ich dir helfen?“) ausblenden, solange das Spiel im Bild ist,
+       damit sie nichts vom Spielfeld verdecken. Welche Knöpfe das sind, steht im CSS bei „mb4-game-near“. */
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) {
+        document.documentElement.classList.toggle('mb4-game-near', en[0].isIntersecting);
+      }, { threshold: 0.15 }).observe(player);
+    }
+
     function ensureVisible() {
       if (isFs()) return;
       var r = player.getBoundingClientRect();
