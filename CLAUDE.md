@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.30.2**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.30.3**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -101,6 +101,8 @@ Gestrichen: Bubble Ball, Schach.
 - **Technik umgesetzt:** interne Auflösung W = Bühnenbreite/2,6–3 (200–440 px), Höhe passend, HUD gestochen scharf darunter (`hudH`). Boden/Decke je Pixel, Wände per DDA, Türen als Ebene in Feldmitte (gleiten seitlich, `open` 0–1, schließen nach 4 s), Geheimwände = Tür-Art `S` mit Riss-Textur der Nachbarwand (Nische als Hinweis), Türrahmen `J`. Licht: Zonen-Grundlicht × Farbton + Lampen (`l`, Sichtlinie) je Feld, an Ecken gemittelt, bilinear; Waschkaue flackert, Arena Alarm-Rot. Helmlampe (`P.lamp`, Item `y` in der Lampenstube) = Kegel in Bildmitte. Senkrecht zielen = Horizont verschieben (`P.pitch`), am Handy ignoriert (Auto-Zielen). Treffer per Strahl (`hitscan`) mit Höhenprüfung. Gegner: Wegekarte per Breitensuche (`computeFlow`), Sichtlinie, Lärm weckt (`noiseAlert`), öffnen normale Türen. Feuerbälle, Fass-Explosionen (Kette), Kamikaze explodiert bei Berührung oder Tod.
 - **Feedback 1 (2.30.1):** Nutzer: „Holy shit ist das GEIL“, spielt nur auf Steiger. Wand-Texturen waren gespiegelt (u-Spiegelung in `render3D` war für die y-nach-unten-Welt falsch herum). Musik: ruhige Ebene läuft immer (Zupfgitarre `pluck` mit Echo, `pad`, Akkordfolge `CALM`), Metal blendet bei Gegnern darüber. Gesicht: Grundausdruck grimmig (Augenbrauen schräg, Lider halb), `smirk` ab und zu, Zähne bei hurt ≥ 2. Hautfarbe: Nutzer wollte sie im Hauptmenü wählbar → Menüpunkt „Kumpel-Look“ (`set.skin`, `SKINS`: braun, honig, hell; Standard braun; wird wie alle Einstellungen nicht gespeichert).
 - **Rampage-Gesicht (2.30.2):** Dauerfeuer > 2 s (`P.holdT`) → `rampage` im Gesicht (steile Brauen, gefletschte Zähne). Wunsch des Nutzers, Detail wie beim Vorbild. Kachel-Vorschaubild = grimmiger Kumpel. **Rote Augen nur bei Gegnern**, die Biene hat immer schwarze Pupillen (auch beim Berserker).
+- **Pausenmenü (2.30.3):** Spiel setzt `ownPause: true` → der Kern reicht Esc an `key()` weiter (statt eigener Pause). Esc im Spiel bzw. Verlust des Pointer-Locks (Browser schluckt Esc dabei) → `openPause()`: halb durchsichtig über dem Spiel (`drawPauseOverlay`, `st.menuOpen`, Liste über `drawItems`), Einstellungen (`settingRows`), Hautfarbe (`skinRow`), „Hauptmenü (Runde abbrechen)“ (`toTitle`, ohne Wertung). Handy: Pause-Knopf oben rechts. Fenster verlassen/Tab wechseln pausiert weiter über den Kern.
+- **Schwierigkeit:** Nutzer: „Steiger ist richtig schön schwer“ → so lassen.
 - **Maus:** Spielerin fand sie zu schnell → Grund-Tempo 0,0012 rad/px (vorher 0,0022), Pitch 0,18, Touch-Drehen 0,0065. Im Spiel + / − ändert `set.sens` (0,2–3).
 - **Level** als Textraster in `00-kopf.js` (`LEVEL1.map`/`zone`), Generator mit Prüfung (Erreichbarkeit, roter Ausgang) im Scratchpad `boom/map.py`. Wichtig: Gegenstand vor einer Geheimwand darf den Weg nicht blockieren.
 - **Zum Testen** `MBArcade.current()._debug()`: `startGame(diff)`, `tp(x,y,a)`, `give()`, `god()`, `fire()`, `useAction()`, `finishLevel()`.
@@ -165,6 +167,7 @@ Die Liste lässt sich jederzeit neu erzeugen (alle `ranks`, `startText`, `cta` u
 - Fehlt beim Rundenende das Ticket (`round.token`), versucht `core.js` es während der Runde bis zu 3-mal neu und zeigt sonst im Endscreen den Grund (`round.err`) statt des Namensfelds.
 - Punkte kommen aus dem Browser, Ranglisten lassen sich mit Aufwand fälschen. Gegenmittel: `max_score`/`sec_per_point` und Löschen im Admin. Nutzer (2.29): reicht für jetzt (Spaß/Easter Egg). Vor einem Gewinnspiel die Obergrenzen je Spiel an echte Bestwerte anpassen (z. B. Flipper 2 Mio. ist sehr großzügig) und Prüfvorbehalt in die Teilnahmebedingungen.
 - Während einer Runde zählt nur ein Finger (`isPrimary`-Filter in `core.js`), außer das Spiel setzt `multiTouch: true` (Steuerkreuz + Knopf).
+- Spiele mit eigenem Pausenmenü setzen `ownPause: true` (Kern gibt Esc an `key()`), Kern-API zusätzlich `ctx.pause()` und `ctx.audio()` (Web-Audio nur bei Ton an).
 - Spiele ohne Rangliste geben `finish(0, { headline, line })` zurück: Punkte 0 = kein Eintrag, eigene Überschrift im Endscreen.
 
 ## Oberfläche

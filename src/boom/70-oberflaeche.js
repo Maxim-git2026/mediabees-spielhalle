@@ -104,16 +104,18 @@
       }
 
       /* ---------------------------------------------------------------- Touch-Steuerung */
-      var joy = null, look = null, btn = { fire: null, use: null, swap: null };
+      var joy = null, look = null, btn = { fire: null, use: null, swap: null, pause: null };
       function touchLayout() {
         var vh = cssH - hudH, r = clamp(Math.min(cssW, vh) * 0.11, 30, 56);
         var right = set.joyLeft;
         btn.fire = { x: right ? cssW - r * 1.5 : r * 1.5, y: vh - r * 1.4, r: r };
         btn.use = { x: right ? cssW - r * 3.4 : r * 3.4, y: vh - r * 0.9, r: r * 0.62 };
         btn.swap = { x: right ? cssW - r * 1.5 : r * 1.5, y: vh - r * 3.6, r: r * 0.55 };
+        btn.pause = { x: cssW - 26, y: Math.max(26, vh * 0.12), r: 18 };
       }
       function drawTouch() {
         touchLayout();
+        var pb = btn.pause; g.globalAlpha = 0.6; g.beginPath(); g.arc(pb.x, pb.y, pb.r, 0, TAU); g.fillStyle = '#3A3F46'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#FDC506'; g.stroke(); g.globalAlpha = 1; g.fillStyle = '#FFF'; g.fillRect(pb.x - pb.r * 0.35, pb.y - pb.r * 0.4, pb.r * 0.25, pb.r * 0.8); g.fillRect(pb.x + pb.r * 0.1, pb.y - pb.r * 0.4, pb.r * 0.25, pb.r * 0.8);
         [['fire', '#E5322D'], ['use', '#3A3F46'], ['swap', '#3A3F46']].forEach(function (b) {
           var o = btn[b[0]];
           g.globalAlpha = held.touchFire && b[0] === 'fire' ? 0.9 : 0.55;
@@ -174,21 +176,39 @@
           l.push({ t: 'Zurück', go: back });
           return l;
         }
-        if (m === 'settings') return [
-          { t: 'Maus-Empfindlichkeit: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
+        if (m === 'pause') return [{ t: 'Weiter', go: resume }].concat(settingRows(false)).concat([skinRow(), { t: 'Hauptmenü (Runde abbrechen)', go: toTitle }]);
+        if (m === 'settings') return settingRows().concat([{ t: 'Zurück', go: back }]);
+        if (m === 'skin') return [skinRow(), { t: 'Zurück', go: back }];
+        if (m === 'code') return [{ t: 'Code prüfen', go: checkCode }, { t: 'Zurück', go: function () { showCodeInput(false); back(); } }];
+        return [{ t: 'Zurück', go: back }];
+      }
+      function skinRow() {
+        var keys = Object.keys(SKINS), names = { braun: 'Braun', honig: 'Honig', hell: 'Hell' };
+        var step = function (d) { set.skin = keys[(keys.indexOf(set.skin) + d + keys.length) % keys.length]; };
+        return { t: 'Hautfarbe: ' + names[set.skin], go: function () { step(1); }, adj: step };
+      }
+      function settingRows() {
+        return [
+          { t: 'Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
           { t: 'Maus umkehren: ' + (set.invert ? 'An' : 'Aus'), go: function () { set.invert = !set.invert; }, adj: function () { set.invert = !set.invert; } },
           { t: 'Musik: ' + bar(set.music), adj: function (d) { set.music = clamp(Math.round((set.music + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
           { t: 'Effekte: ' + bar(set.sfx), adj: function (d) { set.sfx = clamp(Math.round((set.sfx + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
-          { t: 'Handy-Knöpfe: ' + (set.joyLeft ? 'Stick links' : 'Stick rechts'), go: function () { set.joyLeft = !set.joyLeft; }, adj: function () { set.joyLeft = !set.joyLeft; } },
-          { t: 'Zurück', go: back }
+          { t: 'Handy-Knöpfe: ' + (set.joyLeft ? 'Stick links' : 'Stick rechts'), go: function () { set.joyLeft = !set.joyLeft; }, adj: function () { set.joyLeft = !set.joyLeft; } }
         ];
-        if (m === 'skin') {
-          var keys = Object.keys(SKINS), names = { braun: 'Braun', honig: 'Honig', hell: 'Hell' };
-          var step = function (d) { set.skin = keys[(keys.indexOf(set.skin) + d + keys.length) % keys.length]; };
-          return [{ t: 'Hautfarbe: ' + names[set.skin], go: function () { step(1); }, adj: step }, { t: 'Zurück', go: back }];
-        }
-        if (m === 'code') return [{ t: 'Code prüfen', go: checkCode }, { t: 'Zurück', go: function () { showCodeInput(false); back(); } }];
-        return [{ t: 'Zurück', go: back }];
+      }
+      function openPause() {
+        if (st.phase !== 'play' || P.dead || st.menuOpen) return;
+        st.menuOpen = true; st.menu = 'pause'; st.sel = 0;
+        held = {}; joy = null; look = null;
+        releaseMouse(); au.menu();
+      }
+      function resume() {
+        st.menuOpen = false; st.menu = 'main'; st.sel = 0; st.last = performance.now();
+        lockMouse();
+      }
+      function toTitle() {
+        st.menuOpen = false; st.phase = 'title'; st.menu = 'main'; st.sel = 0;
+        releaseMouse(); au.music('title'); ctx.setScore(0);
       }
       function bar(v) { var n = Math.round(v * 10), s = ''; for (var i = 0; i < 10; i++) s += i < n ? '▮' : '▯'; return s; }
       function back() { showCodeInput(false); st.menu = 'main'; st.sel = 0; au.menu(); }
@@ -232,13 +252,18 @@
           if (st.codeMsg) { g.fillStyle = st.codeOk ? '#7CFF8A' : '#FF7A6B'; g.font = '800 ' + Math.round(14 * u) + 'px Poppins, sans-serif'; wrap(st.codeMsg, cssW / 2, y0 + 92 * u, cssW - 40, 19 * u); }
           y0 += 130 * u;
         }
+        drawItems(items, y0, u, m === 'main' || m === 'diff');
+        if (m === 'main') { g.font = '600 ' + Math.round(11.5 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.55)'; g.fillText(ctx.touch() ? 'Antippen zum Auswählen · Handy quer halten' : 'Pfeiltasten + Enter oder Maus · Ton an für die volle Dröhnung', cssW / 2, cssH - 16); }
+      }
+      function drawItems(items, y0, u, big) {
+        g.textAlign = 'center'; g.textBaseline = 'middle';
         st.hits = [];
         var ih = 40 * u;
         var yy = y0;
         items.forEach(function (it, i) {
           var y = yy, on = i === st.sel;
           yy += it.sub ? ih * 1.25 : ih;
-          g.font = (on ? '900 ' : '800 ') + Math.round((m === 'main' || m === 'diff' ? 22 : 17) * u) + 'px Poppins, sans-serif';
+          g.font = (on ? '900 ' : '800 ') + Math.round((big ? 22 : 17) * u) + 'px Poppins, sans-serif';
           var tw = g.measureText(it.t).width;
           if (on) {
             g.fillStyle = 'rgba(253,197,6,0.14)'; art.rrect(g, cssW / 2 - tw / 2 - 40, y - ih * 0.42, tw + 80, ih * (it.sub ? 1.1 : 0.84), 10); g.fill();
@@ -250,7 +275,18 @@
           if (it.adj && on) { g.fillStyle = '#FDC506'; g.font = '900 ' + Math.round(18 * u) + 'px Poppins, sans-serif'; g.fillText('◀', cssW / 2 - tw / 2 - 26, y); g.fillText('▶', cssW / 2 + tw / 2 + 26, y); }
           st.hits.push({ x: cssW / 2 - Math.max(tw, 160) / 2 - 40, y: y - ih * 0.45, w: Math.max(tw, 160) + 80, h: ih * (it.sub ? 1.15 : 0.9), i: i, tw: tw, cy: y });
         });
-        if (m === 'main') { g.font = '600 ' + Math.round(11.5 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.55)'; g.fillText(ctx.touch() ? 'Antippen zum Auswählen · Handy quer halten' : 'Pfeiltasten + Enter oder Maus · Ton an für die volle Dröhnung', cssW / 2, cssH - 16); }
+      }
+      /* Pausenmenü halb durchsichtig über dem Spiel */
+      function drawPauseOverlay() {
+        g.fillStyle = 'rgba(8,6,6,0.66)'; g.fillRect(0, 0, cssW, cssH);
+        var items = menuItems(), u = clamp(Math.min(cssH / (items.length * 46 + 120), cssH / 560), 0.55, 1.1);
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.font = '900 ' + Math.round(34 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.strokeStyle = '#120806';
+        var ty = Math.max(30, cssH * 0.08);
+        g.strokeText('PAUSE', cssW / 2, ty); g.fillStyle = '#FDC506'; g.fillText('PAUSE', cssW / 2, ty);
+        g.font = '600 ' + Math.round(12 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.7)';
+        g.fillText(touchMode ? 'Antippen: wählen · ◀ ▶ links/rechts tippen' : '↑ ↓ wählen · ← → ändern · Enter · Esc: weiter', cssW / 2, ty + 26 * u);
+        drawItems(items, ty + 64 * u, u, false);
       }
       function wrap(text, x, y, maxW, lh) {
         var words = text.split(' '), line = '', lines = [];

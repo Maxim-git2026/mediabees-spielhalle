@@ -23,7 +23,8 @@
         locked = document.pointerLockElement === cv;
         if (!locked) {
           held.mouse = false;
-          if (!selfUnlock && st.on && !st.paused && st.phase === 'play') ctx.pause();
+          /* Esc gibt die Maus frei (der Browser schluckt dabei die Taste) → eigenes Pausenmenü */
+          if (!selfUnlock && st.on && !st.paused && st.phase === 'play') openPause();
           selfUnlock = false;
         }
       }
@@ -33,14 +34,14 @@
       function update(dt) {
         st.titleT += dt;
         au.update();
-        if (st.phase === 'play') updatePlay(dt);
+        if (st.phase === 'play' && !st.menuOpen) updatePlay(dt);
         else if (st.phase === 'dead') { P.deadT += dt; updatePlay(dt); if (P.deadT > 3.4) endRound(); }
         else if (st.phase === 'tally') { st.tallyT += dt; st.t += dt; }
       }
       function draw() {
         if (!cssW) return;
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
-        if (st.phase === 'play' || st.phase === 'dead') drawPlay();
+        if (st.phase === 'play' || st.phase === 'dead') { drawPlay(); if (st.menuOpen) drawPauseOverlay(); }
         else if (st.phase === 'tally') drawTally();
         else drawMenu();
       }
@@ -71,7 +72,7 @@
         e.preventDefault();
         if (e.pointerType === 'touch' || e.pointerType === 'pen') touchMode = true; else if (e.pointerType === 'mouse' && !ctx.touch()) touchMode = false;
         var p = local(e);
-        if (st.phase === 'title') {
+        if (st.phase === 'title' || st.menuOpen) {
           var hit = (st.hits || []).filter(function (h) { return p.x >= h.x && p.x <= h.x + h.w && p.y >= h.y && p.y <= h.y + h.h; })[0];
           if (hit) { var items = menuItems(), it = items[hit.i]; activate(hit.i, it && it.adj ? (p.x < hit.x + hit.w / 2 ? -1 : 1) : 0); }
           return;
@@ -82,6 +83,7 @@
           touchLayout();
           try { cv.setPointerCapture(e.pointerId); } catch (err) {}
           var vh = cssH - hudH;
+          if (Math.hypot(p.x - btn.pause.x, p.y - btn.pause.y) < btn.pause.r * 1.5) { touches[e.pointerId] = 'tap'; openPause(); return; }
           if (Math.hypot(p.x - btn.fire.x, p.y - btn.fire.y) < btn.fire.r * 1.3) { touches[e.pointerId] = 'fire'; held.touchFire = true; return; }
           if (Math.hypot(p.x - btn.use.x, p.y - btn.use.y) < btn.use.r * 1.35) { touches[e.pointerId] = 'tap'; useAction(); return; }
           if (Math.hypot(p.x - btn.swap.x, p.y - btn.swap.y) < btn.swap.r * 1.35) { touches[e.pointerId] = 'tap'; cycleWeapon(1); return; }
@@ -97,7 +99,7 @@
       });
       cv.addEventListener('pointermove', function (e) {
         if (!st.on) return;
-        if (st.phase === 'title' && e.pointerType === 'mouse') {
+        if ((st.phase === 'title' || st.menuOpen) && e.pointerType === 'mouse') {
           var p0 = local(e), h = (st.hits || []).filter(function (h2) { return p0.x >= h2.x && p0.x <= h2.x + h2.w && p0.y >= h2.y && p0.y <= h2.y + h2.h; })[0];
           if (h && h.i !== st.sel) { st.sel = h.i; au.menu(); }
           cv.style.cursor = h ? 'pointer' : 'default';
@@ -137,7 +139,8 @@
 
       function key(e) {
         var c = e.code, k = e.key;
-        if (st.phase === 'title') {
+        if (st.menuOpen && (k === 'Escape' || k === 'Backspace')) { resume(); return true; }
+        if (st.phase === 'title' || st.menuOpen) {
           var n = menuItems().length;
           if (c === 'ArrowUp' || c === 'KeyW') { st.sel = (st.sel - 1 + n) % n; au.menu(); return true; }
           if (c === 'ArrowDown' || c === 'KeyS') { st.sel = (st.sel + 1) % n; au.menu(); return true; }
@@ -150,6 +153,7 @@
         if (st.phase === 'tally') { if ((k === 'Enter' || c === 'Space') && !e.repeat) { if (st.tallyT > 2.9) endRound(); else st.tallyT = 3; } return true; }
         if (st.phase === 'dead') { if ((k === 'Enter' || c === 'Space') && P.deadT > 1.2) endRound(); return true; }
         if (st.phase !== 'play') return false;
+        if (k === 'Escape') { openPause(); return true; }
         if (/^(KeyW|KeyA|KeyS|KeyD|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|ShiftLeft|ShiftRight)$/.test(c)) { held[c] = true; return true; }
         if (c === 'Digit1' || c === 'Numpad1') { selectWeapon(0); return true; }
         if (c === 'Digit2' || c === 'Numpad2') { selectWeapon(1); return true; }
@@ -180,7 +184,7 @@
         setPaused: function (on) {
           st.paused = on; held = {}; touches = {}; joy = null; look = null;
           if (on) releaseMouse();
-          else { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); if (st.phase === 'play') lockMouse(); }
+          else { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); if (st.phase === 'play' && !st.menuOpen) lockMouse(); }
         },
         abort: function () { stopLoop(); showCodeInput(false); st = fresh(); L = null; draw(); },
         unmount: function () {

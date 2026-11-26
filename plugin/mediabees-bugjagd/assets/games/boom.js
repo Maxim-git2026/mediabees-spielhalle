@@ -862,6 +862,7 @@
     title: 'BOOM 2026',
     duration: 0,
     multiTouch: true,
+    ownPause: true,
     startText: 'Die Wespen haben die alte Zeche übernommen. Du fährst als Kumpel mit Grubenhelm ein, mit Faust und Stachler. Die Pollenflinte musst du dir erst holen. Am PC mit Maus und WASD, am Handy quer halten. Ton an für die volle Dröhnung!',
     help: {
       legendTitle: 'Gegner',
@@ -873,7 +874,7 @@
         { icons: ['kbd:1', 'kbd:3'], text: 'Waffe wählen (auch Mausrad oder Q)', kb: true },
         { icons: ['tap'], text: 'Handy quer halten. Links Daumen-Stick zum Laufen, rechts wischen zum Umsehen, roter Knopf schießt, Hand-Knopf benutzt', touch: true },
         { icons: ['kbd:+', 'kbd:−'], text: 'Maus zu schnell oder zu langsam? Im Spiel einfach anpassen', kb: true },
-        { icons: ['kbd:Esc'], text: 'Pause', kb: true }
+        { icons: ['kbd:Esc'], text: 'Pausenmenü mit Maus- und Ton-Einstellungen', kb: true }
       ],
       legend: [
         { draw: legendWasp('wespe'), text: 'Wespe: schnell, sticht zu', val: '100' },
@@ -1754,16 +1755,18 @@
       }
 
       /* ---------------------------------------------------------------- Touch-Steuerung */
-      var joy = null, look = null, btn = { fire: null, use: null, swap: null };
+      var joy = null, look = null, btn = { fire: null, use: null, swap: null, pause: null };
       function touchLayout() {
         var vh = cssH - hudH, r = clamp(Math.min(cssW, vh) * 0.11, 30, 56);
         var right = set.joyLeft;
         btn.fire = { x: right ? cssW - r * 1.5 : r * 1.5, y: vh - r * 1.4, r: r };
         btn.use = { x: right ? cssW - r * 3.4 : r * 3.4, y: vh - r * 0.9, r: r * 0.62 };
         btn.swap = { x: right ? cssW - r * 1.5 : r * 1.5, y: vh - r * 3.6, r: r * 0.55 };
+        btn.pause = { x: cssW - 26, y: Math.max(26, vh * 0.12), r: 18 };
       }
       function drawTouch() {
         touchLayout();
+        var pb = btn.pause; g.globalAlpha = 0.6; g.beginPath(); g.arc(pb.x, pb.y, pb.r, 0, TAU); g.fillStyle = '#3A3F46'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#FDC506'; g.stroke(); g.globalAlpha = 1; g.fillStyle = '#FFF'; g.fillRect(pb.x - pb.r * 0.35, pb.y - pb.r * 0.4, pb.r * 0.25, pb.r * 0.8); g.fillRect(pb.x + pb.r * 0.1, pb.y - pb.r * 0.4, pb.r * 0.25, pb.r * 0.8);
         [['fire', '#E5322D'], ['use', '#3A3F46'], ['swap', '#3A3F46']].forEach(function (b) {
           var o = btn[b[0]];
           g.globalAlpha = held.touchFire && b[0] === 'fire' ? 0.9 : 0.55;
@@ -1824,21 +1827,39 @@
           l.push({ t: 'Zurück', go: back });
           return l;
         }
-        if (m === 'settings') return [
-          { t: 'Maus-Empfindlichkeit: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
+        if (m === 'pause') return [{ t: 'Weiter', go: resume }].concat(settingRows(false)).concat([skinRow(), { t: 'Hauptmenü (Runde abbrechen)', go: toTitle }]);
+        if (m === 'settings') return settingRows().concat([{ t: 'Zurück', go: back }]);
+        if (m === 'skin') return [skinRow(), { t: 'Zurück', go: back }];
+        if (m === 'code') return [{ t: 'Code prüfen', go: checkCode }, { t: 'Zurück', go: function () { showCodeInput(false); back(); } }];
+        return [{ t: 'Zurück', go: back }];
+      }
+      function skinRow() {
+        var keys = Object.keys(SKINS), names = { braun: 'Braun', honig: 'Honig', hell: 'Hell' };
+        var step = function (d) { set.skin = keys[(keys.indexOf(set.skin) + d + keys.length) % keys.length]; };
+        return { t: 'Hautfarbe: ' + names[set.skin], go: function () { step(1); }, adj: step };
+      }
+      function settingRows() {
+        return [
+          { t: 'Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
           { t: 'Maus umkehren: ' + (set.invert ? 'An' : 'Aus'), go: function () { set.invert = !set.invert; }, adj: function () { set.invert = !set.invert; } },
           { t: 'Musik: ' + bar(set.music), adj: function (d) { set.music = clamp(Math.round((set.music + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
           { t: 'Effekte: ' + bar(set.sfx), adj: function (d) { set.sfx = clamp(Math.round((set.sfx + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
-          { t: 'Handy-Knöpfe: ' + (set.joyLeft ? 'Stick links' : 'Stick rechts'), go: function () { set.joyLeft = !set.joyLeft; }, adj: function () { set.joyLeft = !set.joyLeft; } },
-          { t: 'Zurück', go: back }
+          { t: 'Handy-Knöpfe: ' + (set.joyLeft ? 'Stick links' : 'Stick rechts'), go: function () { set.joyLeft = !set.joyLeft; }, adj: function () { set.joyLeft = !set.joyLeft; } }
         ];
-        if (m === 'skin') {
-          var keys = Object.keys(SKINS), names = { braun: 'Braun', honig: 'Honig', hell: 'Hell' };
-          var step = function (d) { set.skin = keys[(keys.indexOf(set.skin) + d + keys.length) % keys.length]; };
-          return [{ t: 'Hautfarbe: ' + names[set.skin], go: function () { step(1); }, adj: step }, { t: 'Zurück', go: back }];
-        }
-        if (m === 'code') return [{ t: 'Code prüfen', go: checkCode }, { t: 'Zurück', go: function () { showCodeInput(false); back(); } }];
-        return [{ t: 'Zurück', go: back }];
+      }
+      function openPause() {
+        if (st.phase !== 'play' || P.dead || st.menuOpen) return;
+        st.menuOpen = true; st.menu = 'pause'; st.sel = 0;
+        held = {}; joy = null; look = null;
+        releaseMouse(); au.menu();
+      }
+      function resume() {
+        st.menuOpen = false; st.menu = 'main'; st.sel = 0; st.last = performance.now();
+        lockMouse();
+      }
+      function toTitle() {
+        st.menuOpen = false; st.phase = 'title'; st.menu = 'main'; st.sel = 0;
+        releaseMouse(); au.music('title'); ctx.setScore(0);
       }
       function bar(v) { var n = Math.round(v * 10), s = ''; for (var i = 0; i < 10; i++) s += i < n ? '▮' : '▯'; return s; }
       function back() { showCodeInput(false); st.menu = 'main'; st.sel = 0; au.menu(); }
@@ -1882,13 +1903,18 @@
           if (st.codeMsg) { g.fillStyle = st.codeOk ? '#7CFF8A' : '#FF7A6B'; g.font = '800 ' + Math.round(14 * u) + 'px Poppins, sans-serif'; wrap(st.codeMsg, cssW / 2, y0 + 92 * u, cssW - 40, 19 * u); }
           y0 += 130 * u;
         }
+        drawItems(items, y0, u, m === 'main' || m === 'diff');
+        if (m === 'main') { g.font = '600 ' + Math.round(11.5 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.55)'; g.fillText(ctx.touch() ? 'Antippen zum Auswählen · Handy quer halten' : 'Pfeiltasten + Enter oder Maus · Ton an für die volle Dröhnung', cssW / 2, cssH - 16); }
+      }
+      function drawItems(items, y0, u, big) {
+        g.textAlign = 'center'; g.textBaseline = 'middle';
         st.hits = [];
         var ih = 40 * u;
         var yy = y0;
         items.forEach(function (it, i) {
           var y = yy, on = i === st.sel;
           yy += it.sub ? ih * 1.25 : ih;
-          g.font = (on ? '900 ' : '800 ') + Math.round((m === 'main' || m === 'diff' ? 22 : 17) * u) + 'px Poppins, sans-serif';
+          g.font = (on ? '900 ' : '800 ') + Math.round((big ? 22 : 17) * u) + 'px Poppins, sans-serif';
           var tw = g.measureText(it.t).width;
           if (on) {
             g.fillStyle = 'rgba(253,197,6,0.14)'; art.rrect(g, cssW / 2 - tw / 2 - 40, y - ih * 0.42, tw + 80, ih * (it.sub ? 1.1 : 0.84), 10); g.fill();
@@ -1900,7 +1926,18 @@
           if (it.adj && on) { g.fillStyle = '#FDC506'; g.font = '900 ' + Math.round(18 * u) + 'px Poppins, sans-serif'; g.fillText('◀', cssW / 2 - tw / 2 - 26, y); g.fillText('▶', cssW / 2 + tw / 2 + 26, y); }
           st.hits.push({ x: cssW / 2 - Math.max(tw, 160) / 2 - 40, y: y - ih * 0.45, w: Math.max(tw, 160) + 80, h: ih * (it.sub ? 1.15 : 0.9), i: i, tw: tw, cy: y });
         });
-        if (m === 'main') { g.font = '600 ' + Math.round(11.5 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.55)'; g.fillText(ctx.touch() ? 'Antippen zum Auswählen · Handy quer halten' : 'Pfeiltasten + Enter oder Maus · Ton an für die volle Dröhnung', cssW / 2, cssH - 16); }
+      }
+      /* Pausenmenü halb durchsichtig über dem Spiel */
+      function drawPauseOverlay() {
+        g.fillStyle = 'rgba(8,6,6,0.66)'; g.fillRect(0, 0, cssW, cssH);
+        var items = menuItems(), u = clamp(Math.min(cssH / (items.length * 46 + 120), cssH / 560), 0.55, 1.1);
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.font = '900 ' + Math.round(34 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.strokeStyle = '#120806';
+        var ty = Math.max(30, cssH * 0.08);
+        g.strokeText('PAUSE', cssW / 2, ty); g.fillStyle = '#FDC506'; g.fillText('PAUSE', cssW / 2, ty);
+        g.font = '600 ' + Math.round(12 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.7)';
+        g.fillText(touchMode ? 'Antippen: wählen · ◀ ▶ links/rechts tippen' : '↑ ↓ wählen · ← → ändern · Enter · Esc: weiter', cssW / 2, ty + 26 * u);
+        drawItems(items, ty + 64 * u, u, false);
       }
       function wrap(text, x, y, maxW, lh) {
         var words = text.split(' '), line = '', lines = [];
@@ -2018,7 +2055,8 @@
         locked = document.pointerLockElement === cv;
         if (!locked) {
           held.mouse = false;
-          if (!selfUnlock && st.on && !st.paused && st.phase === 'play') ctx.pause();
+          /* Esc gibt die Maus frei (der Browser schluckt dabei die Taste) → eigenes Pausenmenü */
+          if (!selfUnlock && st.on && !st.paused && st.phase === 'play') openPause();
           selfUnlock = false;
         }
       }
@@ -2028,14 +2066,14 @@
       function update(dt) {
         st.titleT += dt;
         au.update();
-        if (st.phase === 'play') updatePlay(dt);
+        if (st.phase === 'play' && !st.menuOpen) updatePlay(dt);
         else if (st.phase === 'dead') { P.deadT += dt; updatePlay(dt); if (P.deadT > 3.4) endRound(); }
         else if (st.phase === 'tally') { st.tallyT += dt; st.t += dt; }
       }
       function draw() {
         if (!cssW) return;
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
-        if (st.phase === 'play' || st.phase === 'dead') drawPlay();
+        if (st.phase === 'play' || st.phase === 'dead') { drawPlay(); if (st.menuOpen) drawPauseOverlay(); }
         else if (st.phase === 'tally') drawTally();
         else drawMenu();
       }
@@ -2066,7 +2104,7 @@
         e.preventDefault();
         if (e.pointerType === 'touch' || e.pointerType === 'pen') touchMode = true; else if (e.pointerType === 'mouse' && !ctx.touch()) touchMode = false;
         var p = local(e);
-        if (st.phase === 'title') {
+        if (st.phase === 'title' || st.menuOpen) {
           var hit = (st.hits || []).filter(function (h) { return p.x >= h.x && p.x <= h.x + h.w && p.y >= h.y && p.y <= h.y + h.h; })[0];
           if (hit) { var items = menuItems(), it = items[hit.i]; activate(hit.i, it && it.adj ? (p.x < hit.x + hit.w / 2 ? -1 : 1) : 0); }
           return;
@@ -2077,6 +2115,7 @@
           touchLayout();
           try { cv.setPointerCapture(e.pointerId); } catch (err) {}
           var vh = cssH - hudH;
+          if (Math.hypot(p.x - btn.pause.x, p.y - btn.pause.y) < btn.pause.r * 1.5) { touches[e.pointerId] = 'tap'; openPause(); return; }
           if (Math.hypot(p.x - btn.fire.x, p.y - btn.fire.y) < btn.fire.r * 1.3) { touches[e.pointerId] = 'fire'; held.touchFire = true; return; }
           if (Math.hypot(p.x - btn.use.x, p.y - btn.use.y) < btn.use.r * 1.35) { touches[e.pointerId] = 'tap'; useAction(); return; }
           if (Math.hypot(p.x - btn.swap.x, p.y - btn.swap.y) < btn.swap.r * 1.35) { touches[e.pointerId] = 'tap'; cycleWeapon(1); return; }
@@ -2092,7 +2131,7 @@
       });
       cv.addEventListener('pointermove', function (e) {
         if (!st.on) return;
-        if (st.phase === 'title' && e.pointerType === 'mouse') {
+        if ((st.phase === 'title' || st.menuOpen) && e.pointerType === 'mouse') {
           var p0 = local(e), h = (st.hits || []).filter(function (h2) { return p0.x >= h2.x && p0.x <= h2.x + h2.w && p0.y >= h2.y && p0.y <= h2.y + h2.h; })[0];
           if (h && h.i !== st.sel) { st.sel = h.i; au.menu(); }
           cv.style.cursor = h ? 'pointer' : 'default';
@@ -2132,7 +2171,8 @@
 
       function key(e) {
         var c = e.code, k = e.key;
-        if (st.phase === 'title') {
+        if (st.menuOpen && (k === 'Escape' || k === 'Backspace')) { resume(); return true; }
+        if (st.phase === 'title' || st.menuOpen) {
           var n = menuItems().length;
           if (c === 'ArrowUp' || c === 'KeyW') { st.sel = (st.sel - 1 + n) % n; au.menu(); return true; }
           if (c === 'ArrowDown' || c === 'KeyS') { st.sel = (st.sel + 1) % n; au.menu(); return true; }
@@ -2145,6 +2185,7 @@
         if (st.phase === 'tally') { if ((k === 'Enter' || c === 'Space') && !e.repeat) { if (st.tallyT > 2.9) endRound(); else st.tallyT = 3; } return true; }
         if (st.phase === 'dead') { if ((k === 'Enter' || c === 'Space') && P.deadT > 1.2) endRound(); return true; }
         if (st.phase !== 'play') return false;
+        if (k === 'Escape') { openPause(); return true; }
         if (/^(KeyW|KeyA|KeyS|KeyD|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|ShiftLeft|ShiftRight)$/.test(c)) { held[c] = true; return true; }
         if (c === 'Digit1' || c === 'Numpad1') { selectWeapon(0); return true; }
         if (c === 'Digit2' || c === 'Numpad2') { selectWeapon(1); return true; }
@@ -2175,7 +2216,7 @@
         setPaused: function (on) {
           st.paused = on; held = {}; touches = {}; joy = null; look = null;
           if (on) releaseMouse();
-          else { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); if (st.phase === 'play') lockMouse(); }
+          else { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); if (st.phase === 'play' && !st.menuOpen) lockMouse(); }
         },
         abort: function () { stopLoop(); showCodeInput(false); st = fresh(); L = null; draw(); },
         unmount: function () {

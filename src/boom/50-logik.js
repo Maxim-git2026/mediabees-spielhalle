@@ -6,6 +6,7 @@
     title: 'BOOM 2026',
     duration: 0,
     multiTouch: true,
+    ownPause: true,
     startText: 'Die Wespen haben die alte Zeche übernommen. Du fährst als Kumpel mit Grubenhelm ein, mit Faust und Stachler. Die Pollenflinte musst du dir erst holen. Am PC mit Maus und WASD, am Handy quer halten. Ton an für die volle Dröhnung!',
     help: {
       legendTitle: 'Gegner',
@@ -17,7 +18,7 @@
         { icons: ['kbd:1', 'kbd:3'], text: 'Waffe wählen (auch Mausrad oder Q)', kb: true },
         { icons: ['tap'], text: 'Handy quer halten. Links Daumen-Stick zum Laufen, rechts wischen zum Umsehen, roter Knopf schießt, Hand-Knopf benutzt', touch: true },
         { icons: ['kbd:+', 'kbd:−'], text: 'Maus zu schnell oder zu langsam? Im Spiel einfach anpassen', kb: true },
-        { icons: ['kbd:Esc'], text: 'Pause', kb: true }
+        { icons: ['kbd:Esc'], text: 'Pausenmenü mit Maus- und Ton-Einstellungen', kb: true }
       ],
       legend: [
         { draw: legendWasp('wespe'), text: 'Wespe: schnell, sticht zu', val: '100' },

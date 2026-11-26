@@ -885,7 +885,12 @@
       if (!S.running) return;
       var t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
-      if (e.key === 'Escape') { e.preventDefault(); pause(!S.paused); return; }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        /* Spiele mit eigenem Pausenmenü (BOOM) bekommen Esc selbst */
+        if (!S.paused && S.game && S.game.ownPause && S.inst && S.inst.key && S.inst.key(e)) return;
+        pause(!S.paused); return;
+      }
       if (S.paused || e.ctrlKey || e.metaKey || e.altKey) return;
       if (S.inst && S.inst.key && S.inst.key(e)) e.preventDefault();
     });
