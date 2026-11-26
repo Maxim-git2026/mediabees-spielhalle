@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.24.0
+ * Version: 2.24.1
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.24.0' );
+define( 'MBBJ_VERSION', '2.24.1' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -543,7 +543,7 @@ add_action( 'admin_init', function () {
 			'side'    => 'right' === $side ? 'right' : 'left',
 			'exclude' => isset( $_POST['mbbj_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['mbbj_exclude'] ) ) : '',
 		), true );
-		wp_safe_redirect( admin_url( 'tools.php?page=mbbj&done=1' ) );
+		wp_safe_redirect( admin_url( 'options-general.php?page=mbbj-settings&done=1' ) );
 		exit;
 	}
 	$game   = isset( $_POST['mbbj_game'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_game'] ) ) : '';
@@ -571,21 +571,7 @@ function mbbj_admin_page() {
 		<?php if ( isset( $_GET['done'] ) ) : // phpcs:ignore ?>
 			<div class="notice notice-success is-dismissible"><p>Erledigt.</p></div>
 		<?php endif; ?>
-		<?php $mbbj_t = mbbj_teaser_settings(); ?>
-		<h2 style="margin-top:28px">Knopf und Biene auf der Website</h2>
-		<p>Ein kleiner roter Knopf „Nicht drücken!“ und eine Biene, die ab und zu durchs Bild fliegt, führen zur Spielhalle. Auf der Spielhallen-Seite selbst und auf der 404 erscheinen sie nicht. Es werden keine Cookies gesetzt.</p>
-		<form method="post" style="max-width:720px">
-			<?php wp_nonce_field( 'mbbj_admin' ); ?>
-			<input type="hidden" name="mbbj_action" value="teaser">
-			<table class="form-table" role="presentation">
-				<tr><th scope="row">Roter Knopf</th><td><label><input type="checkbox" name="mbbj_button" value="1" <?php checked( $mbbj_t['button'] ); ?>> „Nicht drücken!“-Knopf zeigen</label></td></tr>
-				<tr><th scope="row">Biene</th><td><label><input type="checkbox" name="mbbj_bee" value="1" <?php checked( $mbbj_t['bee'] ); ?>> Biene fliegt ab und zu durchs Bild (zuerst nach 30–60 Sekunden, höchstens 3-mal pro Seite)</label></td></tr>
-				<tr><th scope="row"><label for="mbbj_url">Adresse der Spielhalle</label></th><td><input type="text" class="regular-text" id="mbbj_url" name="mbbj_url" value="<?php echo esc_attr( $mbbj_t['url'] ); ?>"><p class="description">Zum Beispiel <code>/spielhalle/</code>. Auf diese Seite kommt das Shortcode-Widget <code>[mediabees_arcade]</code>.</p></td></tr>
-				<tr><th scope="row">Knopf-Position</th><td><label><input type="radio" name="mbbj_side" value="left" <?php checked( 'left', $mbbj_t['side'] ); ?>> unten links</label> &nbsp; <label><input type="radio" name="mbbj_side" value="right" <?php checked( 'right', $mbbj_t['side'] ); ?>> unten rechts</label></td></tr>
-				<tr><th scope="row"><label for="mbbj_exclude">Nicht auf diesen Seiten</label></th><td><textarea class="large-text" rows="4" id="mbbj_exclude" name="mbbj_exclude" placeholder="/kontakt/"><?php echo esc_textarea( $mbbj_t['exclude'] ); ?></textarea><p class="description">Eine Adresse pro Zeile, z. B. <code>/kontakt/</code>. Unterseiten zählen mit. <code>/</code> allein steht nur für die Startseite.</p></td></tr>
-			</table>
-			<p><button class="button button-primary" type="submit">Speichern</button> &nbsp; <a href="<?php echo esc_url( add_query_arg( 'mbbj_biene', '1', home_url( '/' ) ) ); ?>" target="_blank" rel="noopener">Biene sofort ansehen (Startseite)</a></p>
-		</form>
+		<p>Knopf „Nicht drücken!“ und fliegende Biene stellst du unter <a href="<?php echo esc_url( admin_url( 'options-general.php?page=mbbj-settings' ) ); ?>">Einstellungen &gt; Spielhalle</a> ein.</p>
 		<h2 style="margin-top:28px">Ranglisten</h2>
 		<?php foreach ( mbbj_games() as $gid => $conf ) : ?>
 			<?php $list = mbbj_sort( mbbj_get_top( $gid ) ); ?>
@@ -624,6 +610,60 @@ function mbbj_admin_page() {
 				</form>
 			<?php endif; ?>
 		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
+/* ------------------------------------------------------------------ *
+ * Backend: Einstellungen > Spielhalle
+ * ------------------------------------------------------------------ */
+
+add_action( 'admin_menu', function () {
+	add_options_page( 'Spielhalle', 'Spielhalle', 'manage_options', 'mbbj-settings', 'mbbj_settings_page' );
+} );
+
+// Link „Einstellungen“ direkt in der Plugin-Liste
+add_filter( 'plugin_action_links_' . plugin_basename( MBBJ_FILE ), function ( $links ) {
+	array_unshift( $links, '<a href="' . esc_url( admin_url( 'options-general.php?page=mbbj-settings' ) ) . '">Einstellungen</a>' );
+	return $links;
+} );
+
+function mbbj_settings_page() {
+	$mbbj_games = mbbj_games();
+	?>
+	<div class="wrap">
+		<h1>MediaBees Spielhalle</h1>
+		<?php if ( isset( $_GET['done'] ) ) : // phpcs:ignore ?>
+			<div class="notice notice-success is-dismissible"><p>Einstellungen gespeichert.</p></div>
+		<?php endif; ?>
+		<div class="card" style="max-width:720px">
+			<h2 class="title">Was ist das?</h2>
+			<p>Die Spielhalle ist eine kleine Sammlung von <?php echo (int) count( $mbbj_games ); ?> Browserspielen im MediaBees-Look, jedes mit eigener Top-10-Rangliste wie am Automaten. Die Spiele laufen direkt im Browser, ohne Cookies, ohne Speicher auf dem Gerät und ohne externe Dienste.</p>
+			<p><strong>Wo erscheint sie?</strong></p>
+			<ul style="list-style:disc;padding-left:20px">
+				<li><strong>Eigene Seite:</strong> Shortcode-Widget mit <code>[mediabees_arcade]</code> auf eine Seite setzen, z. B. <code>/spielhalle/</code>. Mit <code>[mediabees_arcade spiel="solitaer"]</code> ist ein Spiel vorausgewählt.</li>
+				<li><strong>404-Seite:</strong> Wer eine Adresse aufruft, die es nicht gibt, landet automatisch in der Spielhalle.</li>
+				<li><strong>Knopf und Biene:</strong> Auf allen anderen Seiten locken ein roter Knopf „Nicht drücken!“ und eine fliegende Biene in die Spielhalle (Einstellungen unten).</li>
+			</ul>
+			<p><strong>Ranglisten verwalten</strong> (unpassende Namen löschen): <a href="<?php echo esc_url( admin_url( 'tools.php?page=mbbj' ) ); ?>">Werkzeuge &gt; Arcade-Rangliste</a><br>
+			<strong>Text für die Datenschutzerklärung:</strong> <a href="<?php echo esc_url( admin_url( 'options-privacy.php?tab=policyguide' ) ); ?>">Einstellungen &gt; Datenschutz &gt; Leitfaden</a><br>
+			<strong>Version:</strong> <?php echo esc_html( MBBJ_VERSION ); ?> (Updates kommen automatisch unter „Plugins“)</p>
+		</div>
+		<?php $mbbj_t = mbbj_teaser_settings(); ?>
+		<h2 style="margin-top:28px">Roter Knopf und fliegende Biene</h2>
+		<p>Ein kleiner roter Knopf „Nicht drücken!“ und eine Biene, die ab und zu durchs Bild fliegt, führen zur Spielhalle. Auf der Spielhallen-Seite selbst und auf der 404 erscheinen sie nicht. Es werden keine Cookies gesetzt.</p>
+		<form method="post" style="max-width:720px">
+			<?php wp_nonce_field( 'mbbj_admin' ); ?>
+			<input type="hidden" name="mbbj_action" value="teaser">
+			<table class="form-table" role="presentation">
+				<tr><th scope="row">Roter Knopf</th><td><label><input type="checkbox" name="mbbj_button" value="1" <?php checked( $mbbj_t['button'] ); ?>> „Nicht drücken!“-Knopf zeigen</label></td></tr>
+				<tr><th scope="row">Biene</th><td><label><input type="checkbox" name="mbbj_bee" value="1" <?php checked( $mbbj_t['bee'] ); ?>> Biene fliegt ab und zu durchs Bild (zuerst nach 30–60 Sekunden, höchstens 3-mal pro Seite)</label></td></tr>
+				<tr><th scope="row"><label for="mbbj_url">Adresse der Spielhalle</label></th><td><input type="text" class="regular-text" id="mbbj_url" name="mbbj_url" value="<?php echo esc_attr( $mbbj_t['url'] ); ?>"><p class="description">Zum Beispiel <code>/spielhalle/</code>. Auf diese Seite kommt das Shortcode-Widget <code>[mediabees_arcade]</code>.</p></td></tr>
+				<tr><th scope="row">Knopf-Position</th><td><label><input type="radio" name="mbbj_side" value="left" <?php checked( 'left', $mbbj_t['side'] ); ?>> unten links</label> &nbsp; <label><input type="radio" name="mbbj_side" value="right" <?php checked( 'right', $mbbj_t['side'] ); ?>> unten rechts</label></td></tr>
+				<tr><th scope="row"><label for="mbbj_exclude">Nicht auf diesen Seiten</label></th><td><textarea class="large-text" rows="4" id="mbbj_exclude" name="mbbj_exclude" placeholder="/kontakt/"><?php echo esc_textarea( $mbbj_t['exclude'] ); ?></textarea><p class="description">Eine Adresse pro Zeile, z. B. <code>/kontakt/</code>. Unterseiten zählen mit. <code>/</code> allein steht nur für die Startseite.</p></td></tr>
+			</table>
+			<p><button class="button button-primary" type="submit">Änderungen speichern</button> &nbsp; <a href="<?php echo esc_url( add_query_arg( 'mbbj_biene', '1', home_url( '/' ) ) ); ?>" target="_blank" rel="noopener">Biene sofort ansehen (Startseite)</a></p>
+		</form>
 	</div>
 	<?php
 }

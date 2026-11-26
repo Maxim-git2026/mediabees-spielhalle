@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.24.0
+Stable tag: 2.24.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -12,6 +12,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
 * Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wespen-Invasion), pfad (Pollenrausch), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Bienenboom), flipper (Honigflipper), wurf (Haldenduell), blitz (Bienen-Blitz), wimmel (Wimmelpott).
+* Einstellungen (Knopf und Biene): Einstellungen → Spielhalle.
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -19,6 +20,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.24.1 – 26.11.2026 =
+* Neu im Backend: Einstellungen → Spielhalle. Dort steht, was das Plugin macht, und dort stellst du den roten Knopf und die Biene ein. In der Plugin-Liste gibt es dafür jetzt auch den Link „Einstellungen“.
 
 = 2.24.0 – 26.11.2026 =
 * Neu: Auf allen Seiten der Website gibt es jetzt einen kleinen roten Knopf „Nicht drücken!“. Wer ihn drückt, sieht kurz „STRENG GEHEIM!“ und landet in der Spielhalle.

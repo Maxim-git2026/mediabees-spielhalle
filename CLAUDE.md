@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.24.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.24.1**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -146,7 +146,7 @@ Die alte Option `intro` wird ignoriert.
 
 ## Köder auf der Website (seit 2.24.0)
 - Roter Knopf „Nicht drücken!“ unten links/rechts und eine Biene, die nach 30–60 s durchs Bild fliegt, mittendrin kurz stehen bleibt und spricht (max. 3-mal pro Seite). Klick → Vollbild „STRENG GEHEIM!“ (kurzer Alarm) → Weiterleitung zur Spielhalle.
-- Einstellungen: Option `mbbj_teaser` (button, bee, url = `/spielhalle/`, side, exclude = Pfade je Zeile, Unterseiten zählen mit, `/` = nur Startseite), Formular oben auf Werkzeuge → Arcade-Rangliste.
+- Einstellungen: Option `mbbj_teaser` (button, bee, url = `/spielhalle/`, side, exclude = Pfade je Zeile, Unterseiten zählen mit, `/` = nur Startseite), Formular unter Einstellungen → Spielhalle (`mbbj_settings_page`, mit Beschreibung des Plugins, Link „Einstellungen“ in der Plugin-Liste). Ranglisten bleiben unter Werkzeuge → Arcade-Rangliste.
 - Nicht auf: 404, der Spielhallen-Adresse, Seiten mit `#mb404`, Elementor-Vorschau, ausgeschlossenen Pfaden. „Weniger Bewegung“ = keine Biene. `?mbbj_biene=1` lässt die Biene sofort fliegen (zum Ansehen).
 - Die eigene Seite heißt „Spielhalle“ (`/spielhalle/`), der Nutzer legt sie in Elementor an (Shortcode-Widget). Die 404 bleibt zusätzlich.
 
