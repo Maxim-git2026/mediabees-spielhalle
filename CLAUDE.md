@@ -2,14 +2,14 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.28.2**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.29.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
 - Spiele kommen **einzeln** dazu: bauen → Nutzer testet (Juice, Handy) → Feedback → nächstes Spiel.
 - **Kein Backup bei jedem Schritt.** Ein WPvivid-Backup gibt es erst ganz am Ende.
 - MediaBees-CD: Schrift Poppins, Gelb `#FDC506`, dunkle Karten. Viel Juice, Handy zuerst.
-- **Auch Backend-Seiten immer gleich schön gestalten** (Vorschauen, Karten, Schalter), nicht nur WordPress-Standardformulare. Der Nutzer will das nicht extra sagen müssen.
+- **Auch Backend-Seiten immer gleich schön gestalten** (volle Breite, im Dunkelmodus ALLE Textfarben ausdrücklich setzen: WordPress färbt h1–h3/Labels selbst dunkel; Test-Stub mit nachgebauten WP-Admin-Regeln: `stub4.php` im Scratchpad) (Vorschauen, Karten, Schalter), nicht nur WordPress-Standardformulare. Der Nutzer will das nicht extra sagen müssen.
 - Keine Original-Grafiken, -Namen oder -Figuren bekannter Spiele (Tetris, Pac-Man, Dino usw.).
   Nur das Spielprinzip übernehmen, Figuren und Namen selbst erfinden (Bienen, Käfer, Wespen, Ruhrgebiet).
 - DSGVO-schlank: keine Cookies, kein localStorage, keine externen Dienste.
@@ -125,7 +125,7 @@ Die Liste lässt sich jederzeit neu erzeugen (alle `ranks`, `startText`, `cta` u
 - Limits pro IP-Hash (täglich wechselnd): Start 600/h, Eintrag 30 je 15 min, 1000/Tag. Texte freundlich halten (Büro-WLAN teilt eine IP).
 - Titel in der Rangliste werden nicht gespeichert, sondern im Browser aus den Punkten und `ranks` der Kachel berechnet.
 - Speicher: Option `mbbj_top_<id>` (nur Top 10, autoload no). Schreiben mit Sperre `mbbj_lock_<id>` (INSERT IGNORE, nach 5 s veraltet).
-- Admin: Werkzeuge → Arcade-Rangliste. Datenschutztext über `wp_add_privacy_policy_content`.
+- Admin: Werkzeuge → Arcade-Rangliste (`mbbj_admin_page`, seit 2.29 im MediaBees-Look: Karten-Raster je Spiel mit Vorschaubild aus der Kachel, Titel aus `ranks`, beides über `MBArcade.tiles()` aus `arcade.js`, das dort nur dafür geladen wird; Medaillen 1–3, Suche, Filter, Löschen mit Rückfrage, Zähler). Datenschutztext über `wp_add_privacy_policy_content`.
 
 ## Sicherheit (Check 2.9.1: keine Hintertür, keine SQL-Injection, kein XSS)
 - Größtes Risiko ist der Update-Kanal: Wer auf `main` pushen kann, bringt Code auf die Live-Seite. Deshalb: 2FA auf dem GitHub-Konto, Branch-Schutz für `main`, wenig Mitarbeitende.

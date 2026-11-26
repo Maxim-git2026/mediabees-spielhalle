@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.28.2
+Stable tag: 2.29.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.29.0 – 26.11.2026 =
+* Werkzeuge → Arcade-Rangliste im neuen MediaBees-Look: alle Spiele als Karten mit Vorschaubild, Platz 1–3 in Gold/Silber/Bronze, Titel zu jeder Punktzahl, Datum, Löschen per Mülleimer (mit Rückfrage), Zähler oben, Namenssuche und Filter „Nur mit Einträgen“.
+* Beide Backend-Seiten nutzen jetzt die volle Breite.
+* Dunkles Design: Schrift ist jetzt überall gut lesbar (WordPress hatte manche Überschriften und Texte dunkel eingefärbt). Die Ranglisten-Seite folgt der gleichen Hell/Dunkel-Einstellung.
 
 = 2.28.2 – 26.11.2026 =
 * Einstellungen → Spielhalle: Die Knopf-Vorschauen bei „Aussehen“ waren leer (nur ein gelber Link). Jetzt werden die Knöpfe dort wieder richtig gezeigt.

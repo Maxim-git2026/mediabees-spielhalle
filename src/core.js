@@ -262,6 +262,7 @@
 
   window.MBArcade = {
     tile: function (t) { tiles.push(t); },
+    tiles: function () { return tiles.slice(); }, /* für das Backend (Vorschaubilder, Ranglisten-Titel) */
     register: function (g) {
       full[g.id] = g;
       (waiters[g.id] || []).forEach(function (fn) { fn(g); });

@@ -41,7 +41,7 @@
     return (m === 1 ? '1 Minute' : m + ' Minuten') + (r ? ' ' + r + ' Sekunden' : '');
   }
   function upd() {
-    if (!sum) return;
+    if (!sum || !root.querySelector('[name=mbbj_bee]')) return;
     var on = root.querySelector('[name=mbbj_bee]').checked;
     var f = root.querySelector('[name=mbbj_bee_first]').value, e = root.querySelector('[name=mbbj_bee_every]').value, m = parseInt(root.querySelector('[name=mbbj_bee_max]').value, 10) || 1;
     sum.textContent = on
@@ -57,7 +57,7 @@
   var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
   function applyTheme() {
     var sel = document.querySelector('[name=mbbj_admin_theme]:checked');
-    var v = sel ? sel.value : 'auto';
+    var v = sel ? sel.value : (root.getAttribute('data-theme') || 'auto');
     var dark = v === 'dark' || (v === 'auto' && mq && mq.matches);
     document.body.classList.toggle('mbbj-dark', !!dark);
   }
@@ -78,6 +78,7 @@
   var SIZE = { s: 0.8, m: 1, l: 1.25 };
   function val(n) { var el = root.querySelector('[name=' + n + ']:checked') || root.querySelector('[name=' + n + ']'); return el ? el.value : ''; }
   function updKnopf() {
+    if (!root.querySelector('[name=mbbj_k_colors]')) return;
     var mode = val('mbbj_k_text_mode'), txt = (root.querySelector('[name=mbbj_k_text]') || {}).value || '';
     var colors = root.querySelector('[name=mbbj_k_colors]').checked;
     root.classList.toggle('is-colors-off', !colors);
@@ -125,4 +126,44 @@
   }
   root.addEventListener('change', updFloat);
   updFloat();
+  /* ---------------- Ranglisten-Seite: Vorschaubilder, Titel, Suche, Filter, Rückfrage beim Löschen */
+  var tiles = window.MBArcade && window.MBArcade.tiles ? window.MBArcade.tiles() : [];
+  var byId = {};
+  tiles.forEach(function (t) { byId[t.id] = t; });
+  root.querySelectorAll('[data-thumb]').forEach(function (cv) {
+    var t = byId[cv.getAttribute('data-thumb')];
+    if (!t || !t.thumb) return;
+    var w = 160, h = 96, dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = w * dpr; cv.height = h * dpr;
+    var g = cv.getContext('2d'); g.scale(dpr, dpr);
+    try { t.thumb(g, w, h); } catch (e) {}
+  });
+  root.querySelectorAll('[data-rank-title]').forEach(function (el) {
+    var card = el.closest('[data-game]'), t = card && byId[card.getAttribute('data-game')];
+    if (!t || !t.ranks) return;
+    var sc = parseInt(el.getAttribute('data-score'), 10) || 0, title = '';
+    for (var i = 0; i < t.ranks.length; i++) { if (sc >= t.ranks[i][0]) { title = t.ranks[i][1]; break; } }
+    el.textContent = title;
+  });
+  root.querySelectorAll('form[data-confirm]').forEach(function (f) {
+    f.addEventListener('submit', function (e) { if (!window.confirm(f.getAttribute('data-confirm'))) e.preventDefault(); });
+  });
+  var search = root.querySelector('[data-search]'), nores = root.querySelector('[data-nores]');
+  function filterRanks() {
+    var q = search ? search.value.trim().toLowerCase() : '';
+    var fil = root.querySelector('[name=mbbj_filter]:checked'), onlyFilled = fil && fil.value === 'filled';
+    var any = false;
+    root.querySelectorAll('[data-game]').forEach(function (card) {
+      var rows = card.querySelectorAll('li[data-name]'), hit = 0;
+      rows.forEach(function (li) { var ok = !q || li.getAttribute('data-name').indexOf(q) >= 0; li.classList.toggle('is-hidden', !ok); if (ok) hit++; });
+      var show = q ? hit > 0 : (!onlyFilled || rows.length > 0);
+      card.classList.toggle('is-hidden', !show);
+      if (show) any = true;
+    });
+    if (nores) nores.hidden = !q || any;
+  }
+  if (search) {
+    search.addEventListener('input', filterRanks);
+    root.querySelectorAll('[name=mbbj_filter]').forEach(function (r) { r.addEventListener('change', filterRanks); });
+  }
 })();

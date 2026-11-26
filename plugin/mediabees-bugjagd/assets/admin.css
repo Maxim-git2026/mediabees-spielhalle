@@ -1,5 +1,5 @@
 /* MediaBees Spielhalle – Einstellungsseite (Einstellungen → Spielhalle) */
-.mbbj-admin{--y:#FDC506;--ink:#141414;--ink2:#1f1f1f;--line:#e6e2d6;--muted:#6b6658;max-width:1100px;font-family:Poppins,-apple-system,"Segoe UI",system-ui,sans-serif;color:#1d1d1d}
+.mbbj-admin{--y:#FDC506;--ink:#141414;--ink2:#1f1f1f;--line:#e6e2d6;--muted:#6b6658;--txt:#1d1d1d;max-width:none;margin-right:20px;font-family:Poppins,-apple-system,"Segoe UI",system-ui,sans-serif;color:#1d1d1d}
 .mbbj-admin *,.mbbj-admin *::before,.mbbj-admin *::after{box-sizing:border-box}
 .mbbj-admin h2,.mbbj-admin h3{font-family:inherit}
 .mbbj-admin code{background:#f4efe0;border-radius:5px;padding:2px 6px;font-size:12.5px}
@@ -214,3 +214,68 @@ body.mbbj-dark .mbbj-elementor-hint{background-color:#000;border:1px solid #2d2d
 .mbbj-status.is-ok{background:#1f4d24;color:#b7f0bf}
 .mbbj-status.is-bad{background:#5a1d1a;color:#ffc9c4}
 .mbbj-elementor-hint .mbbj-status{display:table}
+
+/* ---------------------------------------------------------------- Lesbarkeit: WordPress färbt h1–h3, Labels, Tabellen usw. selbst dunkel ein.
+   Deshalb alle Textfarben hier ausdrücklich setzen (hell und dunkel). */
+.mbbj-admin .mbbj-card h2,.mbbj-admin .mbbj-card h3,.mbbj-admin .mbbj-label,.mbbj-admin .mbbj-num label,.mbbj-admin .mbbj-switch em,
+.mbbj-admin .mbbj-steps strong,.mbbj-admin .mbbj-choice strong,.mbbj-admin .mbbj-color strong,.mbbj-admin .mbbj-who strong,.mbbj-admin .mbbj-pts{color:var(--txt)}
+.mbbj-admin .mbbj-card h3{color:var(--muted)}
+.mbbj-admin .mbbj-hero h2{color:#fff}
+body.mbbj-dark .mbbj-admin{--txt:#f3efe4;--muted:#b3ad9c}
+body.mbbj-dark .mbbj-admin,body.mbbj-dark .mbbj-admin p,body.mbbj-dark .mbbj-admin li,body.mbbj-dark .mbbj-admin label,body.mbbj-dark .mbbj-admin small,body.mbbj-dark .mbbj-admin td,body.mbbj-dark .mbbj-admin th{color:#ddd8ca}
+body.mbbj-dark .mbbj-admin .mbbj-choice small,body.mbbj-dark .mbbj-admin .mbbj-num span,body.mbbj-dark .mbbj-admin .mbbj-help{color:var(--muted)!important}
+body.mbbj-dark .mbbj-admin .mbbj-card h2,body.mbbj-dark .mbbj-admin strong,body.mbbj-dark .mbbj-admin b{color:var(--txt)}
+body.mbbj-dark .mbbj-admin .mbbj-elementor-hint strong,body.mbbj-dark .mbbj-admin .mbbj-elementor-hint b{color:var(--y)}
+body.mbbj-dark .mbbj-admin .mbbj-seg input:checked+span{color:#141414}
+body.mbbj-dark .mbbj-admin .mbbj-preset{color:var(--txt)}
+body.mbbj-dark .mbbj-admin input[type=search],body.mbbj-dark .mbbj-admin input[type=text],body.mbbj-dark .mbbj-admin textarea{background:#111!important;color:#f3efe4!important}
+body.mbbj-dark .mbbj-admin ::placeholder{color:#8b8676}
+
+/* ---------------------------------------------------------------- Ranglisten-Seite */
+.mbbj-stats{position:relative;display:flex;gap:12px;flex:0 0 auto}
+.mbbj-stats div{min-width:130px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-align:center}
+.mbbj-stats b{display:block;font-size:30px;line-height:1.1;font-weight:800;color:var(--y)}
+.mbbj-stats span{font-size:12px;color:#d8d4c8}
+.mbbj-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px}
+.mbbj-search{max-width:340px;height:44px}
+.mbbj-rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px;align-items:start}
+.mbbj-rcard{margin:0;padding:18px 20px 20px}
+.mbbj-rcard.is-hidden{display:none}
+.mbbj-rhead{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.mbbj-thumb{width:96px;height:58px;border-radius:10px;background:#141414;flex:0 0 auto;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.mbbj-rhead h2{margin:0 0 4px!important;font-size:18px!important}
+.mbbj-count{display:inline-block;padding:3px 10px;border-radius:99px;background:#f4efe0;color:#6b5b1f;font-size:11.5px;font-weight:700}
+.mbbj-rcard.is-empty .mbbj-count{background:#eeeeee;color:#777}
+.mbbj-empty{margin:4px 0 0;padding:16px;border-radius:12px;border:2px dashed var(--line);text-align:center;color:var(--muted)!important}
+.mbbj-rlist{list-style:none;margin:0;padding:0}
+.mbbj-rlist li{display:grid;grid-template-columns:34px 1fr auto 36px;align-items:center;gap:12px;margin:0;padding:9px 8px;border-radius:10px}
+.mbbj-rlist li:nth-child(odd){background:#faf7ee}
+.mbbj-rlist li.is-hidden{display:none}
+.mbbj-pos{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#ece7d8;color:#4a4638;font-weight:800;font-size:13px}
+.mbbj-pos--1{background:linear-gradient(135deg,#ffe680,#e9a800);color:#3a2a00;box-shadow:0 0 0 2px #fff3c4}
+.mbbj-pos--2{background:linear-gradient(135deg,#f1f3f5,#a8b0ba);color:#2a2f36}
+.mbbj-pos--3{background:linear-gradient(135deg,#f3c6a0,#b46a32);color:#3a1d06}
+.mbbj-who{display:flex;flex-direction:column;min-width:0}
+.mbbj-who strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mbbj-who small{font-size:12px;color:var(--muted)}
+.mbbj-pts{display:flex;flex-direction:column;align-items:flex-end;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.mbbj-pts small{font-weight:500;font-size:11.5px;color:var(--muted)}
+.mbbj-del{margin:0}
+.mbbj-icon-btn{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:9px;background:transparent;color:#a39d8c;cursor:pointer;transition:background .15s ease,color .15s ease}
+.mbbj-icon-btn svg{width:17px;height:17px}
+.mbbj-icon-btn:hover,.mbbj-icon-btn:focus-visible{background:#fde3e1;color:#c0261f;outline:0}
+.mbbj-clear{margin:14px 0 0;text-align:right}
+.mbbj-btn--danger{background:transparent;border-color:#e8b4b0;color:#b3261e!important;padding:8px 14px;font-size:12.5px}
+.mbbj-btn--danger:hover{background:#b3261e;border-color:#b3261e;color:#fff!important}
+.mbbj-nores{text-align:center;color:var(--muted);font-weight:600}
+body.mbbj-dark .mbbj-rlist li:nth-child(odd){background:#1f1f1f}
+body.mbbj-dark .mbbj-pos{background:#2c2c2c;color:#ddd8ca}
+body.mbbj-dark .mbbj-pos--1{background:linear-gradient(135deg,#ffe680,#e9a800);color:#3a2a00;box-shadow:none}
+body.mbbj-dark .mbbj-pos--2{background:linear-gradient(135deg,#f1f3f5,#a8b0ba);color:#2a2f36}
+body.mbbj-dark .mbbj-pos--3{background:linear-gradient(135deg,#f3c6a0,#b46a32);color:#3a1d06}
+body.mbbj-dark .mbbj-count{background:#2f2a14;color:#f1d777}
+body.mbbj-dark .mbbj-rcard.is-empty .mbbj-count{background:#262626;color:#999}
+body.mbbj-dark .mbbj-icon-btn:hover{background:#4a1c19;color:#ff9a92}
+body.mbbj-dark .mbbj-btn--danger{border-color:#6a2a25;color:#ff9a92!important}
+@media (max-width:960px){.mbbj-stats{width:100%}.mbbj-stats div{flex:1}.mbbj-rgrid{grid-template-columns:1fr}.mbbj-admin{margin-right:10px}}
+body.mbbj-dark .mbbj-admin .mbbj-stats b{color:var(--y)}

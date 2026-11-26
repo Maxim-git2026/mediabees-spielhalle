@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.28.2
+ * Version: 2.29.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.28.2' );
+define( 'MBBJ_VERSION', '2.29.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -734,58 +734,95 @@ add_action( 'admin_init', function () {
 			mbbj_save_top( $game, array() );
 		}
 	}
-	wp_safe_redirect( admin_url( 'tools.php?page=mbbj&done=1' ) );
+	wp_safe_redirect( admin_url( 'tools.php?page=mbbj&done=' . ( in_array( $action, array( 'delete', 'clear' ), true ) ? $action : '1' ) ) . ( isset( $games[ $game ] ) ? '#mbbj-g-' . $game : '' ) );
 	exit;
 } );
 
 function mbbj_admin_page() {
+	$games = mbbj_games();
+	$lists = array();
+	$total = 0;
+	$with  = 0;
+	foreach ( $games as $gid => $conf ) {
+		$lists[ $gid ] = mbbj_sort( mbbj_get_top( $gid ) );
+		$total        += count( $lists[ $gid ] );
+		$with         += $lists[ $gid ] ? 1 : 0;
+	}
+	$done = isset( $_GET['done'] ) ? sanitize_key( wp_unslash( $_GET['done'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 	?>
-	<div class="wrap">
-		<h1>Arcade-Rangliste</h1>
-		<p>Pro Spiel werden nur die Top 10 gespeichert. Wer rausfällt, wird automatisch gelöscht. Unpassende Namen oder Einträge, deren Löschung jemand verlangt, kannst du hier entfernen.</p>
-		<p>Den Textvorschlag für die Datenschutzerklärung findest du unter <a href="<?php echo esc_url( admin_url( 'options-privacy.php?tab=policyguide' ) ); ?>">Einstellungen &gt; Datenschutz &gt; Leitfaden</a>.</p>
-		<?php if ( isset( $_GET['done'] ) ) : // phpcs:ignore ?>
-			<div class="notice notice-success is-dismissible"><p>Erledigt.</p></div>
+	<div class="wrap mbbj-admin mbbj-ranks" data-theme="<?php echo esc_attr( mbbj_teaser_settings()['admin_theme'] ); ?>">
+		<h1 class="screen-reader-text">Arcade-Rangliste</h1>
+
+		<header class="mbbj-hero">
+			<div class="mbbj-hero-text">
+				<span class="mbbj-badge">Top 10 je Spiel</span>
+				<h2>Ranglisten <span>verwalten</span></h2>
+				<p>Pro Spiel bleiben nur die besten 10. Wer rausfällt, wird automatisch gelöscht. Unpassende Namen oder Einträge, deren Löschung jemand verlangt, entfernst du hier mit einem Klick.</p>
+				<div class="mbbj-hero-links">
+					<a class="mbbj-btn mbbj-btn--yellow" href="<?php echo esc_url( mbbj_teaser_url() ); ?>" target="_blank" rel="noopener">Spielhalle öffnen ↗</a>
+					<a class="mbbj-btn mbbj-btn--ghost" href="<?php echo esc_url( admin_url( 'options-general.php?page=mbbj-settings' ) ); ?>">Einstellungen</a>
+					<a class="mbbj-btn mbbj-btn--ghost" href="<?php echo esc_url( admin_url( 'options-privacy.php?tab=policyguide' ) ); ?>">Text für Datenschutz</a>
+				</div>
+			</div>
+			<div class="mbbj-stats">
+				<div><b><?php echo esc_html( number_format_i18n( $total ) ); ?></b><span>Einträge</span></div>
+				<div><b><?php echo (int) $with; ?>/<?php echo (int) count( $games ); ?></b><span>Spiele mit Rangliste</span></div>
+			</div>
+		</header>
+
+		<?php if ( $done ) : ?>
+			<div class="mbbj-toast"><?php echo 'clear' === $done ? '✓ Rangliste geleert.' : ( 'delete' === $done ? '✓ Eintrag gelöscht.' : '✓ Erledigt.' ); ?></div>
 		<?php endif; ?>
-		<p>Knopf „Nicht drücken!“ und fliegende Biene stellst du unter <a href="<?php echo esc_url( admin_url( 'options-general.php?page=mbbj-settings' ) ); ?>">Einstellungen &gt; Spielhalle</a> ein.</p>
-		<h2 style="margin-top:28px">Ranglisten</h2>
-		<?php foreach ( mbbj_games() as $gid => $conf ) : ?>
-			<?php $list = mbbj_sort( mbbj_get_top( $gid ) ); ?>
-			<h2 style="margin-top:28px"><?php echo esc_html( $conf['title'] ); ?></h2>
-			<table class="widefat striped" style="max-width:720px">
-				<thead><tr><th style="width:60px">Platz</th><th>Name</th><th style="width:90px">Punkte</th><th style="width:160px">Datum</th><th style="width:90px"></th></tr></thead>
-				<tbody>
+
+		<div class="mbbj-toolbar">
+			<input type="search" class="mbbj-input mbbj-search" placeholder="Name suchen …" data-search aria-label="Name suchen">
+			<div class="mbbj-seg" role="radiogroup" aria-label="Filter">
+				<label><input type="radio" name="mbbj_filter" value="all" checked><span>Alle Spiele</span></label>
+				<label><input type="radio" name="mbbj_filter" value="filled"><span>Nur mit Einträgen</span></label>
+			</div>
+		</div>
+
+		<div class="mbbj-rgrid">
+		<?php foreach ( $games as $gid => $conf ) : ?>
+			<?php $list = $lists[ $gid ]; ?>
+			<section class="mbbj-card mbbj-rcard<?php echo $list ? '' : ' is-empty'; ?>" id="mbbj-g-<?php echo esc_attr( $gid ); ?>" data-game="<?php echo esc_attr( $gid ); ?>">
+				<div class="mbbj-rhead">
+					<canvas class="mbbj-thumb" data-thumb="<?php echo esc_attr( $gid ); ?>" width="160" height="96" aria-hidden="true"></canvas>
+					<div>
+						<h2><?php echo esc_html( $conf['title'] ); ?></h2>
+						<span class="mbbj-count"><?php echo $list ? esc_html( count( $list ) . ' von 10' ) : 'Noch leer'; ?></span>
+					</div>
+				</div>
 				<?php if ( ! $list ) : ?>
-					<tr><td colspan="5">Noch keine Einträge.</td></tr>
+					<p class="mbbj-empty">Noch keine Einträge. Zeit für eine Runde?</p>
+				<?php else : ?>
+					<ol class="mbbj-rlist">
+						<?php foreach ( $list as $i => $e ) : ?>
+							<li data-name="<?php echo esc_attr( mb_strtolower( $e['name'] ) ); ?>">
+								<span class="mbbj-pos mbbj-pos--<?php echo (int) $i + 1; ?>"><?php echo (int) $i + 1; ?></span>
+								<span class="mbbj-who"><strong><?php echo esc_html( $e['name'] ); ?></strong><small data-rank-title data-score="<?php echo (int) $e['score']; ?>"></small></span>
+								<span class="mbbj-pts"><?php echo esc_html( number_format_i18n( (int) $e['score'] ) ); ?><small><?php echo esc_html( wp_date( 'd.m.Y H:i', (int) $e['time'] ) ); ?></small></span>
+								<form method="post" class="mbbj-del" data-confirm="<?php echo esc_attr( 'Eintrag von „' . $e['name'] . '“ wirklich löschen?' ); ?>">
+									<?php wp_nonce_field( 'mbbj_admin' ); ?>
+									<input type="hidden" name="mbbj_action" value="delete">
+									<input type="hidden" name="mbbj_game" value="<?php echo esc_attr( $gid ); ?>">
+									<input type="hidden" name="mbbj_id" value="<?php echo esc_attr( $e['id'] ); ?>">
+									<button type="submit" class="mbbj-icon-btn" title="Eintrag löschen" aria-label="<?php echo esc_attr( 'Eintrag von ' . $e['name'] . ' löschen' ); ?>"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3h6l1 2h3v2H3V5h3zM5 8h10l-1 9H6z" fill="currentColor"/></svg></button>
+								</form>
+							</li>
+						<?php endforeach; ?>
+					</ol>
+					<form method="post" class="mbbj-clear" data-confirm="<?php echo esc_attr( 'Wirklich ALLE Einträge von ' . $conf['title'] . ' löschen? Das lässt sich nicht rückgängig machen.' ); ?>">
+						<?php wp_nonce_field( 'mbbj_admin' ); ?>
+						<input type="hidden" name="mbbj_action" value="clear">
+						<input type="hidden" name="mbbj_game" value="<?php echo esc_attr( $gid ); ?>">
+						<button class="mbbj-btn mbbj-btn--danger" type="submit">Rangliste leeren</button>
+					</form>
 				<?php endif; ?>
-				<?php foreach ( $list as $i => $e ) : ?>
-					<tr>
-						<td><?php echo (int) $i + 1; ?></td>
-						<td><?php echo esc_html( $e['name'] ); ?></td>
-						<td><?php echo esc_html( number_format_i18n( (int) $e['score'] ) ); ?></td>
-						<td><?php echo esc_html( wp_date( 'd.m.Y H:i', (int) $e['time'] ) ); ?></td>
-						<td>
-							<form method="post">
-								<?php wp_nonce_field( 'mbbj_admin' ); ?>
-								<input type="hidden" name="mbbj_action" value="delete">
-								<input type="hidden" name="mbbj_game" value="<?php echo esc_attr( $gid ); ?>">
-								<input type="hidden" name="mbbj_id" value="<?php echo esc_attr( $e['id'] ); ?>">
-								<button class="button button-small" type="submit">Löschen</button>
-							</form>
-						</td>
-					</tr>
-				<?php endforeach; ?>
-				</tbody>
-			</table>
-			<?php if ( $list ) : ?>
-				<form method="post" style="margin-top:10px" onsubmit="return confirm('Wirklich alle Einträge von <?php echo esc_attr( $conf['title'] ); ?> löschen?');">
-					<?php wp_nonce_field( 'mbbj_admin' ); ?>
-					<input type="hidden" name="mbbj_action" value="clear">
-					<input type="hidden" name="mbbj_game" value="<?php echo esc_attr( $gid ); ?>">
-					<button class="button" type="submit">Rangliste <?php echo esc_html( $conf['title'] ); ?> leeren</button>
-				</form>
-			<?php endif; ?>
+			</section>
 		<?php endforeach; ?>
+		</div>
+		<p class="mbbj-nores" data-nores hidden>Kein Eintrag mit diesem Namen gefunden.</p>
 	</div>
 	<?php
 }
@@ -822,6 +859,12 @@ add_filter( 'plugin_action_links_' . plugin_basename( MBBJ_FILE ), function ( $l
 } );
 
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
+	if ( 'tools_page_mbbj' === $hook ) {
+		wp_enqueue_style( 'mbbj-admin', plugins_url( 'assets/admin.css', MBBJ_FILE ), array(), MBBJ_VERSION );
+		wp_enqueue_script( 'mbbj-arcade-tiles', plugins_url( 'assets/arcade.js', MBBJ_FILE ), array(), MBBJ_VERSION, true ); // nur für Vorschaubilder und Titel
+		wp_enqueue_script( 'mbbj-admin', plugins_url( 'assets/admin.js', MBBJ_FILE ), array( 'mbbj-arcade-tiles' ), MBBJ_VERSION, true );
+		return;
+	}
 	if ( 'settings_page_mbbj-settings' !== $hook ) {
 		return;
 	}
@@ -838,7 +881,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 /* Dunkles Design der Einstellungsseite: Klasse am <body>, damit auch der Hintergrund von WordPress mitzieht */
 add_filter( 'admin_body_class', function ( $classes ) {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-	if ( $screen && 'settings_page_mbbj-settings' === $screen->id ) {
+	if ( $screen && in_array( $screen->id, array( 'settings_page_mbbj-settings', 'tools_page_mbbj' ), true ) ) {
 		$classes .= ' mbbj-theme-' . sanitize_html_class( mbbj_teaser_settings()['admin_theme'] );
 	}
 	return $classes;
