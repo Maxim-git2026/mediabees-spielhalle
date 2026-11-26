@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.25.0
+Stable tag: 2.25.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.25.1 – 26.11.2026 =
+* Der doppelte Link „Einstellungen (Knopf & Biene)“ hinter „Nach Updates suchen“ ist weg. Die Einstellungen erreichst du über den Link „Einstellungen“ neben „Deaktivieren“.
 
 = 2.25.0 – 26.11.2026 =
 * Der rote Knopf gehört jetzt in den Footer: Shortcode [mediabees_knopf] in der Elementor-Footer-Vorlage einsetzen. Schwebend am Bildschirmrand geht weiterhin, wenn man es in den Einstellungen wählt.
