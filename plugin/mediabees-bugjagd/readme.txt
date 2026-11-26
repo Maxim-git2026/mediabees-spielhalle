@@ -22,7 +22,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
 
 = 2.30.6 – 26.11.2026 =
-* BOOM 2026: Das Gesicht der Biene ist kinderfreundlicher: entschlossen statt gruselig. Beim Dauerfeuer gibt es jetzt einen Comic-Kampfschrei statt gefletschter Zähne, und das Vorschaubild zeigt ein cooles, schiefes Grinsen. Bei einer neuen Waffe strahlt die Biene jetzt mit einem breiten Lächeln.
+* BOOM 2026: Das Gesicht der Biene ist kinderfreundlicher: entschlossen statt gruselig. Beim Dauerfeuer gibt es jetzt einen Comic-Kampfschrei statt gefletschter Zähne, Bei einer neuen Waffe grinst die Biene breit mit Zähnen und entschlossenem Blick, genau dieses Grinsen zeigt jetzt auch das Vorschaubild.
 
 = 2.30.5 – 26.11.2026 =
 * BOOM 2026: Du rennst jetzt deutlich schneller, wie bei den Klassikern. Shift = langsam gehen. Wer lieber normal läuft und mit Shift sprintet, stellt das im Menü um („Shift: Sprinten“).

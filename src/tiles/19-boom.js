@@ -36,12 +36,18 @@
       g.fillStyle = '#FFF6C0'; g.beginPath(); g.arc(0, -16.5, 3, 0, TAU); g.fill();
       [-6, 6].forEach(function (ex, k) {
         var sd = k ? -1 : 1;
-        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 3.6, 0, 0, TAU); g.fill();
+        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6, 0, 0, TAU); g.fill();
         g.fillStyle = '#111'; g.beginPath(); g.arc(ex, 3.8, 1.8, 0, TAU); g.fill();
-        g.strokeStyle = '#111'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(ex - 5 * sd, -2.6); g.lineTo(ex + 4 * sd, -0.6); g.stroke();
+        g.strokeStyle = '#111'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(ex - 5 * sd, -3.2); g.lineTo(ex + 4 * sd, -0.4); g.stroke();
       });
-      /* entschlossenes, schiefes Grinsen */
-      g.strokeStyle = '#F7B500'; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(-5, 11.5); g.lineTo(2, 11.5); g.quadraticCurveTo(5, 11.2, 6.5, 8.8); g.stroke();
+      /* breites Grinsen mit Zähnen (wie bei einer neuen Waffe im Spiel) */
+      g.save(); g.beginPath(); g.moveTo(-9.5, 8.5); g.quadraticCurveTo(0, 21, 9.5, 8.5); g.quadraticCurveTo(0, 11, -9.5, 8.5); g.closePath();
+      g.fillStyle = '#5A1A10'; g.fill(); g.clip();
+      g.fillStyle = '#FFF'; g.fillRect(-10, 8, 20, 4.6);
+      g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 0.8; for (var t = -6; t <= 6; t += 3) { g.beginPath(); g.moveTo(t, 8.5); g.lineTo(t, 12.6); g.stroke(); }
+      g.fillStyle = '#E86A8A'; g.beginPath(); g.ellipse(0, 17, 4, 2.4, 0, 0, TAU); g.fill();
+      g.restore();
+      g.strokeStyle = '#111'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-9.5, 8.5); g.quadraticCurveTo(0, 21, 9.5, 8.5); g.quadraticCurveTo(0, 11, -9.5, 8.5); g.stroke();
       g.restore();
       /* Logo */
       var fs = Math.round(h * 0.27);

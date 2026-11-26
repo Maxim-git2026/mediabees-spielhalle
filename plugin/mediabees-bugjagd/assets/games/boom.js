@@ -781,10 +781,9 @@
         g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
         g.fillStyle = '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
         /* Augenbrauen: immer schräg nach innen (grimmig), beim fiesen Grinsen noch steiler */
-        var hard = f.rage || f.rampage;
+        var hard = f.rage || f.rampage || f.grin;
         g.strokeStyle = '#111'; g.lineWidth = hard ? 2.4 : 2.1;
-        if (f.grin) { g.beginPath(); g.moveTo(ex - 4.5, -2.2); g.quadraticCurveTo(ex, -5.2, ex + 4.5, -2.2); g.stroke(); }
-        else { g.beginPath(); g.moveTo(ex - 5 * sd, hard ? -3.2 : -2.4); g.lineTo(ex + 4 * sd, hard ? -0.4 : -1.2); g.stroke(); }
+        g.beginPath(); g.moveTo(ex - 5 * sd, hard ? -3.2 : -2.4); g.lineTo(ex + 4 * sd, hard ? -0.4 : -1.2); g.stroke();
       });
       if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3.4, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3.4, 3.5, 2.2, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3.6, 1.6, 0, TAU); g.fill(); }
       /* Mund */
