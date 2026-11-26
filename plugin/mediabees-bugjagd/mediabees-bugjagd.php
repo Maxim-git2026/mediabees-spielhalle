@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.24.2
+ * Version: 2.25.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.24.2' );
+define( 'MBBJ_VERSION', '2.25.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -88,11 +88,67 @@ function mbbj_teaser_settings() {
 	return wp_parse_args( is_array( $s ) ? $s : array(), array(
 		'button'  => 1,
 		'bee'     => 1,
-		'url'     => '/spielhalle/',
-		'side'    => 'left',
-		'exclude' => '',
+		'url'       => '/spielhalle/',
+		'place'     => 'footer', // footer = per Shortcode [mediabees_knopf], left/right = schwebt am Bildschirmrand
+		'style'     => 'notaus', // notaus, klappe, arcade
+		'bee_first' => 40,       // erste Biene nach so vielen Sekunden
+		'bee_every' => 120,      // danach alle so vielen Sekunden
+		'bee_max'   => 2,        // höchstens so viele Bienen pro Seitenaufruf
+		'exclude'   => '',
 	) );
 }
+
+function mbbj_knopf_styles() {
+	return array(
+		'notaus' => 'Not-Aus (gelb-schwarzer Kasten)',
+		'klappe' => 'Geheimknopf unter Glasklappe',
+		'arcade' => 'Arcade-Knopf (rund, rot)',
+	);
+}
+
+function mbbj_teaser_url() {
+	$url = (string) mbbj_teaser_settings()['url'];
+	if ( ! preg_match( '#^https?://#i', $url ) ) {
+		$url = home_url( '/' . ltrim( $url, '/' ) );
+	}
+	return $url;
+}
+
+/* HTML des Knopfs. Ein normaler Link, damit er auch ohne JavaScript zur Spielhalle führt. */
+function mbbj_knopf_html( $style = '', $extra_class = '' ) {
+	$styles = mbbj_knopf_styles();
+	if ( ! isset( $styles[ $style ] ) ) {
+		$style = mbbj_teaser_settings()['style'];
+	}
+	if ( ! isset( $styles[ $style ] ) ) {
+		$style = 'notaus';
+	}
+	$label = 'klappe' === $style ? 'Streng geheim!' : 'Nicht drücken!';
+	return '<a class="mbbj-k mbbj-k--' . esc_attr( $style ) . ( $extra_class ? ' ' . esc_attr( $extra_class ) : '' ) . '" href="' . esc_url( mbbj_teaser_url() ) . '" aria-label="' . esc_attr( $label . ' (führt zur MediaBees-Spielhalle)' ) . '">'
+		. '<span class="mbbj-k-box" aria-hidden="true"><span class="mbbj-k-cap"></span>' . ( 'klappe' === $style ? '<span class="mbbj-k-lid"></span>' : '' ) . '</span>'
+		. '<span class="mbbj-k-label" aria-hidden="true">' . esc_html( $label ) . '</span></a>';
+}
+
+/*
+ * Shortcode [mediabees_knopf] für den Footer (Elementor: Shortcode-Widget in der Footer-Vorlage).
+ * Optional stil="notaus|klappe|arcade". Auf der Spielhalle selbst, der 404 und ausgeschlossenen Seiten bleibt er leer.
+ */
+add_shortcode( 'mediabees_knopf', function ( $atts = array() ) {
+	$atts = shortcode_atts( array( 'stil' => '' ), is_array( $atts ) ? $atts : array(), 'mediabees_knopf' );
+	$s    = mbbj_teaser_settings();
+	if ( ! $s['button'] ) {
+		return '';
+	}
+	if ( isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Vorschau im Elementor-Editor: Knopf zeigen, aber ohne Biene
+		wp_enqueue_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
+		return '<span class="mbbj-k-wrap">' . mbbj_knopf_html( sanitize_key( $atts['stil'] ) ) . '</span>';
+	}
+	if ( ! mbbj_teaser_active() ) {
+		return '';
+	}
+	mbbj_teaser_enqueue();
+	return '<span class="mbbj-k-wrap">' . mbbj_knopf_html( sanitize_key( $atts['stil'] ) ) . '</span>';
+} );
 
 /* Pfad ohne Domain und ohne Schrägstrich am Ende, z. B. "/kontakt" */
 function mbbj_teaser_path( $url ) {
@@ -129,25 +185,39 @@ function mbbj_teaser_active() {
 	return true;
 }
 
-add_action( 'wp_enqueue_scripts', function () {
-	if ( ! mbbj_teaser_active() ) {
+function mbbj_teaser_enqueue() {
+	static $done = false;
+	if ( $done ) {
 		return;
 	}
-	$s   = mbbj_teaser_settings();
-	$url = (string) $s['url'];
-	if ( ! preg_match( '#^https?://#i', $url ) ) {
-		$url = home_url( '/' . ltrim( $url, '/' ) );
-	}
+	$done = true;
+	$s    = mbbj_teaser_settings();
 	wp_enqueue_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
 	wp_enqueue_script( 'mbbj-teaser', plugins_url( 'assets/teaser.js', MBBJ_FILE ), array(), MBBJ_VERSION, true );
 	wp_add_inline_script( 'mbbj-teaser', 'window.MBBJ_TEASER=' . wp_json_encode( array(
-		'url'    => esc_url_raw( $url ),
-		'button' => (bool) $s['button'],
-		'bee'    => (bool) $s['bee'],
-		'side'   => 'right' === $s['side'] ? 'right' : 'left',
-		'test'   => isset( $_GET['mbbj_biene'] ), // phpcs:ignore WordPress.Security.NonceVerification -- nur zum Ausprobieren: Biene kommt sofort
+		'url'   => esc_url_raw( mbbj_teaser_url() ),
+		'bee'   => (bool) $s['bee'],
+		'first' => max( 3, (int) $s['bee_first'] ),
+		'every' => max( 10, (int) $s['bee_every'] ),
+		'max'   => max( 1, min( 20, (int) $s['bee_max'] ) ),
+		'test'  => isset( $_GET['mbbj_biene'] ), // phpcs:ignore WordPress.Security.NonceVerification -- nur zum Ausprobieren: Biene kommt sofort
 	) ) . ';', 'before' );
+}
+
+add_action( 'wp_enqueue_scripts', function () {
+	if ( mbbj_teaser_active() ) {
+		mbbj_teaser_enqueue();
+	}
 }, 20 );
+
+/* Schwebender Knopf (nur wenn in den Einstellungen „unten links/rechts“ gewählt ist) */
+add_action( 'wp_footer', function () {
+	$s = mbbj_teaser_settings();
+	if ( ! $s['button'] || 'footer' === $s['place'] || ! mbbj_teaser_active() ) {
+		return;
+	}
+	echo '<div class="mbbj-k-float mbbj-k-float--' . ( 'right' === $s['place'] ? 'right' : 'left' ) . '">' . mbbj_knopf_html() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- in mbbj_knopf_html escaped
+}, 5 );
 
 add_shortcode( 'mediabees_arcade', 'mbbj_render' );
 add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
@@ -534,14 +604,23 @@ add_action( 'admin_init', function () {
 	check_admin_referer( 'mbbj_admin' );
 	$action = sanitize_key( wp_unslash( $_POST['mbbj_action'] ) );
 	if ( 'teaser' === $action ) {
-		$side = isset( $_POST['mbbj_side'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_side'] ) ) : 'left';
-		$url  = isset( $_POST['mbbj_url'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['mbbj_url'] ) ) ) : '';
+		$place = isset( $_POST['mbbj_place'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_place'] ) ) : 'footer';
+		$style = isset( $_POST['mbbj_style'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_style'] ) ) : 'notaus';
+		$url   = isset( $_POST['mbbj_url'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['mbbj_url'] ) ) ) : '';
+		$num   = function ( $key, $min, $max, $def ) {
+			$v = isset( $_POST[ $key ] ) ? (int) $_POST[ $key ] : $def; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return max( $min, min( $max, $v ) );
+		};
 		update_option( 'mbbj_teaser', array(
-			'button'  => empty( $_POST['mbbj_button'] ) ? 0 : 1,
-			'bee'     => empty( $_POST['mbbj_bee'] ) ? 0 : 1,
-			'url'     => '' === $url ? '/spielhalle/' : $url,
-			'side'    => 'right' === $side ? 'right' : 'left',
-			'exclude' => isset( $_POST['mbbj_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['mbbj_exclude'] ) ) : '',
+			'button'    => empty( $_POST['mbbj_button'] ) ? 0 : 1,
+			'bee'       => empty( $_POST['mbbj_bee'] ) ? 0 : 1,
+			'url'       => '' === $url ? '/spielhalle/' : $url,
+			'place'     => in_array( $place, array( 'footer', 'left', 'right' ), true ) ? $place : 'footer',
+			'style'     => isset( mbbj_knopf_styles()[ $style ] ) ? $style : 'notaus',
+			'bee_first' => $num( 'mbbj_bee_first', 3, 3600, 40 ),
+			'bee_every' => $num( 'mbbj_bee_every', 10, 3600, 120 ),
+			'bee_max'   => $num( 'mbbj_bee_max', 1, 20, 2 ),
+			'exclude'   => isset( $_POST['mbbj_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['mbbj_exclude'] ) ) : '',
 		), true );
 		wp_safe_redirect( admin_url( 'options-general.php?page=mbbj-settings&done=1' ) );
 		exit;
@@ -659,16 +738,32 @@ function mbbj_settings_page() {
 		</div>
 		<?php $mbbj_t = mbbj_teaser_settings(); ?>
 		<h2 style="margin-top:28px">Roter Knopf und fliegende Biene</h2>
-		<p>Ein kleiner roter Knopf „Nicht drücken!“ und eine Biene, die ab und zu durchs Bild fliegt, führen zur Spielhalle. Auf der Spielhallen-Seite selbst und auf der 404 erscheinen sie nicht. Es werden keine Cookies gesetzt.</p>
-		<form method="post" style="max-width:720px">
+		<p>Ein roter Knopf „Nicht drücken!“ und eine Biene, die ab und zu durchs Bild fliegt, führen zur Spielhalle. Auf der Spielhallen-Seite selbst und auf der 404 erscheinen sie nicht. Es werden keine Cookies gesetzt.</p>
+		<form method="post" style="max-width:820px">
 			<?php wp_nonce_field( 'mbbj_admin' ); ?>
 			<input type="hidden" name="mbbj_action" value="teaser">
 			<table class="form-table" role="presentation">
-				<tr><th scope="row">Roter Knopf</th><td><label><input type="checkbox" name="mbbj_button" value="1" <?php checked( $mbbj_t['button'] ); ?>> „Nicht drücken!“-Knopf zeigen</label></td></tr>
-				<tr><th scope="row">Biene</th><td><label><input type="checkbox" name="mbbj_bee" value="1" <?php checked( $mbbj_t['bee'] ); ?>> Biene fliegt ab und zu durchs Bild (zuerst nach 30–60 Sekunden, höchstens 3-mal pro Seite)</label></td></tr>
+				<tr><th scope="row">Roter Knopf</th><td><label><input type="checkbox" name="mbbj_button" value="1" <?php checked( $mbbj_t['button'] ); ?>> Knopf zeigen</label></td></tr>
+				<tr><th scope="row">Aussehen</th><td>
+					<?php foreach ( mbbj_knopf_styles() as $mbbj_k => $mbbj_name ) : ?>
+						<label style="display:block;margin-bottom:4px"><input type="radio" name="mbbj_style" value="<?php echo esc_attr( $mbbj_k ); ?>" <?php checked( $mbbj_k, $mbbj_t['style'] ); ?>> <?php echo esc_html( $mbbj_name ); ?></label>
+					<?php endforeach; ?>
+				</td></tr>
+				<tr><th scope="row">Wo?</th><td>
+					<label style="display:block;margin-bottom:4px"><input type="radio" name="mbbj_place" value="footer" <?php checked( 'footer', $mbbj_t['place'] ); ?>> <strong>Im Footer</strong> (empfohlen)</label>
+					<p class="description" style="margin:0 0 8px 24px">In Elementor: Templates → Theme Builder → Footer bearbeiten → Widget „Shortcode“ an die gewünschte Stelle ziehen und <code>[mediabees_knopf]</code> eintragen. Ein anderes Aussehen nur dort: <code>[mediabees_knopf stil="klappe"]</code> (notaus, klappe, arcade).</p>
+					<label style="display:block;margin-bottom:4px"><input type="radio" name="mbbj_place" value="left" <?php checked( 'left', $mbbj_t['place'] ); ?>> schwebt unten links am Bildschirmrand</label>
+					<label style="display:block"><input type="radio" name="mbbj_place" value="right" <?php checked( 'right', $mbbj_t['place'] ); ?>> schwebt unten rechts am Bildschirmrand</label>
+				</td></tr>
+				<tr><th scope="row">Biene</th><td><label><input type="checkbox" name="mbbj_bee" value="1" <?php checked( $mbbj_t['bee'] ); ?>> Biene fliegt ab und zu durchs Bild</label></td></tr>
+				<tr><th scope="row">Wann und wie oft?</th><td>
+					Erste Biene nach <input type="number" min="3" max="3600" style="width:80px" name="mbbj_bee_first" value="<?php echo (int) $mbbj_t['bee_first']; ?>"> Sekunden,<br>
+					danach alle <input type="number" min="10" max="3600" style="width:80px" name="mbbj_bee_every" value="<?php echo (int) $mbbj_t['bee_every']; ?>"> Sekunden,<br>
+					höchstens <input type="number" min="1" max="20" style="width:70px" name="mbbj_bee_max" value="<?php echo (int) $mbbj_t['bee_max']; ?>"> Bienen pro Seitenaufruf.
+					<p class="description">Die Zeiten schwanken leicht, damit es nicht wie ein Uhrwerk wirkt. Wer am Gerät „Weniger Bewegung“ eingestellt hat, sieht keine Biene.</p>
+				</td></tr>
 				<tr><th scope="row"><label for="mbbj_url">Adresse der Spielhalle</label></th><td><input type="text" class="regular-text" id="mbbj_url" name="mbbj_url" value="<?php echo esc_attr( $mbbj_t['url'] ); ?>"><p class="description">Zum Beispiel <code>/spielhalle/</code>. Auf diese Seite kommt das Shortcode-Widget <code>[mediabees_arcade]</code>.</p></td></tr>
-				<tr><th scope="row">Knopf-Position</th><td><label><input type="radio" name="mbbj_side" value="left" <?php checked( 'left', $mbbj_t['side'] ); ?>> unten links</label> &nbsp; <label><input type="radio" name="mbbj_side" value="right" <?php checked( 'right', $mbbj_t['side'] ); ?>> unten rechts</label></td></tr>
-				<tr><th scope="row"><label for="mbbj_exclude">Nicht auf diesen Seiten</label></th><td><textarea class="large-text" rows="4" id="mbbj_exclude" name="mbbj_exclude" placeholder="/kontakt/"><?php echo esc_textarea( $mbbj_t['exclude'] ); ?></textarea><p class="description">Eine Adresse pro Zeile, z. B. <code>/kontakt/</code>. Unterseiten zählen mit. <code>/</code> allein steht nur für die Startseite.</p></td></tr>
+				<tr><th scope="row"><label for="mbbj_exclude">Nicht auf diesen Seiten</label></th><td><textarea class="large-text" rows="4" id="mbbj_exclude" name="mbbj_exclude" placeholder="/kontakt/"><?php echo esc_textarea( $mbbj_t['exclude'] ); ?></textarea><p class="description">Eine Adresse pro Zeile, z. B. <code>/kontakt/</code>. Unterseiten zählen mit. <code>/</code> allein steht nur für die Startseite. Gilt für Knopf und Biene.</p></td></tr>
 			</table>
 			<p><button class="button button-primary" type="submit">Änderungen speichern</button> &nbsp; <a href="<?php echo esc_url( add_query_arg( 'mbbj_biene', '1', home_url( '/' ) ) ); ?>" target="_blank" rel="noopener">Biene sofort ansehen (Startseite)</a></p>
 		</form>

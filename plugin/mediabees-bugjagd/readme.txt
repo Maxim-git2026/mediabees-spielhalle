@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.24.2
+Stable tag: 2.25.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -12,7 +12,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
 * Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wespen-Invasion), pfad (Pollenrausch), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Bienenboom), flipper (Honigflipper), wurf (Haldenduell), blitz (Bienen-Blitz), wimmel (Wimmelpott).
-* Einstellungen (Knopf und Biene): Einstellungen → Spielhalle.
+* Einstellungen (Knopf und Biene): Einstellungen → Spielhalle. Knopf im Footer: Shortcode [mediabees_knopf] (optional stil="notaus|klappe|arcade").
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
 * Beim Löschen des Plugins entfernt uninstall.php alle Ranglisten, Einstellungen und Zähler aus der Datenbank.
@@ -20,6 +20,12 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.25.0 – 26.11.2026 =
+* Der rote Knopf gehört jetzt in den Footer: Shortcode [mediabees_knopf] in der Elementor-Footer-Vorlage einsetzen. Schwebend am Bildschirmrand geht weiterhin, wenn man es in den Einstellungen wählt.
+* Drei neue Knopf-Looks zur Auswahl: Not-Aus (gelb-schwarz), Geheimknopf unter Glasklappe (Klappe geht beim Drüberfahren auf) und Arcade-Knopf.
+* Die Biene ist jetzt eine richtig gezeichnete Biene mit flatternden Flügeln. Vorher konnte das Theme sie zu einem gelben Knopf umstylen.
+* Neu in Einstellungen → Spielhalle: wann die erste Biene kommt, wie oft danach und wie viele Bienen höchstens pro Seite.
 
 = 2.24.2 – 26.11.2026 =
 * In der Plugin-Liste steht jetzt hinter „Nach Updates suchen“ der Link „Einstellungen (Knopf & Biene)“.
