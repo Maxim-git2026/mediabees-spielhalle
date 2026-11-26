@@ -38,15 +38,16 @@
       if (!f.ouch) { g.fillStyle = '#FFF'; g.fillRect(-4, 11, 8, 1.4); }
     } else {
       /* Augen: leicht zusammengekniffen, entschlossen */
-      var half = f.hurt >= 4 ? 0.5 : f.rampage ? 0.7 : f.grin ? 0.9 : 0.82;
+      var half = f.hurt >= 4 ? 0.5 : f.rampage ? 0.7 : f.grin ? 1 : 0.82;
       [-6, 6].forEach(function (ex, i) {
         var sd = i ? -1 : 1;
         g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
         g.fillStyle = '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
         /* Augenbrauen: immer schräg nach innen (grimmig), beim fiesen Grinsen noch steiler */
-        var hard = f.grin || f.rage || f.rampage;
+        var hard = f.rage || f.rampage;
         g.strokeStyle = '#111'; g.lineWidth = hard ? 2.4 : 2.1;
-        g.beginPath(); g.moveTo(ex - 5 * sd, hard ? -3.2 : -2.4); g.lineTo(ex + 4 * sd, hard ? -0.4 : -1.2); g.stroke();
+        if (f.grin) { g.beginPath(); g.moveTo(ex - 4.5, -2.2); g.quadraticCurveTo(ex, -5.2, ex + 4.5, -2.2); g.stroke(); }
+        else { g.beginPath(); g.moveTo(ex - 5 * sd, hard ? -3.2 : -2.4); g.lineTo(ex + 4 * sd, hard ? -0.4 : -1.2); g.stroke(); }
       });
       if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3.4, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3.4, 3.5, 2.2, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3.6, 1.6, 0, TAU); g.fill(); }
       /* Mund */
@@ -56,8 +57,14 @@
         g.fillStyle = '#FFF'; g.fillRect(-4, 9.2, 8, 1.8);
         g.fillStyle = '#E86A8A'; g.beginPath(); g.ellipse(0, 15, 3, 1.4, 0, 0, TAU); g.fill();
       } else if (f.grin) {
-        g.fillStyle = '#111'; g.beginPath(); g.moveTo(-9, 9); g.quadraticCurveTo(0, 19, 9, 9); g.closePath(); g.fill();
-        g.fillStyle = '#FFF'; for (var t = -7; t < 7; t += 3.4) g.fillRect(t, 9.6, 2.4, 2.6);
+        /* breites, fröhliches Lächeln mit Zähnen */
+        g.save(); g.beginPath(); g.moveTo(-9.5, 8.5); g.quadraticCurveTo(0, 21, 9.5, 8.5); g.quadraticCurveTo(0, 11, -9.5, 8.5); g.closePath();
+        g.fillStyle = '#5A1A10'; g.fill(); g.clip();
+        g.fillStyle = '#FFF'; g.fillRect(-10, 8, 20, 4.6);
+        g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 0.8; for (var t = -6; t <= 6; t += 3) { g.beginPath(); g.moveTo(t, 8.5); g.lineTo(t, 12.6); g.stroke(); }
+        g.fillStyle = '#E86A8A'; g.beginPath(); g.ellipse(0, 17, 4, 2.4, 0, 0, TAU); g.fill();
+        g.restore();
+        g.strokeStyle = '#111'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-9.5, 8.5); g.quadraticCurveTo(0, 21, 9.5, 8.5); g.quadraticCurveTo(0, 11, -9.5, 8.5); g.stroke();
       } else if (f.rage || f.hurt >= 2) {
         /* zusammengebissene Zähne (weich gezeichnet) */
         g.fillStyle = '#FFF'; art.rrect(g, -6, 10, 12, 4, 2); g.fill(); g.strokeStyle = '#111'; g.lineWidth = 1.2; g.stroke();
