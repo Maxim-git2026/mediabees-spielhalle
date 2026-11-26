@@ -470,6 +470,9 @@
       setScore: setScore, setTime: setTime,
       finish: function (score, stats) { endRound(score, stats); },
       say: say, tone: tone, announce: announce,
+      /* Für größere Spiele (BOOM): Pause von innen auslösen und eigenes Audio, nur wenn der Ton an ist */
+      pause: function () { pause(true); },
+      audio: function () { return soundOn && ac ? ac : null; },
       touch: function () { return !!(window.matchMedia && window.matchMedia('(hover: none)').matches); }
     };
 

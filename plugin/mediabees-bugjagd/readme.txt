@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.29.0
+Stable tag: 2.30.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -11,7 +11,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 
 * 404-Seite: Das Plugin übernimmt die 404-Seite automatisch (Header und Footer bleiben aus Elementor). Gibt es eine Elementor-404-Vorlage, wird stattdessen die gezeigt. Dort kann der Shortcode eingesetzt werden.
 * Eigene Seite: [mediabees_arcade] in ein Shortcode-Widget setzen. Auf normalen Seiten erscheint nur die Spielhalle, ohne den 404-Kopf.
-* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wespen-Invasion), pfad (Pollenrausch), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Bienenboom), flipper (Honigflipper), wurf (Haldenduell), blitz (Bienen-Blitz), wimmel (Wimmelpott).
+* Optionen: spiel="polonaise" wählt ein Spiel vor: bugjagd (Käfer-Jagd), wespen (Bienenstich), revier (Revierflug), polonaise (Bienentanz), flitzer (A40-Flitzer), abriss (Website-Abriss), nester (Wespennest), wacht (Wespen-Invasion), pfad (Pollenrausch), wabenbau (Wabenbau), solitaer (Bienen-Solitär), hopser (Hummelhopser), honigdieb (Honigdieb), knaller (Bombenstimmung), flipper (Honigflipper), wurf (Haldenduell), blitz (Bienen-Blitz), wimmel (Wimmelpott), boom (BOOM 2026).
 * Einstellungen (Knopf und Biene): Einstellungen → Spielhalle. Knopf im Footer: Shortcode [mediabees_knopf] (optional stil="notaus|klappe|arcade").
 * Ranglisten verwalten: Werkzeuge → Arcade-Rangliste.
 * Datenschutz-Text: Einstellungen → Datenschutz → Leitfaden.
@@ -20,6 +20,15 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.30.0 – 26.11.2026 =
+* Neues Spiel: BOOM 2026! Ein Ich-Shooter wie in den 90ern, unter Tage in der Zeche. Du bist der Kumpel mit Grubenhelm, die Wespen haben das Bergwerk übernommen.
+* Sohle 1 „Einfahrt“: Förderkorb, Waschkaue, Lampenstube, Stollen, Varroa-Kammer, Markenraum und Alarm-Arena. Drei Geheimnisse, rote Grubenmarke, Ausgang über den Förderkorb.
+* Waffen: Faust, Stachler und Pollenflinte (die lässt die Flinten-Wespe fallen). Gegner: Wespe, Wach-Wespe, Flinten-Wespe, Feuerwespe, Kamikaze-Wespe, Varroa-Milben. Grubengas-Fässer explodieren.
+* Statusleiste mit Bienengesicht: schaut herum, guckt zum Treffer, wird ramponierter, grinst fies bei neuen Waffen, Kreuzaugen beim Tod.
+* Hauptmenü mit brennendem Logo, vier Schwierigkeitsgrade (Malocher! erst per Code), Level-Codes wie früher, Einstellungen, Steuerung, Mitwirkende. Eigene Musik und Sounds, Metal setzt ein, sobald Wespen dich bemerken.
+* Steuerung: am PC WASD + Maus (Maus wird beim Klick ins Bild gefangen, Esc gibt sie frei), am Handy quer mit Daumen-Stick, Wischen und Feuerknopf.
+* Bienenboom heißt jetzt „Bombenstimmung“. Die Rangliste bleibt erhalten.
 
 = 2.29.0 – 26.11.2026 =
 * Werkzeuge → Arcade-Rangliste im neuen MediaBees-Look: alle Spiele als Karten mit Vorschaubild, Platz 1–3 in Gold/Silber/Bronze, Titel zu jeder Punktzahl, Datum, Löschen per Mülleimer (mit Rückfrage), Zähler oben, Namenssuche und Filter „Nur mit Einträgen“.

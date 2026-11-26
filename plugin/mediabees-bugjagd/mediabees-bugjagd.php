@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.29.0
+ * Version: 2.30.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.29.0' );
+define( 'MBBJ_VERSION', '2.30.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -58,11 +58,12 @@ function mbbj_games() {
 		'solitaer' => array( 'title' => 'Bienen-Solitär', 'min_age' => 5, 'max_score' => 5000, 'sec_per_point' => 0.02 ),
 		'hopser'   => array( 'title' => 'Hummelhopser', 'min_age' => 3, 'max_score' => 20000, 'sec_per_point' => 0.04 ),
 		'honigdieb' => array( 'title' => 'Honigdieb', 'min_age' => 3, 'max_score' => 50000, 'sec_per_point' => 0.03 ),
-		'knaller'  => array( 'title' => 'Bienenboom', 'min_age' => 5, 'max_score' => 200000, 'sec_per_point' => 0.004 ),
+		'knaller'  => array( 'title' => 'Bombenstimmung', 'min_age' => 5, 'max_score' => 200000, 'sec_per_point' => 0.004 ),
 		'flipper'  => array( 'title' => 'Honigflipper', 'min_age' => 5, 'max_score' => 2000000, 'sec_per_point' => 0.0002 ),
 		'wurf'     => array( 'title' => 'Haldenduell', 'min_age' => 10, 'max_score' => 300000, 'sec_per_point' => 0.002 ),
 		'blitz'    => array( 'title' => 'Bienen-Blitz', 'min_age' => 8, 'max_score' => 500000, 'sec_per_point' => 0.002 ),
 		'wimmel'   => array( 'title' => 'Wimmelpott', 'min_age' => 10, 'max_score' => 500000, 'sec_per_point' => 0.002 ),
+		'boom'     => array( 'title' => 'BOOM 2026', 'min_age' => 20, 'max_score' => 150000, 'sec_per_point' => 0.001 ),
 	);
 }
 
@@ -305,7 +306,7 @@ add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
 
 /**
  * Shortcode [mediabees_arcade]
- * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest, wacht = Wespen-Invasion, pfad = Pollenrausch, wabenbau = Wabenbau, solitaer = Bienen-Solitär, hopser = Hummelhopser, honigdieb = Honigdieb, knaller = Bienenboom, flipper = Honigflipper, wurf = Haldenduell, blitz = Bienen-Blitz, wimmel = Wimmelpott).
+ * spiel="polonaise" Dieses Spiel ist beim Laden ausgewählt (bugjagd = Käfer-Jagd, wespen = Bienenstich, revier = Revierflug, polonaise = Bienentanz, flitzer = A40-Flitzer, abriss = Website-Abriss, nester = Wespennest, wacht = Wespen-Invasion, pfad = Pollenrausch, wabenbau = Wabenbau, solitaer = Bienen-Solitär, hopser = Hummelhopser, honigdieb = Honigdieb, knaller = Bombenstimmung, flipper = Honigflipper, wurf = Haldenduell, blitz = Bienen-Blitz, wimmel = Wimmelpott, boom = BOOM 2026).
  */
 function mbbj_render( $atts = array() ) {
 	// "intro" wird seit 2.7.0 ignoriert (kein 404-Kopf mehr), bleibt aber erlaubt, damit alte Shortcodes nicht brechen.

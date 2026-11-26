@@ -53,7 +53,7 @@
 
   MBArcade.register({
     id: 'knaller',
-    title: 'Bienenboom',
+    title: 'Bombenstimmung',
     duration: 0,
     multiTouch: true,
     startText: 'Sprengt euch durch den Stock! Allein räumst du Level für Level die Wespen ab. Oder du trittst gegen drei Bots an, die selbst Bomben legen. Am PC geht es auch zu zweit, auf Wunsch mit zwei Bots dazu (ohne Rangliste).',

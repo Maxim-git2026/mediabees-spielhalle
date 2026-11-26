@@ -4,7 +4,7 @@
   var TAU = Math.PI * 2, art = MBArcade.art, rr = art.rrect;
   MBArcade.tile({
     id: 'knaller',
-    title: 'Bienenboom',
+    title: 'Bombenstimmung',
     ranks: [
       [12000, 'Bombenerfolg', 'Der Stock gehört dir.'],
       [8000, 'Granate', 'Du bist echt \'ne Granate.'],
