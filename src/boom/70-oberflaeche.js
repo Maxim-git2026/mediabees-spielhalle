@@ -85,7 +85,7 @@
           } else if (k === 'face') {
             g.fillStyle = '#0D0E10'; g.fillRect(x + 6, y + 7, w - 12, h - 13);
             var hurt = P.hp > 80 ? 0 : P.hp > 60 ? 1 : P.hp > 40 ? 2 : P.hp > 20 ? 3 : 4;
-            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0 });
+            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0, skin: set.skin });
             if (narrow) st.hudWeapons = { x: x, y: y, w: w, h: h };
           } else if (k === 'marken') {
             var r = Math.min(w * 0.22, h * 0.17);
@@ -167,7 +167,7 @@
       }
       function menuItems() {
         var m = st.menu;
-        if (m === 'main') return [{ t: 'Neues Spiel', go: function () { st.menu = 'diff'; st.sel = 1; } }, { t: 'Level-Code eingeben', go: function () { st.menu = 'code'; st.sel = 0; st.codeMsg = ''; showCodeInput(true); } }, { t: 'Steuerung', go: function () { st.menu = 'controls'; st.sel = 0; } }, { t: 'Einstellungen', go: function () { st.menu = 'settings'; st.sel = 0; } }, { t: 'Mitwirkende', go: function () { st.menu = 'credits'; st.sel = 0; } }];
+        if (m === 'main') return [{ t: 'Neues Spiel', go: function () { st.menu = 'diff'; st.sel = 1; } }, { t: 'Level-Code eingeben', go: function () { st.menu = 'code'; st.sel = 0; st.codeMsg = ''; showCodeInput(true); } }, { t: 'Steuerung', go: function () { st.menu = 'controls'; st.sel = 0; } }, { t: 'Einstellungen', go: function () { st.menu = 'settings'; st.sel = 0; } }, { t: 'Kumpel-Look', go: function () { st.menu = 'skin'; st.sel = 0; } }, { t: 'Mitwirkende', go: function () { st.menu = 'credits'; st.sel = 0; } }];
         if (m === 'diff') {
           var l = DIFFS.map(function (d, i) { return { t: d.name, sub: d.sub, go: function () { startGame(i); } }; });
           if (!unlocked.malocher) l.pop();
@@ -182,6 +182,11 @@
           { t: 'Handy-Knöpfe: ' + (set.joyLeft ? 'Stick links' : 'Stick rechts'), go: function () { set.joyLeft = !set.joyLeft; }, adj: function () { set.joyLeft = !set.joyLeft; } },
           { t: 'Zurück', go: back }
         ];
+        if (m === 'skin') {
+          var keys = Object.keys(SKINS), names = { braun: 'Braun', honig: 'Honig', hell: 'Hell' };
+          var step = function (d) { set.skin = keys[(keys.indexOf(set.skin) + d + keys.length) % keys.length]; };
+          return [{ t: 'Hautfarbe: ' + names[set.skin], go: function () { step(1); }, adj: step }, { t: 'Zurück', go: back }];
+        }
         if (m === 'code') return [{ t: 'Code prüfen', go: checkCode }, { t: 'Zurück', go: function () { showCodeInput(false); back(); } }];
         return [{ t: 'Zurück', go: back }];
       }
@@ -211,6 +216,16 @@
           });
           y0 = Math.max(y, cssH * 0.82);
         }
+        if (m === 'skin') {
+          /* Große Vorschau, wechselt durch die Gesichtsausdrücke */
+          var ex = [{}, { smirk: true }, { grin: true }, { hurt: 2, look: -1 }, { pain: true, hurt: 1 }][Math.floor(st.titleT / 1.2) % 5];
+          var fs = Math.min(cssH * 0.16, 90) / 24;
+          g.fillStyle = '#0D0E10'; art.rrect(g, cssW / 2 - fs * 26, y0 - 6, fs * 52, fs * 54, 12); g.fill();
+          drawFace(g, cssW / 2, y0 + fs * 28, fs, Object.assign({ look: Math.sin(st.titleT * 1.5), hurt: 0, skin: set.skin }, ex));
+          g.font = '600 ' + Math.round(12 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(242,233,208,0.7)';
+          g.fillText('So siehst du unten in der Statusleiste aus. ◀ ▶ oder antippen zum Wechseln.', cssW / 2, y0 + fs * 54 + 14 * u, cssW - 30);
+          y0 += fs * 54 + 44 * u;
+        }
         if (m === 'code') {
           g.font = '700 ' + Math.round(14 * u) + 'px Poppins, sans-serif'; g.fillStyle = '#F2E9D0';
           g.fillText('Code von der Auswertung eintippen, z. B. KOHLE-ABCDE-FGHJK', cssW / 2, y0, cssW - 30);
@@ -227,7 +242,7 @@
           var tw = g.measureText(it.t).width;
           if (on) {
             g.fillStyle = 'rgba(253,197,6,0.14)'; art.rrect(g, cssW / 2 - tw / 2 - 40, y - ih * 0.42, tw + 80, ih * (it.sub ? 1.1 : 0.84), 10); g.fill();
-            drawFace(g, cssW / 2 - tw / 2 - 22, y + 1, 0.42 * u, { look: Math.sin(st.titleT * 2), hurt: 0, smirk: true });
+            drawFace(g, cssW / 2 - tw / 2 - (it.adj ? 52 : 22), y + 1, 0.42 * u, { look: Math.sin(st.titleT * 2), hurt: 0, smirk: true, skin: set.skin });
           }
           g.lineWidth = 5; g.strokeStyle = '#120806'; g.strokeText(it.t, cssW / 2, y);
           g.fillStyle = on ? '#FDC506' : '#E9DFC8'; g.fillText(it.t, cssW / 2, y);
