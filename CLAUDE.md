@@ -78,7 +78,7 @@ Die IDs sind fest, weil die Ranglisten daran hängen. Nur die Titel dürfen sich
 - **Feedback-Paket 2.20.0 eingebaut** (Pollenpfad 4 Wespen, Solitär-Löser, Honigknaller Ecken/Bomben/Extras/Leben, Flipper Tor/Honigsaft/Kugel, Wurfduell Abbruch/Mauer-Klick): Nutzer testet nach.
 - **Honigdieb** (2.19.4): Handy-Steuerung jetzt links halten = ducken, rechts = springen (Feedback). Testen, ob das so passt.
 - **Bienen-Blitz** (2.21.x) und **Wimmelpott** (2.22.0): neu, Nutzer testet.
-- **Käfer-Jagd**: Sprüche mit Mitarbeitenden; offen, ob Philipp (gekündigt) hinter „Die Maschine“, „Sprücheklopfer“ oder „Allesmacher“ steckt, und welche Kolleginnen/Kollegen dazukommen.
+- **Käfer-Jagd**: Philipp steckt hinter keinem der Spitznamen („Die Maschine“, „Sprücheklopfer“, „Allesmacher“ bleiben). Philipp nicht in Sprüche aufnehmen. Offen: welche Kolleginnen/Kollegen neu dazukommen (Nutzer liefert Namen/Spitznamen).
 - **Wespennest**: nie gezieltes Feedback bekommen.
 - Frühe Spiele (Käfer-Jagd, Bienenstich, Revierflug, Bienentanz): kein Feedback seit dem Juice-Update notiert.
 Feedback bisher abgeschlossen: Hummelhopser (passt), A40-Flitzer, Pollenpfad, Wabenbau, Bienen-Solitär, Wabenwacht, Website-Abriss.
