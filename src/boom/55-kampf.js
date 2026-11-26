@@ -261,7 +261,8 @@
         if ((held.mouse || held.ControlLeft || held.ControlRight || held.KeyF || held.touchFire) && !P.dead) fire();
         /* Gesicht schaut ab und zu herum */
         P.lookT -= dt;
-        if (P.lookT <= 0) { P.lookT = rnd(0.8, 2.2); P.look = pick([-1, 0, 0, 1]); }
+        if (P.lookT <= 0) { P.lookT = rnd(0.8, 2.2); P.look = pick([-1, 0, 0, 1]); if (Math.random() < 0.12) P.smirk = 1.2; }
+        if (P.smirk > 0) P.smirk -= dt;
         /* Herzklopfen bei wenig Leben */
         if (P.hp < 25 && !P.dead) { P.heartT -= dt; if (P.heartT <= 0) { P.heartT = 1.1; au.heart(); } }
         /* Gegenstände */

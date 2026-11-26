@@ -85,7 +85,7 @@
           } else if (k === 'face') {
             g.fillStyle = '#0D0E10'; g.fillRect(x + 6, y + 7, w - 12, h - 13);
             var hurt = P.hp > 80 ? 0 : P.hp > 60 ? 1 : P.hp > 40 ? 2 : P.hp > 20 ? 3 : 4;
-            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead });
+            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0 });
             if (narrow) st.hudWeapons = { x: x, y: y, w: w, h: h };
           } else if (k === 'marken') {
             var r = Math.min(w * 0.22, h * 0.17);
@@ -227,7 +227,7 @@
           var tw = g.measureText(it.t).width;
           if (on) {
             g.fillStyle = 'rgba(253,197,6,0.14)'; art.rrect(g, cssW / 2 - tw / 2 - 40, y - ih * 0.42, tw + 80, ih * (it.sub ? 1.1 : 0.84), 10); g.fill();
-            drawFace(g, cssW / 2 - tw / 2 - 22, y + 1, 0.42 * u, { look: Math.sin(st.titleT * 2), hurt: 0, grin: true });
+            drawFace(g, cssW / 2 - tw / 2 - 22, y + 1, 0.42 * u, { look: Math.sin(st.titleT * 2), hurt: 0, smirk: true });
           }
           g.lineWidth = 5; g.strokeStyle = '#120806'; g.strokeText(it.t, cssW / 2, y);
           g.fillStyle = on ? '#FDC506' : '#E9DFC8'; g.fillText(it.t, cssW / 2, y);

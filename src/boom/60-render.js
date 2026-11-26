@@ -108,7 +108,7 @@
             if (L.solid[ci]) {
               dist = side === 0 ? sdx - ddx : sdy - ddy;
               var wx = side === 0 ? P.y + dist * rdy : P.x + dist * rdx; wx -= Math.floor(wx);
-              u = wx; if ((side === 0 && rdx > 0) || (side === 1 && rdy < 0)) u = 1 - u;
+              u = wx; if ((side === 0 && rdx < 0) || (side === 1 && rdy > 0)) u = 1 - u;
               tex2 = prevDoor ? prevDoor.jamb : L.tex[ci];
               hx = P.x + rdx * (dist - 0.02); hy = P.y + rdy * (dist - 0.02);
               hit = true; break;

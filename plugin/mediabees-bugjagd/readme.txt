@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.30.0
+Stable tag: 2.30.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.30.1 – 26.11.2026 =
+* BOOM 2026: Schrift auf Postern und Schildern ist nicht mehr gespiegelt.
+* BOOM 2026: Neue ruhige Musik, die immer läuft (cleane Gitarre mit Echo, warme Flächen). Sobald Wespen dich bemerken, blendet sie in den Metal über.
+* BOOM 2026: Die Biene schaut jetzt grimmig und entschlossen statt dauernd zu lächeln. Ab und zu ein schiefes Grinsen, bei neuen Waffen das fiese Grinsen, bei wenig Leben zusammengebissene Zähne.
 
 = 2.30.0 – 26.11.2026 =
 * Neues Spiel: BOOM 2026! Ein Ich-Shooter wie in den 90ern, unter Tage in der Zeche. Du bist der Kumpel mit Grubenhelm, die Wespen haben das Bergwerk übernommen.

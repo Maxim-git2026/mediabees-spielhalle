@@ -194,7 +194,7 @@
             st: st, P: function () { return P; }, L: function () { return L; }, startGame: startGame, fire: fire, useAction: useAction, finishLevel: finishLevel, set: set, unlocked: unlocked,
             tp: function (x, y, a) { P.x = x; P.y = y; if (a !== undefined) P.a = a; }, hold: held,
             give: function () { P.has = [true, true, true]; P.ammo.sta = 200; P.ammo.pol = 50; P.keys.red = true; P.lamp = true; },
-            god: function () { P.hp = 999999; }
+            god: function () { P.hp = 999999; }, drawFace: drawFace
           };
         }
       };

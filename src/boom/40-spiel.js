@@ -1,7 +1,11 @@
 
   /* ------------------------------------------------------------------ Gesicht in der Statusleiste */
-  /* f: { look -1..1, hurt 0..4, pain, grin, rage, dead, ouch } */
+  /* Hautfarben zur Auswahl (Kopf der Biene). Standard steht in FACE_SKIN */
+  var SKINS = { braun: ['#3A2410', '#2A1C10', '#F7B500'], honig: ['#E9A23B', '#B87A20', '#5A2A08'], hell: ['#F2C9A0', '#D9A980', '#7A3A1A'] };
+  var FACE_SKIN = 'braun';
+  /* f: { look -1..1, hurt 0..4, pain, grin, rage, dead, ouch, smirk, skin } – Grundausdruck grimmig wie die Helden der 90er */
   function drawFace(g, cx, cy, s, f) {
+    var sk = SKINS[f.skin || FACE_SKIN] || SKINS.braun, line = sk[2];
     g.save(); g.translate(cx, cy); g.scale(s, s);
     if (f.dead) g.rotate(0.25);
     /* Fühler */
@@ -11,7 +15,9 @@
     g.fillStyle = '#111'; g.beginPath(); g.arc(-15, -25, 2.4, 0, TAU); g.arc(bent ? 19 : 15, bent ? -17 : -25, 2.4, 0, TAU); g.fill();
     /* Kopf */
     g.beginPath(); g.arc(0, 2, 17, 0, TAU);
-    g.fillStyle = f.rage ? '#7A1E10' : f.dead ? '#2A1C10' : '#3A2410'; g.fill(); g.lineWidth = 2.4; g.strokeStyle = '#111'; g.stroke();
+    g.fillStyle = f.rage ? '#9A2A18' : f.dead ? sk[1] : sk[0]; g.fill(); g.lineWidth = 2.4; g.strokeStyle = '#111'; g.stroke();
+    /* Bartstoppeln / Schatten unten (hart wie ein Kumpel) */
+    g.fillStyle = 'rgba(0,0,0,0.16)'; g.beginPath(); g.ellipse(0, 12, 11, 6, 0, 0, TAU); g.fill();
     /* Grubenhelm mit Lampe */
     g.save(); if (f.dead) g.rotate(-0.4);
     g.beginPath(); g.ellipse(0, -8, 19, 13, 0, PI, TAU); g.fillStyle = '#F2C200'; g.fill(); g.strokeStyle = '#111'; g.lineWidth = 2; g.stroke();
@@ -19,35 +25,40 @@
     g.fillStyle = '#5E646C'; g.fillRect(-5, -20, 10, 7); g.fillStyle = f.dead ? '#555' : '#FFF6C0'; g.beginPath(); g.arc(0, -16.5, 3, 0, TAU); g.fill();
     if (f.hurt >= 2) { g.strokeStyle = '#7A5A00'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(9, -16); g.lineTo(12, -11); g.lineTo(10, -8); g.stroke(); }
     g.restore();
-    /* Augen */
     var lx = clamp(f.look, -1, 1) * 2.4;
     if (f.dead) {
       g.strokeStyle = '#FFF'; g.lineWidth = 2;
       [[-6, 3], [6, 3]].forEach(function (e) { g.beginPath(); g.moveTo(e[0] - 3, e[1] - 3); g.lineTo(e[0] + 3, e[1] + 3); g.moveTo(e[0] + 3, e[1] - 3); g.lineTo(e[0] - 3, e[1] + 3); g.stroke(); });
       g.fillStyle = '#E86A8A'; g.beginPath(); g.ellipse(3, 13, 3, 4, 0.3, 0, TAU); g.fill();
-      g.strokeStyle = '#F7B500'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-6, 11); g.lineTo(6, 11); g.stroke();
+      g.strokeStyle = line; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-6, 11); g.lineTo(6, 11); g.stroke();
     } else if (f.pain) {
       g.strokeStyle = '#FFF'; g.lineWidth = 2;
       g.beginPath(); g.moveTo(-9, 1); g.lineTo(-4, 3); g.lineTo(-9, 5); g.moveTo(9, 1); g.lineTo(4, 3); g.lineTo(9, 5); g.stroke();
       g.fillStyle = '#5A0A08'; g.beginPath(); g.ellipse(0, 12, f.ouch ? 4 : 5, f.ouch ? 4.5 : 2.5, 0, 0, TAU); g.fill();
+      if (!f.ouch) { g.fillStyle = '#FFF'; g.fillRect(-4, 11, 8, 1.4); }
     } else {
-      var half = f.hurt >= 4 ? 0.45 : 1, evil = f.grin || f.rage;
+      /* Augen: leicht zusammengekniffen, entschlossen */
+      var half = f.hurt >= 4 ? 0.45 : f.grin ? 0.85 : 0.72;
       [-6, 6].forEach(function (ex, i) {
-        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
-        g.fillStyle = f.rage ? '#E5322D' : '#111'; g.beginPath(); g.arc(ex + lx, 3 + (half < 1 ? 1 : 0), 2, 0, TAU); g.fill();
-        if (evil) { var sd = i ? -1 : 1; g.strokeStyle = '#111'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(ex - 5 * sd, -3); g.lineTo(ex + 4 * sd, 0.5); g.stroke(); }
+        var sd = i ? -1 : 1;
+        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
+        g.fillStyle = f.rage ? '#E5322D' : '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
+        /* Augenbrauen: immer schräg nach innen (grimmig), beim fiesen Grinsen noch steiler */
+        g.strokeStyle = '#111'; g.lineWidth = f.grin || f.rage ? 2.6 : 2.2;
+        g.beginPath(); g.moveTo(ex - 5 * sd, f.grin || f.rage ? -3.5 : -2); g.lineTo(ex + 4 * sd, f.grin || f.rage ? 0.5 : -0.2); g.stroke();
       });
-      if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3, 3.5, 2.5, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3, 1.6, 0, TAU); g.fill(); }
+      if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3.4, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3.4, 3.5, 2.2, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3.6, 1.6, 0, TAU); g.fill(); }
       /* Mund */
       if (f.grin) {
         g.fillStyle = '#111'; g.beginPath(); g.moveTo(-9, 9); g.quadraticCurveTo(0, 19, 9, 9); g.closePath(); g.fill();
         g.fillStyle = '#FFF'; for (var t = -7; t < 7; t += 3.4) g.fillRect(t, 9.6, 2.4, 2.6);
-      } else if (f.rage) {
-        g.fillStyle = '#111'; g.fillRect(-7, 10, 14, 4); g.fillStyle = '#FFF'; for (var t2 = -6; t2 < 6; t2 += 3) g.fillRect(t2, 10.5, 2, 3);
+      } else if (f.rage || f.hurt >= 2) {
+        /* zusammengebissene Zähne */
+        g.fillStyle = '#111'; g.fillRect(-7, 10, 14, 4.4); g.fillStyle = '#FFF'; for (var t2 = -6; t2 < 6; t2 += 3) g.fillRect(t2, 10.6, 2, 3.2);
+      } else if (f.smirk) {
+        g.strokeStyle = line; g.lineWidth = 1.9; g.beginPath(); g.moveTo(-5, 11.5); g.lineTo(2, 11.5); g.quadraticCurveTo(5, 11.2, 6.5, 9); g.stroke();
       } else {
-        g.strokeStyle = '#F7B500'; g.lineWidth = 1.8; g.beginPath();
-        if (f.hurt >= 2) { g.moveTo(-5, 13); g.quadraticCurveTo(0, 10, 5, 13); } else { g.moveTo(-5, 10); g.quadraticCurveTo(0, 14, 5, 10); }
-        g.stroke();
+        g.strokeStyle = line; g.lineWidth = 1.9; g.beginPath(); g.moveTo(-5.5, 12.2); g.quadraticCurveTo(0, 10.6, 5.5, 12.2); g.stroke();
       }
     }
     /* Pflaster und Kratzer */

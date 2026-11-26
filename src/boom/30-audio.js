@@ -15,6 +15,10 @@
       A.mus = ac.createGain(); A.mus.connect(A.master);
       A.amb = ac.createGain(); A.amb.gain.value = 0; A.amb.connect(A.mus);
       A.metal = ac.createGain(); A.metal.gain.value = 0; A.metal.connect(A.mus);
+      /* Echo für die ruhige Gitarre */
+      A.echo = ac.createDelay(1); A.echo.delayTime.value = 0.3;
+      var fb = ac.createGain(); fb.gain.value = 0.38; var ef = ac.createBiquadFilter(); ef.type = 'lowpass'; ef.frequency.value = 1800;
+      A.echo.connect(ef); ef.connect(fb); fb.connect(A.echo); ef.connect(A.amb);
       /* Rauschen */
       var len = ac.sampleRate * 1.5, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
       for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
@@ -66,11 +70,29 @@
     }
     function kick(t, vol, dest) { var ac = A.ac, o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(gn, t, vol, 0.002, 0.16); o.connect(gn); gn.connect(dest); o.start(t); o.stop(t + 0.2); }
     function snare(t, vol, dest) { noiseAt(t, 'bandpass', 1800, 900, vol, 0.14, dest, 0.7); var ac = A.ac, o = ac.createOscillator(), gn = ac.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(140, t + 0.08); env(gn, t, vol * 0.6, 0.002, 0.09); o.connect(gn); gn.connect(dest); o.start(t); o.stop(t + 0.12); }
+    function hatAmb(t) { noiseAt(t, 'highpass', 6000, 5000, 0.03, 0.08, A.amb, 0.5); }
     function hat(t, vol, dest) { noiseAt(t, 'highpass', 8000, 7000, vol, 0.04, dest, 0.5); }
     function noiseAt(t, ftype, f1, f2, vol, dur, dest, q) {
       var ac = A.ac, s = ac.createBufferSource(), f = ac.createBiquadFilter(), gn = ac.createGain();
       s.buffer = A.noise; f.type = ftype; f.frequency.setValueAtTime(f1, t); f.frequency.exponentialRampToValueAtTime(f2, t + dur); f.Q.value = q || 0.8;
       env(gn, t, vol, 0.002, dur); s.connect(f); f.connect(gn); gn.connect(dest); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+    }
+    /* Ruhige Ebene: cleane Zupfgitarre mit Echo und warme Fläche */
+    function pluck(t, f, vol) {
+      var ac = A.ac, o = ac.createOscillator(), o2 = ac.createOscillator(), lp = ac.createBiquadFilter(), gn = ac.createGain();
+      o.type = 'triangle'; o.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 2;
+      lp.type = 'lowpass'; lp.frequency.setValueAtTime(3200, t); lp.frequency.exponentialRampToValueAtTime(700, t + 0.5);
+      var g2 = ac.createGain(); g2.gain.value = 0.3; o2.connect(g2); g2.connect(lp);
+      o.connect(lp); lp.connect(gn); env(gn, t, vol, 0.004, 0.9);
+      gn.connect(A.amb); gn.connect(A.echo);
+      o.start(t); o2.start(t); o.stop(t + 1); o2.stop(t + 1);
+    }
+    function pad(t, freqs, dur, vol) {
+      var ac = A.ac, lp = ac.createBiquadFilter(), gn = ac.createGain();
+      lp.type = 'lowpass'; lp.frequency.value = 650;
+      gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(vol, t + dur * 0.35); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      freqs.forEach(function (f) { [-8, 8].forEach(function (d) { var o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = d; o.connect(lp); o.start(t); o.stop(t + dur + 0.05); }); });
+      lp.connect(gn); gn.connect(A.amb);
     }
     function bass(t, f, dur, vol, dest) { var ac = A.ac, o = ac.createOscillator(), lp = ac.createBiquadFilter(), gn = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f / 2; lp.type = 'lowpass'; lp.frequency.value = 380; gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(lp); lp.connect(gn); gn.connect(dest); o.start(t); o.stop(t + dur + 0.05); }
 
@@ -83,6 +105,9 @@
       'eeeeE---eeeeG---', 'eeF-eeE-eeD-E---'
     ];
     var KICK = ['x...x...x.x.x...', 'xxxxxxxxxxxxxxxx'], SNARE = '....x.......x...', HAT = 'x.x.x.x.x.x.x.x.';
+    /* Ruhige Akkorde (Grundton, Terz, Quinte) – 8 Takte, eigene Folge */
+    var CALM = [[164.81, 196, 246.94], [164.81, 196, 246.94], [130.81, 164.81, 196], [146.83, 185, 220], [164.81, 196, 246.94], [164.81, 196, 246.94], [123.47, 146.83, 185], [130.81, 164.81, 196]];
+    var ARP = [0, 1, 2, 3, 2, 1, 2, 1];
     var TITLE = ['E-------E---F---', 'E-------D---C---', 'E-------E---F---', 'G-------F---E---'];
 
     function schedule() {
@@ -90,7 +115,7 @@
       var ac = A.ac, ahead = ac.currentTime + 0.25;
       /* Lautstärke zwischen ruhig und Metal überblenden */
       A.intensity += (A.target - A.intensity) * 0.04;
-      if (A.mode === 'level') { A.metal.gain.value = A.intensity; A.amb.gain.value = 0.9 - A.intensity * 0.6; }
+      if (A.mode === 'level') { A.metal.gain.value = A.intensity; A.amb.gain.value = 0.85 - A.intensity * 0.55; }
       else { A.metal.gain.value = 1; A.amb.gain.value = 0; }
       if (A.next < ac.currentTime - 0.3) A.next = ac.currentTime + 0.05;
       while (A.next < ahead) {
@@ -108,9 +133,15 @@
           if (kp[s] === 'x') kick(t, 0.55, A.metal);
           if (SNARE[s] === 'x') snare(t, 0.3, A.metal);
           if (HAT[s] === 'x') hat(t, 0.08, A.metal);
-          /* Ruhige Ebene: Brummen, Tropfen, fernes Hämmern */
-          if (A.mode === 'level' && s === 0) {
-            var o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.value = 41.2 + (A.bar % 2) * 2; env(gn, t, 0.18, 0.4, 1.7); o.connect(gn); gn.connect(A.amb); o.start(t); o.stop(t + 1.8);
+          /* Ruhige Ebene (läuft immer): Zupfgitarre, Fläche, Brummen, Tropfen, fernes Hämmern */
+          if (A.mode === 'level') {
+            var ch = CALM[A.bar % CALM.length];
+            if (s % 2 === 0) { var ti = ARP[(s / 2) % 8], fq = ti === 3 ? ch[0] * 2 : ch[ti]; pluck(t, fq, s === 0 ? 0.16 : 0.11); }
+            if (s === 0) {
+              pad(t, [ch[0] / 2, ch[1] / 2, ch[2] / 2], 1.7, 0.05);
+              var o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.value = ch[0] / 4; env(gn, t, 0.16, 0.3, 1.7); o.connect(gn); gn.connect(A.amb); o.start(t); o.stop(t + 1.8);
+            }
+            if (s === 8 && A.bar % 2) hatAmb(t);
           }
           if (A.mode === 'level' && Math.random() < 0.06) { var o2 = ac.createOscillator(), g2 = ac.createGain(); o2.type = 'sine'; o2.frequency.setValueAtTime(1500 + Math.random() * 900, t); o2.frequency.exponentialRampToValueAtTime(500, t + 0.09); env(g2, t, 0.05, 0.003, 0.1); o2.connect(g2); g2.connect(A.amb); o2.start(t); o2.stop(t + 0.12); }
           if (A.mode === 'level' && s === 6 && A.bar % 3 === 1) noiseAt(t, 'lowpass', 500, 200, 0.06, 0.12, A.amb, 1);

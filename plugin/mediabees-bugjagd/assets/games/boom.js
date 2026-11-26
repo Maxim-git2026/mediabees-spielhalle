@@ -548,6 +548,10 @@
       A.mus = ac.createGain(); A.mus.connect(A.master);
       A.amb = ac.createGain(); A.amb.gain.value = 0; A.amb.connect(A.mus);
       A.metal = ac.createGain(); A.metal.gain.value = 0; A.metal.connect(A.mus);
+      /* Echo für die ruhige Gitarre */
+      A.echo = ac.createDelay(1); A.echo.delayTime.value = 0.3;
+      var fb = ac.createGain(); fb.gain.value = 0.38; var ef = ac.createBiquadFilter(); ef.type = 'lowpass'; ef.frequency.value = 1800;
+      A.echo.connect(ef); ef.connect(fb); fb.connect(A.echo); ef.connect(A.amb);
       /* Rauschen */
       var len = ac.sampleRate * 1.5, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
       for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
@@ -599,11 +603,29 @@
     }
     function kick(t, vol, dest) { var ac = A.ac, o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(gn, t, vol, 0.002, 0.16); o.connect(gn); gn.connect(dest); o.start(t); o.stop(t + 0.2); }
     function snare(t, vol, dest) { noiseAt(t, 'bandpass', 1800, 900, vol, 0.14, dest, 0.7); var ac = A.ac, o = ac.createOscillator(), gn = ac.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(140, t + 0.08); env(gn, t, vol * 0.6, 0.002, 0.09); o.connect(gn); gn.connect(dest); o.start(t); o.stop(t + 0.12); }
+    function hatAmb(t) { noiseAt(t, 'highpass', 6000, 5000, 0.03, 0.08, A.amb, 0.5); }
     function hat(t, vol, dest) { noiseAt(t, 'highpass', 8000, 7000, vol, 0.04, dest, 0.5); }
     function noiseAt(t, ftype, f1, f2, vol, dur, dest, q) {
       var ac = A.ac, s = ac.createBufferSource(), f = ac.createBiquadFilter(), gn = ac.createGain();
       s.buffer = A.noise; f.type = ftype; f.frequency.setValueAtTime(f1, t); f.frequency.exponentialRampToValueAtTime(f2, t + dur); f.Q.value = q || 0.8;
       env(gn, t, vol, 0.002, dur); s.connect(f); f.connect(gn); gn.connect(dest); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+    }
+    /* Ruhige Ebene: cleane Zupfgitarre mit Echo und warme Fläche */
+    function pluck(t, f, vol) {
+      var ac = A.ac, o = ac.createOscillator(), o2 = ac.createOscillator(), lp = ac.createBiquadFilter(), gn = ac.createGain();
+      o.type = 'triangle'; o.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 2;
+      lp.type = 'lowpass'; lp.frequency.setValueAtTime(3200, t); lp.frequency.exponentialRampToValueAtTime(700, t + 0.5);
+      var g2 = ac.createGain(); g2.gain.value = 0.3; o2.connect(g2); g2.connect(lp);
+      o.connect(lp); lp.connect(gn); env(gn, t, vol, 0.004, 0.9);
+      gn.connect(A.amb); gn.connect(A.echo);
+      o.start(t); o2.start(t); o.stop(t + 1); o2.stop(t + 1);
+    }
+    function pad(t, freqs, dur, vol) {
+      var ac = A.ac, lp = ac.createBiquadFilter(), gn = ac.createGain();
+      lp.type = 'lowpass'; lp.frequency.value = 650;
+      gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(vol, t + dur * 0.35); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      freqs.forEach(function (f) { [-8, 8].forEach(function (d) { var o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = d; o.connect(lp); o.start(t); o.stop(t + dur + 0.05); }); });
+      lp.connect(gn); gn.connect(A.amb);
     }
     function bass(t, f, dur, vol, dest) { var ac = A.ac, o = ac.createOscillator(), lp = ac.createBiquadFilter(), gn = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f / 2; lp.type = 'lowpass'; lp.frequency.value = 380; gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(lp); lp.connect(gn); gn.connect(dest); o.start(t); o.stop(t + dur + 0.05); }
 
@@ -616,6 +638,9 @@
       'eeeeE---eeeeG---', 'eeF-eeE-eeD-E---'
     ];
     var KICK = ['x...x...x.x.x...', 'xxxxxxxxxxxxxxxx'], SNARE = '....x.......x...', HAT = 'x.x.x.x.x.x.x.x.';
+    /* Ruhige Akkorde (Grundton, Terz, Quinte) – 8 Takte, eigene Folge */
+    var CALM = [[164.81, 196, 246.94], [164.81, 196, 246.94], [130.81, 164.81, 196], [146.83, 185, 220], [164.81, 196, 246.94], [164.81, 196, 246.94], [123.47, 146.83, 185], [130.81, 164.81, 196]];
+    var ARP = [0, 1, 2, 3, 2, 1, 2, 1];
     var TITLE = ['E-------E---F---', 'E-------D---C---', 'E-------E---F---', 'G-------F---E---'];
 
     function schedule() {
@@ -623,7 +648,7 @@
       var ac = A.ac, ahead = ac.currentTime + 0.25;
       /* Lautstärke zwischen ruhig und Metal überblenden */
       A.intensity += (A.target - A.intensity) * 0.04;
-      if (A.mode === 'level') { A.metal.gain.value = A.intensity; A.amb.gain.value = 0.9 - A.intensity * 0.6; }
+      if (A.mode === 'level') { A.metal.gain.value = A.intensity; A.amb.gain.value = 0.85 - A.intensity * 0.55; }
       else { A.metal.gain.value = 1; A.amb.gain.value = 0; }
       if (A.next < ac.currentTime - 0.3) A.next = ac.currentTime + 0.05;
       while (A.next < ahead) {
@@ -641,9 +666,15 @@
           if (kp[s] === 'x') kick(t, 0.55, A.metal);
           if (SNARE[s] === 'x') snare(t, 0.3, A.metal);
           if (HAT[s] === 'x') hat(t, 0.08, A.metal);
-          /* Ruhige Ebene: Brummen, Tropfen, fernes Hämmern */
-          if (A.mode === 'level' && s === 0) {
-            var o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.value = 41.2 + (A.bar % 2) * 2; env(gn, t, 0.18, 0.4, 1.7); o.connect(gn); gn.connect(A.amb); o.start(t); o.stop(t + 1.8);
+          /* Ruhige Ebene (läuft immer): Zupfgitarre, Fläche, Brummen, Tropfen, fernes Hämmern */
+          if (A.mode === 'level') {
+            var ch = CALM[A.bar % CALM.length];
+            if (s % 2 === 0) { var ti = ARP[(s / 2) % 8], fq = ti === 3 ? ch[0] * 2 : ch[ti]; pluck(t, fq, s === 0 ? 0.16 : 0.11); }
+            if (s === 0) {
+              pad(t, [ch[0] / 2, ch[1] / 2, ch[2] / 2], 1.7, 0.05);
+              var o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.value = ch[0] / 4; env(gn, t, 0.16, 0.3, 1.7); o.connect(gn); gn.connect(A.amb); o.start(t); o.stop(t + 1.8);
+            }
+            if (s === 8 && A.bar % 2) hatAmb(t);
           }
           if (A.mode === 'level' && Math.random() < 0.06) { var o2 = ac.createOscillator(), g2 = ac.createGain(); o2.type = 'sine'; o2.frequency.setValueAtTime(1500 + Math.random() * 900, t); o2.frequency.exponentialRampToValueAtTime(500, t + 0.09); env(g2, t, 0.05, 0.003, 0.1); o2.connect(g2); g2.connect(A.amb); o2.start(t); o2.stop(t + 0.12); }
           if (A.mode === 'level' && s === 6 && A.bar % 3 === 1) noiseAt(t, 'lowpass', 500, 200, 0.06, 0.12, A.amb, 1);
@@ -694,8 +725,12 @@
   }
 
   /* ------------------------------------------------------------------ Gesicht in der Statusleiste */
-  /* f: { look -1..1, hurt 0..4, pain, grin, rage, dead, ouch } */
+  /* Hautfarben zur Auswahl (Kopf der Biene). Standard steht in FACE_SKIN */
+  var SKINS = { braun: ['#3A2410', '#2A1C10', '#F7B500'], honig: ['#E9A23B', '#B87A20', '#5A2A08'], hell: ['#F2C9A0', '#D9A980', '#7A3A1A'] };
+  var FACE_SKIN = 'braun';
+  /* f: { look -1..1, hurt 0..4, pain, grin, rage, dead, ouch, smirk, skin } – Grundausdruck grimmig wie die Helden der 90er */
   function drawFace(g, cx, cy, s, f) {
+    var sk = SKINS[f.skin || FACE_SKIN] || SKINS.braun, line = sk[2];
     g.save(); g.translate(cx, cy); g.scale(s, s);
     if (f.dead) g.rotate(0.25);
     /* Fühler */
@@ -705,7 +740,9 @@
     g.fillStyle = '#111'; g.beginPath(); g.arc(-15, -25, 2.4, 0, TAU); g.arc(bent ? 19 : 15, bent ? -17 : -25, 2.4, 0, TAU); g.fill();
     /* Kopf */
     g.beginPath(); g.arc(0, 2, 17, 0, TAU);
-    g.fillStyle = f.rage ? '#7A1E10' : f.dead ? '#2A1C10' : '#3A2410'; g.fill(); g.lineWidth = 2.4; g.strokeStyle = '#111'; g.stroke();
+    g.fillStyle = f.rage ? '#9A2A18' : f.dead ? sk[1] : sk[0]; g.fill(); g.lineWidth = 2.4; g.strokeStyle = '#111'; g.stroke();
+    /* Bartstoppeln / Schatten unten (hart wie ein Kumpel) */
+    g.fillStyle = 'rgba(0,0,0,0.16)'; g.beginPath(); g.ellipse(0, 12, 11, 6, 0, 0, TAU); g.fill();
     /* Grubenhelm mit Lampe */
     g.save(); if (f.dead) g.rotate(-0.4);
     g.beginPath(); g.ellipse(0, -8, 19, 13, 0, PI, TAU); g.fillStyle = '#F2C200'; g.fill(); g.strokeStyle = '#111'; g.lineWidth = 2; g.stroke();
@@ -713,35 +750,40 @@
     g.fillStyle = '#5E646C'; g.fillRect(-5, -20, 10, 7); g.fillStyle = f.dead ? '#555' : '#FFF6C0'; g.beginPath(); g.arc(0, -16.5, 3, 0, TAU); g.fill();
     if (f.hurt >= 2) { g.strokeStyle = '#7A5A00'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(9, -16); g.lineTo(12, -11); g.lineTo(10, -8); g.stroke(); }
     g.restore();
-    /* Augen */
     var lx = clamp(f.look, -1, 1) * 2.4;
     if (f.dead) {
       g.strokeStyle = '#FFF'; g.lineWidth = 2;
       [[-6, 3], [6, 3]].forEach(function (e) { g.beginPath(); g.moveTo(e[0] - 3, e[1] - 3); g.lineTo(e[0] + 3, e[1] + 3); g.moveTo(e[0] + 3, e[1] - 3); g.lineTo(e[0] - 3, e[1] + 3); g.stroke(); });
       g.fillStyle = '#E86A8A'; g.beginPath(); g.ellipse(3, 13, 3, 4, 0.3, 0, TAU); g.fill();
-      g.strokeStyle = '#F7B500'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-6, 11); g.lineTo(6, 11); g.stroke();
+      g.strokeStyle = line; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-6, 11); g.lineTo(6, 11); g.stroke();
     } else if (f.pain) {
       g.strokeStyle = '#FFF'; g.lineWidth = 2;
       g.beginPath(); g.moveTo(-9, 1); g.lineTo(-4, 3); g.lineTo(-9, 5); g.moveTo(9, 1); g.lineTo(4, 3); g.lineTo(9, 5); g.stroke();
       g.fillStyle = '#5A0A08'; g.beginPath(); g.ellipse(0, 12, f.ouch ? 4 : 5, f.ouch ? 4.5 : 2.5, 0, 0, TAU); g.fill();
+      if (!f.ouch) { g.fillStyle = '#FFF'; g.fillRect(-4, 11, 8, 1.4); }
     } else {
-      var half = f.hurt >= 4 ? 0.45 : 1, evil = f.grin || f.rage;
+      /* Augen: leicht zusammengekniffen, entschlossen */
+      var half = f.hurt >= 4 ? 0.45 : f.grin ? 0.85 : 0.72;
       [-6, 6].forEach(function (ex, i) {
-        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
-        g.fillStyle = f.rage ? '#E5322D' : '#111'; g.beginPath(); g.arc(ex + lx, 3 + (half < 1 ? 1 : 0), 2, 0, TAU); g.fill();
-        if (evil) { var sd = i ? -1 : 1; g.strokeStyle = '#111'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(ex - 5 * sd, -3); g.lineTo(ex + 4 * sd, 0.5); g.stroke(); }
+        var sd = i ? -1 : 1;
+        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
+        g.fillStyle = f.rage ? '#E5322D' : '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
+        /* Augenbrauen: immer schräg nach innen (grimmig), beim fiesen Grinsen noch steiler */
+        g.strokeStyle = '#111'; g.lineWidth = f.grin || f.rage ? 2.6 : 2.2;
+        g.beginPath(); g.moveTo(ex - 5 * sd, f.grin || f.rage ? -3.5 : -2); g.lineTo(ex + 4 * sd, f.grin || f.rage ? 0.5 : -0.2); g.stroke();
       });
-      if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3, 3.5, 2.5, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3, 1.6, 0, TAU); g.fill(); }
+      if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3.4, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3.4, 3.5, 2.2, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3.6, 1.6, 0, TAU); g.fill(); }
       /* Mund */
       if (f.grin) {
         g.fillStyle = '#111'; g.beginPath(); g.moveTo(-9, 9); g.quadraticCurveTo(0, 19, 9, 9); g.closePath(); g.fill();
         g.fillStyle = '#FFF'; for (var t = -7; t < 7; t += 3.4) g.fillRect(t, 9.6, 2.4, 2.6);
-      } else if (f.rage) {
-        g.fillStyle = '#111'; g.fillRect(-7, 10, 14, 4); g.fillStyle = '#FFF'; for (var t2 = -6; t2 < 6; t2 += 3) g.fillRect(t2, 10.5, 2, 3);
+      } else if (f.rage || f.hurt >= 2) {
+        /* zusammengebissene Zähne */
+        g.fillStyle = '#111'; g.fillRect(-7, 10, 14, 4.4); g.fillStyle = '#FFF'; for (var t2 = -6; t2 < 6; t2 += 3) g.fillRect(t2, 10.6, 2, 3.2);
+      } else if (f.smirk) {
+        g.strokeStyle = line; g.lineWidth = 1.9; g.beginPath(); g.moveTo(-5, 11.5); g.lineTo(2, 11.5); g.quadraticCurveTo(5, 11.2, 6.5, 9); g.stroke();
       } else {
-        g.strokeStyle = '#F7B500'; g.lineWidth = 1.8; g.beginPath();
-        if (f.hurt >= 2) { g.moveTo(-5, 13); g.quadraticCurveTo(0, 10, 5, 13); } else { g.moveTo(-5, 10); g.quadraticCurveTo(0, 14, 5, 10); }
-        g.stroke();
+        g.strokeStyle = line; g.lineWidth = 1.9; g.beginPath(); g.moveTo(-5.5, 12.2); g.quadraticCurveTo(0, 10.6, 5.5, 12.2); g.stroke();
       }
     }
     /* Pflaster und Kratzer */
@@ -1351,7 +1393,8 @@
         if ((held.mouse || held.ControlLeft || held.ControlRight || held.KeyF || held.touchFire) && !P.dead) fire();
         /* Gesicht schaut ab und zu herum */
         P.lookT -= dt;
-        if (P.lookT <= 0) { P.lookT = rnd(0.8, 2.2); P.look = pick([-1, 0, 0, 1]); }
+        if (P.lookT <= 0) { P.lookT = rnd(0.8, 2.2); P.look = pick([-1, 0, 0, 1]); if (Math.random() < 0.12) P.smirk = 1.2; }
+        if (P.smirk > 0) P.smirk -= dt;
         /* Herzklopfen bei wenig Leben */
         if (P.hp < 25 && !P.dead) { P.heartT -= dt; if (P.heartT <= 0) { P.heartT = 1.1; au.heart(); } }
         /* Gegenstände */
@@ -1501,7 +1544,7 @@
             if (L.solid[ci]) {
               dist = side === 0 ? sdx - ddx : sdy - ddy;
               var wx = side === 0 ? P.y + dist * rdy : P.x + dist * rdx; wx -= Math.floor(wx);
-              u = wx; if ((side === 0 && rdx > 0) || (side === 1 && rdy < 0)) u = 1 - u;
+              u = wx; if ((side === 0 && rdx < 0) || (side === 1 && rdy > 0)) u = 1 - u;
               tex2 = prevDoor ? prevDoor.jamb : L.tex[ci];
               hx = P.x + rdx * (dist - 0.02); hy = P.y + rdy * (dist - 0.02);
               hit = true; break;
@@ -1684,7 +1727,7 @@
           } else if (k === 'face') {
             g.fillStyle = '#0D0E10'; g.fillRect(x + 6, y + 7, w - 12, h - 13);
             var hurt = P.hp > 80 ? 0 : P.hp > 60 ? 1 : P.hp > 40 ? 2 : P.hp > 20 ? 3 : 4;
-            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead });
+            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0 });
             if (narrow) st.hudWeapons = { x: x, y: y, w: w, h: h };
           } else if (k === 'marken') {
             var r = Math.min(w * 0.22, h * 0.17);
@@ -1826,7 +1869,7 @@
           var tw = g.measureText(it.t).width;
           if (on) {
             g.fillStyle = 'rgba(253,197,6,0.14)'; art.rrect(g, cssW / 2 - tw / 2 - 40, y - ih * 0.42, tw + 80, ih * (it.sub ? 1.1 : 0.84), 10); g.fill();
-            drawFace(g, cssW / 2 - tw / 2 - 22, y + 1, 0.42 * u, { look: Math.sin(st.titleT * 2), hurt: 0, grin: true });
+            drawFace(g, cssW / 2 - tw / 2 - 22, y + 1, 0.42 * u, { look: Math.sin(st.titleT * 2), hurt: 0, smirk: true });
           }
           g.lineWidth = 5; g.strokeStyle = '#120806'; g.strokeText(it.t, cssW / 2, y);
           g.fillStyle = on ? '#FDC506' : '#E9DFC8'; g.fillText(it.t, cssW / 2, y);
@@ -2123,7 +2166,7 @@
             st: st, P: function () { return P; }, L: function () { return L; }, startGame: startGame, fire: fire, useAction: useAction, finishLevel: finishLevel, set: set, unlocked: unlocked,
             tp: function (x, y, a) { P.x = x; P.y = y; if (a !== undefined) P.a = a; }, hold: held,
             give: function () { P.has = [true, true, true]; P.ammo.sta = 200; P.ammo.pol = 50; P.keys.red = true; P.lamp = true; },
-            god: function () { P.hp = 999999; }
+            god: function () { P.hp = 999999; }, drawFace: drawFace
           };
         }
       };
