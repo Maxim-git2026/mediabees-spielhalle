@@ -394,7 +394,7 @@
         if (p.dead || st.t < p.inv) return;
         p.dead = st.t;
         ctx.fx.boom(px(p.x), py(p.y), '#FF5A4A', '255,74,61', 1);
-        ctx.fx.text(px(p.x), py(p.y) - C, self ? 'Gut gemacht!' : st.duo ? nameOf(p) + ' erwischt!' : 'Autsch!', '#FF7A6B', 24);
+        ctx.fx.text(px(p.x), py(p.y) - C, self ? ['Gut gemacht!', 'Selbstkill!', 'Peinlich!'][Math.floor(Math.random() * 3)] : st.duo ? nameOf(p) + ' erwischt!' : 'Autsch!', '#FF7A6B', 24);
         ctx.tone(440, 60, 0.6, 'sawtooth', 0.06);
         if (st.duo) {
           setTimeout(function () {

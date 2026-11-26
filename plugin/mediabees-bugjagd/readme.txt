@@ -22,6 +22,7 @@ Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, rein
 
 = 2.23.4 – 26.11.2026 =
 * Bienen-Blitz: Am Spielende steht über der umgekippten Biene jetzt jedes Mal ein anderer lustiger Spruch, zum Beispiel „Biene k.o.!“, „Summ … summ … zzz“ oder „Bitte nicht stören!“.
+* Bienenboom: Wer sich selbst wegsprengt, bekommt jetzt abwechselnd „Gut gemacht!“, „Selbstkill!“ oder „Peinlich!“.
 
 = 2.23.3 – 26.11.2026 =
 * Sprüche in allen Spielen: Lange Sprüche ragen auf dem Handy nicht mehr über den Rand. Sie werden umgebrochen und bei Bedarf etwas kleiner, und längere Sprüche bleiben länger stehen.
