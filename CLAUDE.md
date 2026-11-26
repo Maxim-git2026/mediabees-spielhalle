@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.23.2**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.23.3**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -105,6 +105,8 @@ Die Liste lässt sich jederzeit neu erzeugen (alle `ranks`, `startText`, `cta` u
    - **Juice für große Momente:** `ctx.fx` (eigene Ebene über dem Spielfeld, Koordinaten in CSS-Pixeln relativ zur Bühne):
      `flash(rgb, stärke)`, `shake(sek, px)`, `ring(x, y, farbe, radius, linie, ms)`, `sparkle(x, y, farben, n, tempo)`,
      `text(x, y, text, farbe, größe)`, `banner(text, farbe)`, `boom(x, y, farbe, rgb, stärke)` = alles auf einmal, `at(element)` = Mitte eines DOM-Elements.
+     `text`/`banner` brechen lange Sprüche um (max. 3 Zeilen, Schrift wird bei Bedarf kleiner), bleiben im Bild und je nach Länge länger stehen.
+     Der letzte Spruch ohne Zahlen (`quote`) erscheint im Endbildschirm vor der Auswertung. Spiele sollen Sprüche über `ctx.fx.text` zeigen, keine eigenen Text-Zeichner (Wespen-Invasion, Pollenrausch, A40-Flitzer wurden umgestellt).
      Spiele mit eigenen Spielkoordinaten rechnen mit `* k` um. „Weniger Bewegung“ beachtet `ctx.fx` selbst.
      Beim A40-Flitzer keine `banner` (verdecken die Straße).
    - Icons für die Anleitung: z. B. `'kbd:Esc'`, `'tap'`, `'swipe'`.

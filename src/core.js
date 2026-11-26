@@ -335,7 +335,11 @@
     renderSound();
 
     var msgTimer = 0;
+    /* Letzten Spruch merken (ohne Zahlen), damit er im Endbildschirm nochmal steht */
+    var lastQuote = null;
+    function quote(text) { if (S.running && text && text.length >= 6 && !/[0-9×+−]/.test(text)) lastQuote = { text: text, at: Date.now() }; }
     function say(text) {
+      quote(text);
       elMsg.textContent = text;
       elMsg.classList.add('is-on');
       clearTimeout(msgTimer);
@@ -394,13 +398,30 @@
       FX.texts = FX.texts.filter(function (t) { t.t += dt; return t.t < t.life; });
       FX.texts.forEach(function (t) {
         var a = t.t / t.life, s = a < 0.12 ? 0.4 + a / 0.12 * 0.8 : 1.2 - Math.min(0.2, (a - 0.12) * 0.6);
-        g.save(); g.font = '900 ' + t.size + 'px Poppins, sans-serif';
-        var half = g.measureText(t.text).width * 0.62 + 8;
-        g.translate(Math.max(half, Math.min(FX.w - half, t.x)), t.y - a * t.rise); g.scale(s, s); g.rotate(t.tilt * (1 - a));
-        g.globalAlpha = a > 0.7 ? Math.max(0, 1 - (a - 0.7) / 0.3) : 1;
+        g.save();
+        /* Einmal umbrechen: passt nie über den Rand, notfalls kleinere Schrift */
+        if (!t.lines || t.fw !== FX.w) {
+          var maxW = Math.max(80, (FX.w - 24) / 1.2), fs = t.size, lines;
+          for (var tries = 0; tries < 8; tries++) {
+            g.font = '900 ' + fs + 'px Poppins, sans-serif';
+            lines = []; var cur = '', tooWide = false;
+            t.text.split(' ').forEach(function (w) { var test = cur ? cur + ' ' + w : w; if (g.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; } else cur = test; if (g.measureText(w).width > maxW) tooWide = true; });
+            lines.push(cur);
+            if (!tooWide && lines.length <= 3) break;
+            fs = Math.max(11, Math.round(fs * 0.85));
+          }
+          t.lines = lines; t.fs = fs; t.fw = FX.w;
+          g.font = '900 ' + fs + 'px Poppins, sans-serif';
+          t.lw = Math.max.apply(null, lines.map(function (l) { return g.measureText(l).width; }));
+        }
+        g.font = '900 ' + t.fs + 'px Poppins, sans-serif';
+        var half = t.lw * 0.62 + 8, lh = t.fs * 1.12, hh = (t.lines.length * lh) * 0.62 + 6;
+        var ty = Math.max(hh, Math.min(FX.h - hh, t.y - a * t.rise));
+        g.translate(Math.max(half, Math.min(FX.w - half, t.x)), ty); g.scale(s, s); g.rotate(t.tilt * (1 - a));
+        g.globalAlpha = a > 0.75 ? Math.max(0, 1 - (a - 0.75) / 0.25) : 1;
         g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
-        g.lineWidth = Math.max(4, t.size / 5); g.strokeStyle = 'rgba(17,17,17,0.92)'; g.strokeText(t.text, 0, 0);
-        g.fillStyle = t.c; g.fillText(t.text, 0, 0);
+        g.lineWidth = Math.max(4, t.fs / 5); g.strokeStyle = 'rgba(17,17,17,0.92)';
+        t.lines.forEach(function (l, i) { var ly = (i - (t.lines.length - 1) / 2) * lh; g.strokeText(l, 0, ly); g.fillStyle = t.c; g.fillText(l, 0, ly); });
         g.restore();
       });
       g.globalAlpha = 1;
@@ -428,8 +449,9 @@
         }
         fxKick();
       },
-      text: function (x, y, text, color, size) { FX.texts.push({ x: x, y: y, text: text, c: color || '#FDC506', size: size || 20, life: 0.9, rise: 34, tilt: 0, t: 0 }); fxKick(); },
-      banner: function (text, color, size) { FX.texts.push({ x: FX.w / 2 || stage.clientWidth / 2, y: (FX.h || stage.clientHeight) * 0.42, text: text, c: color || '#FDC506', size: size || Math.min(38, (stage.clientWidth || 400) / 11), life: 1.4, rise: 18, tilt: -0.08, t: 0 }); fxKick(); },
+      /* Längere Sprüche bleiben länger stehen, damit man sie lesen kann */
+      text: function (x, y, text, color, size) { text = String(text); quote(text); FX.texts.push({ x: x, y: y, text: text, c: color || '#FDC506', size: size || 20, life: 0.9 + Math.min(1.3, Math.max(0, text.length - 10) * 0.05), rise: 34, tilt: 0, t: 0 }); fxKick(); },
+      banner: function (text, color, size) { text = String(text); quote(text); FX.texts.push({ x: FX.w / 2 || stage.clientWidth / 2, y: (FX.h || stage.clientHeight) * 0.42, text: text, c: color || '#FDC506', size: size || Math.min(38, (stage.clientWidth || 400) / 11), life: 1.4 + Math.min(1.2, Math.max(0, text.length - 14) * 0.04), rise: 18, tilt: -0.08, t: 0 }); fxKick(); },
       /* Großer Moment: alles auf einmal */
       boom: function (x, y, color, rgb, strength) {
         var k2 = strength || 1;
@@ -789,6 +811,8 @@
       rankEl.textContent = rank[1];
       resultEl.textContent = fmt(score) + ' Punkte. ' + (isNew && score > 0 ? 'Neuer Rekord!' : rank[2]);
       statsEl.textContent = (g.stats && stats) ? g.stats(stats) : '';
+      if (lastQuote && Date.now() - lastQuote.at < 4000 && !(stats && stats.headline) && statsEl.textContent.indexOf(lastQuote.text) < 0) statsEl.textContent = '„' + lastQuote.text + '“  ' + statsEl.textContent;
+      lastQuote = null;
       statsEl.hidden = !statsEl.textContent;
       /* Spiele ohne Rangliste (z. B. zu zweit) liefern eine eigene Überschrift */
       if (stats && stats.headline) { rankEl.textContent = stats.headline; resultEl.textContent = stats.line || ''; }

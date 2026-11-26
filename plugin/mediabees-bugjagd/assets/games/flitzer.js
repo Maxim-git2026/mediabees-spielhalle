@@ -231,7 +231,8 @@
           st.parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, life: (life || 0.5) * (0.6 + Math.random() * 0.8), size: 1.5 + Math.random() * 3, c: colors[i % colors.length], g: grav || 0 });
         }
       }
-      function pop(x, y, text, color) { st.pops.push({ x: x, y: y, text: text, color: color || '#FDC506', t0: st.t }); }
+      /* Sprüche über die gemeinsame Anzeige (bricht um, bleibt im Bild) */
+      function pop(x, y, text, color) { ctx.fx.text(x * k, y * k, text, color || '#FDC506', Math.max(16, 20 * k)); }
       function shakeIt(v) { if (!ctx.reduce) st.shake = Math.max(st.shake, v); }
 
       function move(d) {

@@ -148,7 +148,8 @@
       }
 
       function epos(e) { var f = st.f; return { x: f.x + e.c * f.g.spx, y: f.y + e.r * f.g.spy + Math.sin(st.t / 300 + e.wob) * 2 }; }
-      function pop(x, y, text, color, big) { st.pops.push({ x: x, y: y, text: text, color: color || '#FDC506', t0: st.t, big: !!big }); }
+      /* Sprüche über die gemeinsame Anzeige (bricht um, bleibt im Bild) */
+      function pop(x, y, text, color, big) { ctx.fx.text(x * k, y * k, text, color || '#FDC506', big ? Math.max(20, Math.min(34, W / 13) * k) : Math.max(15, 18 * k)); }
       function puff(x, y, colors, n, speed, grav) {
         if (ctx.reduce) n = Math.ceil(n / 2);
         for (var i = 0; i < n; i++) {

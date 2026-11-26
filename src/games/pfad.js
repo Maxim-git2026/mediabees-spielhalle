@@ -301,7 +301,8 @@
         return false;
       }
 
-      function pop(x, y, text, color, big) { st.pops.push({ x: x, y: y, text: text, color: color || '#FDC506', t0: st.t, big: !!big }); }
+      /* Sprüche über die gemeinsame Anzeige (bricht um, bleibt im Bild) */
+      function pop(x, y, text, color, big) { ctx.fx.text(x, y, text, color || '#FDC506', big ? Math.min(30, cssW / 14) : Math.max(14, T * 0.75)); }
       function puff(x, y, colors, n, speed) {
         if (ctx.reduce) n = Math.ceil(n / 2);
         for (var i = 0; i < n; i++) {
