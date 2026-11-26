@@ -120,7 +120,7 @@
 
   MBArcade.register({
     id: 'pfad',
-    title: 'Pollenpfad',
+    title: 'Pollenrausch',
     duration: 0,
     startText: 'Sammle alle Pollen im Labyrinth, ohne dass dich eine Wespe erwischt. Mit einem Honigglas drehst du den Spieß um. Drei Labyrinthe, vier Wespen von Anfang an und ab Level 2 sogar fünf.',
     help: {
@@ -362,14 +362,14 @@
           st.flower = { x: 9, y: 11, until: st.t + 9000, t0: st.t };
           ring(px(9), py(11), '#FF8AD8', T * 4, 600, 5);
           sparkle(px(9), py(11), ['#FF8AD8', '#FFC2EC', '#FFFFFF'], 12, 120);
-          pop(px(9), py(11) - T, 'Blume!', '#FF8AD8');
+          pop(px(9), py(11) - T, 'Bonus-Blume!', '#FF8AD8');
           ctx.tone(990, 1480, 0.12, 'triangle', 0.04); ctx.tone(1320, 1980, 0.12, 'triangle', 0.03, 0.1);
         }
         if (!st.left) {
           st.levelDone = st.t + 1800;
           var bonus = 500 * st.level;
           addScore(bonus);
-          pop(cssW / 2, oy + T * 11.5, 'Alles gesammelt! +' + bonus, '#FDC506', true);
+          pop(cssW / 2, oy + T * 11.5, 'Teller leer! +' + bonus, '#FDC506', true);
           flashIt(0.8, '253,197,6'); shakeIt(0.25, 7); punch(1);
           for (var k = 0; k < 5; k++) {
             var cx = ox + T * COLS * (0.15 + k * 0.175), cy = oy + T * ROWS * (0.3 + (k % 2) * 0.35);
@@ -382,6 +382,7 @@
 
       function hitBee() {
         st.dying = st.t;
+        pop(px(st.bee.x), py(st.bee.y) - T * 1.5, Math.random() < 0.5 ? 'Erwischt!' : 'Mampf-Pause!', '#FF7A6B', true);
         shakeIt(0.5, 13); hitstop(260); flashIt(1, '255,74,61');
         ring(px(st.bee.x), py(st.bee.y), '#FF5A4A', T * 6, 600, 6);
         puff(px(st.bee.x), py(st.bee.y), ['#F7B500', '#3A2410', '#FFFFFF'], 28, 170);

@@ -276,7 +276,7 @@
         T.inl.forEach(function (il, i) {
           if (Math.abs(b.x - il.x) < 12 && oy0 < 520 && b.y >= 520 && b.vy > 0) {
             addScore(100); il.lit = true; il.t = st.t; juice(3);
-            if (!T.kick[i].lit) { T.kick[i].lit = true; ctx.fx.text(SX(il.x), SY(500), 'Rettung an!', '#7FD3FF', 15); }
+            if (!T.kick[i].lit) { T.kick[i].lit = true; ctx.fx.text(SX(il.x), SY(500), 'Am Ball bleiben!', '#7FD3FF', 15); }
             ctx.fx.ring(SX(il.x), SY(520), '#7FD3FF', 22 * k, 3, 300); ctx.tone(1100, 1500, 0.06, 'triangle', 0.03);
           }
         });
@@ -327,7 +327,7 @@
         var b = { x: LANE_X, y: 600, vx: 0, vy: -1650, still: 0 };
         st.list.push(b);
         st.saveUntil = Math.max(st.saveUntil, st.t + 6000);
-        ctx.fx.banner('MULTIBALL! Alles doppelt!', '#FF9F1A', 36); ctx.fx.flash('255,159,26', 0.8); ctx.fx.shake(0.35, 9);
+        ctx.fx.banner('DICKE BÄLLE! Alles doppelt!', '#FF9F1A', 36); ctx.fx.flash('255,159,26', 0.8); ctx.fx.shake(0.35, 9);
         ctx.fx.sparkle(SX(200), SY(300), ['#FDC506', '#FF9F1A', '#FFFFFF', '#FF8AD8'], 40, 360);
         ctx.tone(392, 784, 0.15, 'square', 0.05); ctx.tone(523, 1046, 0.15, 'square', 0.05, 0.12); ctx.tone(784, 1568, 0.3, 'triangle', 0.06, 0.24);
       }
@@ -342,7 +342,7 @@
         if (st.list.length) {
           /* Im Multiball kostet eine Kugel kein Leben */
           if (st.t < st.saveUntil) { var nb = { x: LANE_X, y: 600, vx: 0, vy: -1600, still: 0 }; st.list.push(nb); ctx.fx.text(SX(200), SY(560), 'Gerettet!', '#7FD3FF', 20); return; }
-          if (st.list.length === 1 && st.multi) { st.multi = false; ctx.fx.text(SX(200), SY(520), 'Multiball vorbei', '#FF9F1A', 18); }
+          if (st.list.length === 1 && st.multi) { st.multi = false; ctx.fx.text(SX(200), SY(520), 'Ballmangel!', '#FF9F1A', 18); }
           ctx.tone(300, 120, 0.25, 'sawtooth', 0.03);
           return;
         }
@@ -363,8 +363,8 @@
         var bonusTxt = bonus ? 'Bonus +' + bonus.toLocaleString('de-DE') + (st.mult > 1 ? ' (×' + st.mult + ')' : '') : '';
         st.ballStats = { bumps: 0, targets: 0, spins: 0, wasps: 0 };
         st.ball = null;
-        if (st.balls <= 0) { ctx.fx.banner('Letzte Kugel weg!' + (bonus ? ' ' + bonusTxt : ''), '#FF7A6B'); st.drained = st.t; return; }
-        ctx.fx.banner('Kugel weg!' + (bonus ? ' ' + bonusTxt : ' Noch ' + st.balls), '#FF7A6B');
+        if (st.balls <= 0) { ctx.fx.banner('Ende Gelände!' + (bonus ? ' ' + bonusTxt : ''), '#FF7A6B'); st.drained = st.t; return; }
+        ctx.fx.banner(bonus ? 'Kugel weg! ' + bonusTxt : 'Abgesoffen! Noch ' + st.balls, '#FF7A6B');
         st.mult = 1; st.saveUsed = false; juice(25);
         newBall();
       }

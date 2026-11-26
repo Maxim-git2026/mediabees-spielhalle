@@ -168,7 +168,7 @@
         } else if (!o.target) {
           st.wrong++; st.time = Math.max(0, st.time - WRONG_S);
           st.marks.push({ x: o.x, y: o.y, r: o.r, ok: false, t0: st.t });
-          ctx.fx.shake(0.15, 4); ctx.fx.text(o.x, o.y - o.r - 8, pick(['Nee!', 'Falsch!', 'Das nicht!', 'Leider nein!']) + ' −' + WRONG_S + ' s', '#FF7A6B', 18);
+          ctx.fx.shake(0.15, 4); ctx.fx.text(o.x, o.y - o.r - 8, pick(['Nee!', 'Falsch!', 'Das nicht!', 'Leider nein!', 'Kalt, ganz kalt!', 'Brille putzen!']) + ' −' + WRONG_S + ' s', '#FF7A6B', 18);
           ctx.tone(220, 140, 0.15, 'square', 0.04);
         }
       }

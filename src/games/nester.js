@@ -187,7 +187,7 @@
         if (n > 8) {
           shakeIt(0.08); ctx.tone(520, 1040, 0.15, 'triangle', 0.05);
           ctx.fx.flash('253,197,6', Math.min(0.6, 0.2 + n / 80)); ctx.fx.sparkle(p.x, p.y, null, Math.min(30, 8 + n / 2), 220);
-          if (n >= 20) ctx.fx.text(p.x, p.y - R * 1.5, 'Riesig!', '#FFE680', 26);
+          if (n >= 20) ctx.fx.text(p.x, p.y - R * 1.5, 'Freie Bahn!', '#FFE680', 26);
         }
         else ctx.tone(700 + Math.random() * 120, 980, 0.05, 'triangle', 0.04);
         if (!safeLeft()) win();
@@ -220,7 +220,7 @@
         shakeIt(0.45);
         var p = center(c);
         puff(p.x, p.y, ['#B8AE9C', '#111', '#FFD400'], 26, 260);
-        ctx.fx.flash('255,74,61', 1); ctx.fx.ring(p.x, p.y, '#FF5A4A', R * 7, 7, 650); ctx.fx.text(p.x, p.y - R, 'AUTSCH!', '#FF7A6B', 30);
+        ctx.fx.flash('255,74,61', 1); ctx.fx.ring(p.x, p.y, '#FF5A4A', R * 7, 7, 650); ctx.fx.text(p.x, p.y - R, 'AUTSCH!', '#FF7A6B', 30); ctx.fx.text(p.x, p.y + R * 1.2, 'Jetzt sind sie wach!', '#FFE680', 20);
         ctx.tone(220, 60, 0.4, 'sawtooth', 0.07);
         /* Die übrigen Nester gehen nacheinander auf */
         var others = st.cells.filter(function (x) { return x.nest && x !== c; });
@@ -239,7 +239,7 @@
         st.score += bonus; st.cleared++; ctx.setScore(st.score);
         st.nextAt = st.t + 1500;
         st.flash = 0.6; st.flashC = '253,197,6';
-        pop(cssW / 2, (cssH - BAR) * 0.45, 'Feld geräumt! +' + bonus, '#FDC506', true);
+        pop(cssW / 2, (cssH - BAR) * 0.45, 'Alle Waben frei! +' + bonus, '#FDC506', true);
         st.cells.forEach(function (c) { if (c.nest && !c.flag) { c.flag = true; c.pop = 1; } });
         for (var i = 0; i < 4; i++) puff(rnd(0, cssW), rnd(0, cssH - BAR), ['#FDC506', '#FFE680', '#FFFFFF'], 12, 220);
         ctx.fx.shake(0.3, 9);

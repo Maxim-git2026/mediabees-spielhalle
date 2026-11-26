@@ -6,14 +6,14 @@
     id: 'revier',
     title: 'Revierflug',
     ranks: [
-      [100, 'Ehrenbürgerin des Reviers', 'Einmal ums ganze Revier!'],
-      [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
-      [45, 'Kumpel-Biene', 'Glück auf!'],
-      [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
-      [20, 'Stadtflitzer', 'Schon zwei Städte weit.'],
-      [10, 'Ausflugs-Biene', 'Schöne Tour.'],
-      [4, 'Startbiene', 'Aus Herne raus ist schwer.'],
-      [0, 'Bruchpilot', 'Anschnallen und nochmal.']
+      [100, 'Ruhrpott-Maverick', 'Einmal ums ganze Revier!'],
+      [60, 'Top Gun', 'Einmal quer durchs Revier!'],
+      [45, 'Fliegerass', 'Glück auf und Hals- und Beinbruch!'],
+      [30, 'Kampfpilot', 'Die A40 von oben? Easy.'],
+      [20, 'Pilot', 'Zwei Städte, null Kratzer.'],
+      [10, 'Co-Pilot', 'Darf schon mal ans Steuer.'],
+      [4, 'Flugschüler', 'Aus Herne raus ist schwer.'],
+      [0, 'Bruchpilot', 'Mayday, Mayday! Nochmal.']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);

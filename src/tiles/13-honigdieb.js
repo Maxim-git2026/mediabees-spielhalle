@@ -6,13 +6,13 @@
     id: 'honigdieb',
     title: 'Honigdieb',
     ranks: [
-      [2200, 'Unfassbar', 'Der Kammerjäger gibt auf.'],
-      [1600, 'Meisterdiebin', 'Quer durchs ganze Revier.'],
+      [2200, 'Meistgesucht', 'Dein Steckbrief hängt in jeder Imkerei.'],
+      [1600, 'Meisterdieb', 'Quer durchs ganze Revier.'],
       [1150, 'Phantom der Halde', 'Nur noch ein Summen in der Nacht.'],
-      [800, 'Fluchtkünstlerin', 'Elegant entwischt.'],
-      [520, 'Hakenschlägerin', 'Dem Spray immer einen Schritt voraus.'],
-      [300, 'Flinkflügel', 'Ganz schön flott.'],
-      [120, 'Langfinger', 'Ein paar Straßen weit gekommen.'],
+      [800, 'Ganove', 'Klebrige Finger, weiße Weste.'],
+      [520, 'Hakenschläger', 'Dem Spray immer einen Schritt voraus.'],
+      [300, 'Gelegenheitsdieb', 'Gelegenheit macht Diebe.'],
+      [120, 'Taschendieb', 'Nur ein Löffelchen Honig.'],
       [0, 'Ertappt', 'Auf frischer Tat. Nochmal!']
     ],
     thumb: function (g, w, h) {

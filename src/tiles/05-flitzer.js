@@ -6,14 +6,14 @@
     id: 'flitzer',
     title: 'A40-Flitzer',
     ranks: [
-      [8000, 'Venlo-Rakete', 'Schneller als die Polizei erlaubt.'],
-      [5000, 'Autobahn-Legende', 'Einmal Venlo und zurück!'],
-      [3500, 'Spurwechsel-Profi', 'Elegant durch den Verkehr.'],
-      [2500, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
-      [1600, 'Pendler-Biene', 'Schöne Fahrt.'],
-      [1000, 'Sonntagsfahrer', 'Gemütlich unterwegs.'],
-      [400, 'Fahrschülerin', 'Die ersten Kilometer sitzen.'],
-      [0, 'Blechschaden', 'Anschnallen und nochmal.']
+      [8000, 'Venlo-Rakete', 'Mehr Punkte als in Flensburg!'],
+      [5000, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
+      [3500, 'Spurwechsel-Profi', 'Blinker? Braucht man nicht.'],
+      [2500, 'Probezeit', 'Jetzt bloß nix riskieren.'],
+      [1600, 'Führerschein bestanden', 'Lappen in der Tasche!'],
+      [1000, 'Erste Fahrstunde', 'Der Fahrlehrer schwitzt noch.'],
+      [400, 'Fahrschüler', 'Spiegel, Schulterblick, los!'],
+      [0, 'Durchgefallen', 'Nochmal in die Theorie.']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#132219'; g.fillRect(0, 0, w, h);

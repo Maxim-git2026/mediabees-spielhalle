@@ -6,14 +6,14 @@
     id: 'wabenbau',
     title: 'Wabenbau',
     ranks: [
-      [40000, 'Wabenwunder', 'Ein Bau für die Ewigkeit.'],
-      [25000, 'Baumeisterin', 'Statik? Sitzt.'],
-      [15000, 'Baubiene', 'Saubere Reihen.'],
-      [8000, 'Polierbiene', 'Da glänzt der Stock.'],
-      [4000, 'Wachs-Azubi', 'Der Stock wächst.'],
-      [2000, 'Lehrlingsbiene', 'Die ersten Reihen stehen.'],
-      [700, 'Wachsknetende', 'Das Wachs wird warm.'],
-      [0, 'Wachsklumpen', 'Das wird noch. Nochmal!']
+      [40000, 'Wabenwunder', 'Du siehst jetzt überall Waben, oder?'],
+      [25000, 'Lückenlos', 'Nicht mal ein Pollen passt dazwischen.'],
+      [15000, 'Ordnungsamt', 'Hier liegt nix schief.'],
+      [8000, 'Umzugs-Held', 'Drei Zimmer in einen Transporter.'],
+      [4000, 'Spülmaschinen-Profi', 'Alles hat seinen Platz.'],
+      [2000, 'Kofferraum-Packer', 'Urlaubsgepäck? Passt.'],
+      [700, 'Lückenfüller', 'Irgendwo passt\'s schon rein.'],
+      [0, 'Chaos-Biene', 'Das lange Teil kam nie. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#14100A'; g.fillRect(0, 0, w, h);

@@ -10,10 +10,10 @@
   };
   var NAMES = { bug: 'Käfer', gold: 'goldener Käfer', bee: 'Biene, nicht klicken' };
   var BEE_LINES = [
-    'Autsch! Das war Die Maschine.',
-    'Ey, ich bin Kollegin!',
-    'Finger weg, ich bau hier Websites.',
-    'Das war der Sprücheklopfer. Der hat jetzt was zu erzählen.',
+    'Ich bin eine BIEENE!',
+    'Ey, nicht mich!',
+    'Ich hab gar nix gemacht :(',
+    'Der Sprücheklopfer! Der hat jetzt was zu erzählen.',
     'Bienen sind die Guten!',
     'Der Allesmacher macht jetzt erstmal Pause.'
   ];

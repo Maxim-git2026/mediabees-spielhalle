@@ -7,13 +7,13 @@
     title: 'Website-Abriss',
     ranks: [
       [3000, 'Abrissbirne', 'Da steht kein Stein mehr.'],
-      [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
-      [1500, 'Kahlschlag-Biene', 'Ordentlich aufgeräumt.'],
-      [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
-      [700, 'Bauarbeiterbiene', 'Mit Schmackes dabei.'],
-      [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
-      [150, 'Hobbybastlerin', 'Ein paar Risse sind drin.'],
-      [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
+      [2000, 'Presslufthammer', 'Die Nachbarn sind begeistert.'],
+      [1500, 'Bauleiter', 'Das kriegen wir bis Freitag hin.'],
+      [1000, 'Polier', 'Wird schon halten.'],
+      [700, 'Maurer', 'Pi mal Daumen. Passt.'],
+      [400, 'Handlanger', 'Drei gucken, einer arbeitet.'],
+      [150, 'Bau-Azubi', 'Holt erstmal Brötchen für alle.'],
+      [0, 'Kaffeepause', 'Die alte Seite steht noch. Erstmal \'n Bütterken. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#0E0E10'; g.fillRect(0, 0, w, h);

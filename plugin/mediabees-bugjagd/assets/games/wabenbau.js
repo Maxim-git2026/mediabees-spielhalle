@@ -13,7 +13,7 @@
     { k: 'haken', c: '#5CC46A', cells: [[0, 0], [0, -1], [0, 1], [1, 0]] },
     { k: 'bogen', c: '#7FD3FF', cells: [[0, 0], [1, -1], [-1, 0], [-1, 1]] }
   ];
-  var LINE_PTS = [0, 100, 300, 500, 800], LINE_TXT = ['', '', 'Doppelt!', 'Dreifach!', 'WABEN-WAHNSINN!'];
+  var LINE_PTS = [0, 100, 300, 500, 800], LINE_TXT = ['', '', 'Doppelt!', 'Dreifach!', 'Perfekt eingeparkt!'];
   var art = MBArcade.art, rr = art.rrect;
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function rot(c) { return [-c[1], c[0] + c[1]]; }
@@ -119,6 +119,9 @@
 
       function spawn() {
         st.cur = newPiece(st.next ? st.next : draw7());
+        /* Langes Teil nach langer Wartezeit */
+        if (st.cur.s.k === 'stab') { if ((st.sinceStab || 0) >= 8 && !st.dying) ctx.fx.text(cssW / 2, cssH * 0.25, 'Endlich, das lange Teil!', '#FFE680', 22); st.sinceStab = 0; }
+        else st.sinceStab = (st.sinceStab || 0) + 1;
         st.next = draw7();
         st.fall = 0; st.lockT = 0; st.resets = 0;
         if (!fits(cellsOf(st.cur))) { gameOver(); return; }
@@ -126,7 +129,7 @@
       function gameOver() {
         st.dying = st.t; st.cur = null;
         ctx.fx.flash('255,74,61', 1); ctx.fx.shake(0.5, 12);
-        ctx.fx.banner('Der Stock ist voll!', '#FF7A6B');
+        ctx.fx.banner(Math.random() < 0.5 ? 'Nix geht mehr!' : 'Bis unter die Decke!', '#FF7A6B');
         ctx.tone(440, 60, 0.9, 'sawtooth', 0.05);
       }
 

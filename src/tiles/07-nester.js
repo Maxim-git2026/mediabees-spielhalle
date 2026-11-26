@@ -7,13 +7,13 @@
     title: 'Wespennest',
     ranks: [
       [4000, 'Nest-Orakel', 'Du siehst durch Wachs.'],
-      [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
-      [1600, 'Detektivbiene', 'Kombiniert wie im Krimi.'],
-      [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
-      [600, 'Kundschafterin', 'Mutig aufgedeckt.'],
-      [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
-      [100, 'Glückspilz', 'Ein paar Waben hast du geschafft.'],
-      [0, 'Gestochen', 'Autsch. Nochmal!']
+      [2500, 'Wespenflüsterer', 'Die Nester verraten sich von selbst.'],
+      [1600, 'Wespenradar', 'Du riechst die Nester.'],
+      [1000, 'Wespen-Entschärfer', 'Kein Nest geht hoch.'],
+      [600, 'Fingerspitzengefühl', 'Wabe für Wabe.'],
+      [300, 'Auf Zehenspitzen', 'Bloß keine Wespe aufwecken.'],
+      [100, 'Angsthase', 'Nur ganz vorsichtig angetippt.'],
+      [0, 'Ins Wespennest gestochen', 'Autsch. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#14120E'; g.fillRect(0, 0, w, h);

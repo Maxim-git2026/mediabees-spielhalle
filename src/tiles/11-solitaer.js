@@ -6,13 +6,13 @@
     id: 'solitaer',
     title: 'Bienen-Solitär',
     ranks: [
-      [3000, 'Kartenkönigin', 'Schneller sortiert als gemischt.'],
+      [3000, 'Abteilungsleiter', 'Jetzt spielt der Chef selber.'],
       [2500, 'Solitär-Ass', 'Blitzsauber sortiert!'],
       [2000, 'Stapelprofi', 'Alles an seinem Platz.'],
-      [1500, 'Sortiertalent', 'Fast alles im Griff.'],
-      [900, 'Kartenbiene', 'Gut gemischt.'],
-      [500, 'Stapelbiene', 'Die ersten Reihen liegen.'],
-      [200, 'Kartenzähler', 'Ein paar Karten sitzen.'],
+      [1500, 'Überstunden-Biene', 'Offiziell am Arbeiten.'],
+      [900, 'Schnell-Wegklicker', 'Keiner hat was gesehen.'],
+      [500, 'Bürobiene', 'Der Chef guckt grad nicht.'],
+      [200, 'Mittagspause', 'Nur eine Runde, versprochen.'],
       [0, 'Mischmasch', 'Die Karten waren gemein. Nochmal!']
     ],
     thumb: function (g, w, h) {

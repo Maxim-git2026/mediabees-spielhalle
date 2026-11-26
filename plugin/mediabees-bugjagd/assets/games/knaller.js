@@ -14,7 +14,7 @@
     { name: 'Summbot', color: '#FF9F1A', bumble: false }
   ];
   function rnd(a, b) { return a + Math.random() * (b - a); }
-  var BOT_NAMES = ['Ilse', 'Uschi', 'Waldo', 'Wayne', 'Super Siggi', 'Trude', 'Kalle', 'Moni', 'Günni', 'Elfriede', 'Hotte', 'Jupp'];
+  var BOT_NAMES = ['Uschi', 'Waldo', 'Wayne', 'Super Siggi', 'Ilse', 'Gisela', 'Horst'];
   /* Zufällig, aber Waldo und Wayne kommen deutlich öfter */
   var NAME_WEIGHT = { Waldo: 5, Wayne: 5 };
   function pickNames(n) {
@@ -53,7 +53,7 @@
 
   MBArcade.register({
     id: 'knaller',
-    title: 'Honigknaller',
+    title: 'Bienenboom',
     duration: 0,
     multiTouch: true,
     startText: 'Sprengt euch durch den Stock! Allein räumst du Level für Level die Wespen ab. Oder du trittst gegen drei Bots an, die selbst Bomben legen. Am PC geht es auch zu zweit, auf Wunsch mit zwei Bots dazu (ohne Rangliste).',
@@ -371,7 +371,7 @@
             var other = bombAt(x, y); if (other) { other.t = FUSE - 0.05; break; }
           }
         });
-        cells.forEach(function (c) { st.flames.push({ x: c[0], y: c[1], t: 0, cx: b.x, cy: b.y, foe: b.foe }); st.powers = st.powers.filter(function (pw) { return pw.protect || !(pw.x === c[0] && pw.y === c[1]); }); });
+        cells.forEach(function (c) { st.flames.push({ x: c[0], y: c[1], t: 0, cx: b.x, cy: b.y, foe: b.foe, owner: b.owner }); st.powers = st.powers.filter(function (pw) { return pw.protect || !(pw.x === c[0] && pw.y === c[1]); }); });
         ctx.fx.ring(px(b.x), py(b.y), '#FF9F1A', C * (b.range + 1), 6, 450);
         ctx.fx.shake(0.18, 4 + b.range);
         ctx.fx.flash('255,159,26', 0.25);
@@ -390,11 +390,11 @@
       function inFlame(x, y) { return !!flameAt(x, y); }
       function flameAt(x, y) { for (var i = 0; i < st.flames.length; i++) if (st.flames[i].x === x && st.flames[i].y === y) return st.flames[i]; return null; }
 
-      function hurtPlayer(p) {
+      function hurtPlayer(p, self) {
         if (p.dead || st.t < p.inv) return;
         p.dead = st.t;
         ctx.fx.boom(px(p.x), py(p.y), '#FF5A4A', '255,74,61', 1);
-        ctx.fx.text(px(p.x), py(p.y) - C, st.duo ? nameOf(p) + ' erwischt!' : 'Autsch!', '#FF7A6B', 24);
+        ctx.fx.text(px(p.x), py(p.y) - C, self ? 'Gut gemacht!' : st.duo ? nameOf(p) + ' erwischt!' : 'Autsch!', '#FF7A6B', 24);
         ctx.tone(440, 60, 0.6, 'sawtooth', 0.06);
         if (st.duo) {
           setTimeout(function () {
@@ -405,7 +405,7 @@
             st.roundEnd = st.t + 1800;
             if (alive.length === 1) { st.wins[alive[0].n]++; ctx.fx.banner(nameOf(alive[0]) + ' gewinnt die Runde!', SLOTS[alive[0].n].color); }
             else if (alive.length > 1) { alive.forEach(function (q) { st.wins[q.n]++; }); ctx.fx.banner('Die Bots holen sich die Runde!', '#7FD3FF'); }
-            else ctx.fx.banner('Unentschieden!', '#FFFFFF');
+            else ctx.fx.banner('Alle gleichzeitig hochgegangen!', '#FFFFFF');
           }, 400);
         } else {
           st.lives--;
@@ -417,7 +417,7 @@
         /* Von einer Wespenbombe erwischt: weg, aber ohne Punkte */
         if (foe) {
           ctx.fx.ring(px(e.x), py(e.y), '#FF7A6B', C * 1.3, 4, 380);
-          ctx.fx.text(px(e.x), py(e.y) - C * 0.6, 'Eigentor!', '#FF7A6B', 18);
+          ctx.fx.text(px(e.x), py(e.y) - C * 0.6, 'Gut gemacht!', '#FF7A6B', 18);
           ctx.tone(400, 150, 0.12, 'triangle', 0.04);
           return;
         }
@@ -430,6 +430,7 @@
         ctx.fx.ring(px(e.x), py(e.y), e.hornet ? '#FFE680' : '#FFFFFF', C * 1.6, 5, 420);
         ctx.fx.text(px(e.x), py(e.y) - C * 0.6, '+' + pts + (st.chain > 1 ? ' ×' + st.chain : ''), st.chain > 1 ? '#FFE680' : '#FDC506', st.chain > 1 ? 26 : 20);
         if (st.chain >= 2) { ctx.fx.flash('253,197,6', 0.4); ctx.fx.sparkle(px(e.x), py(e.y), null, 14, 220); }
+        else if (Math.random() < 0.3) ctx.fx.text(px(e.x), py(e.y) + C * 0.6, Math.random() < 0.5 ? 'KAWUMM!' : 'Das schlug ein wie \'ne Bombe!', '#FFE680', 16);
         ctx.tone(500, 1000, 0.12, 'triangle', 0.05);
       }
 
@@ -470,7 +471,7 @@
         if (st.duo && !st.roundEnd && st.boost < 2 && st.t - st.roundStart > (st.boost ? 70000 : 40000)) {
           st.boost++;
           st.players.forEach(function (q) { q.range = Math.min(8, q.range + 2); q.bombs = Math.min(6, q.bombs + 1); });
-          ctx.fx.banner('Endspurt! Mehr Wumms für alle!', '#FF9F1A', 32); ctx.fx.flash('255,159,26', 0.5); ctx.fx.shake(0.25, 6);
+          ctx.fx.banner('Jetzt wird\'s explosiv! Mehr Wumms für alle!', '#FF9F1A', 32); ctx.fx.flash('255,159,26', 0.5); ctx.fx.shake(0.25, 6);
           ctx.tone(220, 880, 0.3, 'sawtooth', 0.05);
         }
         /* Spieler */
@@ -491,7 +492,8 @@
               ctx.tone(660, 1320, 0.15, 'triangle', 0.05);
             }
           }
-          if (inFlame(cx, cy)) hurtPlayer(p);
+          var pf = flameAt(cx, cy);
+          if (pf) hurtPlayer(p, pf.owner === p);
         });
         /* Wespen */
         st.enemies.forEach(function (e) {
@@ -518,7 +520,7 @@
           var bonus = 500 * st.level;
           st.score += bonus; ctx.setScore(st.score);
           st.levelEnd = st.t + 1800;
-          ctx.fx.banner('Stock gesäubert! +' + bonus, '#FDC506', 32); ctx.fx.flash('253,197,6', 0.8); ctx.fx.shake(0.3, 8);
+          ctx.fx.banner('BOMBENSTIMMUNG! +' + bonus, '#FDC506', 32); ctx.fx.flash('253,197,6', 0.8); ctx.fx.shake(0.3, 8);
           ctx.fx.sparkle(cssW / 2, cssH * 0.4, ['#FDC506', '#FFE680', '#FFFFFF', '#FF8AD8'], 36, 340);
           ctx.tone(523, 784, 0.12, 'triangle', 0.06); ctx.tone(784, 1046, 0.18, 'triangle', 0.06, 0.12);
         }

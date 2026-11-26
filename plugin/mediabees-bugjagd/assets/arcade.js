@@ -1011,13 +1011,13 @@
     id: 'bugjagd',
     title: 'Käfer-Jagd',
     ranks: [
-      [50, 'Bug-Terminator', 'Kein Käfer hat eine Chance.'],
-      [40, 'Chef-Biene', 'Das ist ja großartig!'],
+      [50, 'Kammerjäger!', 'Kein Käfer hat eine Chance.'],
+      [40, 'Boss-Biene', 'Das ist ja großartig!'],
       [32, 'Senior-Biene', 'Routiniert gejagt.'],
-      [25, 'Programmier-Biene', 'Sauberer Code, saubere Waben.'],
-      [18, 'Webdesign-Biene', 'Schick gejagt.'],
-      [12, 'Junior-Biene', 'Ordentlich gejagt.'],
-      [6, 'Praktikanten-Biene', 'Da geht noch was.'],
+      [25, 'Webdesigner', 'Sauberer Code, saubere Waben.'],
+      [18, 'Azubiene', 'Schick gejagt.'],
+      [12, 'Praktikant', 'Ordentlich gejagt.'],
+      [6, 'Kindergarten', 'Da geht noch was.'],
       [0, 'Frisch geschlüpft', 'Erstmal warm werden. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1051,14 +1051,14 @@
     id: 'wespen',
     title: 'Bienenstich',
     ranks: [
-      [2200, 'Wespen-Albtraum', 'Die Wespen erzählen sich Geschichten über dich.'],
-      [1600, 'Hornissen-Schreck', 'Der Stock ist sicher!'],
-      [1200, 'Scharfschützin', 'Kaum ein Schuss daneben.'],
-      [900, 'Wächterbiene', 'Starke Verteidigung.'],
-      [600, 'Arbeiterbiene', 'Solide Schicht.'],
-      [350, 'Flugschülerin', 'Das Zielen klappt schon.'],
-      [150, 'Drohne', 'Da summt noch Luft nach oben.'],
-      [0, 'Daneben-Biene', 'Zielwasser trinken und nochmal!']
+      [2200, 'General', 'Die Wespen erzählen sich Geschichten über dich.'],
+      [1600, 'Scharfschütze', 'Ein Schuss, ein Treffer.'],
+      [1200, 'Artillerie', 'Schweres Geschütz aufgefahren.'],
+      [900, 'Feldwebel', 'Der Stock steht stramm.'],
+      [600, 'Unteroffizier', 'Die Truppe hört auf dich.'],
+      [350, 'Gefreiter', 'Die ersten Treffer sitzen.'],
+      [150, 'Flieger', 'Zum Dienst gemeldet.'],
+      [0, 'Rekrut', 'Grundausbildung läuft noch. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
@@ -1087,14 +1087,14 @@
     id: 'revier',
     title: 'Revierflug',
     ranks: [
-      [100, 'Ehrenbürgerin des Reviers', 'Einmal ums ganze Revier!'],
-      [60, 'Revier-Legende', 'Einmal quer durchs Revier!'],
-      [45, 'Kumpel-Biene', 'Glück auf!'],
-      [30, 'Pendler-Biene', 'Die A40 ist nix dagegen.'],
-      [20, 'Stadtflitzer', 'Schon zwei Städte weit.'],
-      [10, 'Ausflugs-Biene', 'Schöne Tour.'],
-      [4, 'Startbiene', 'Aus Herne raus ist schwer.'],
-      [0, 'Bruchpilot', 'Anschnallen und nochmal.']
+      [100, 'Ruhrpott-Maverick', 'Einmal ums ganze Revier!'],
+      [60, 'Top Gun', 'Einmal quer durchs Revier!'],
+      [45, 'Fliegerass', 'Glück auf und Hals- und Beinbruch!'],
+      [30, 'Kampfpilot', 'Die A40 von oben? Easy.'],
+      [20, 'Pilot', 'Zwei Städte, null Kratzer.'],
+      [10, 'Co-Pilot', 'Darf schon mal ans Steuer.'],
+      [4, 'Flugschüler', 'Aus Herne raus ist schwer.'],
+      [0, 'Bruchpilot', 'Mayday, Mayday! Nochmal.']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
@@ -1130,8 +1130,8 @@
     ranks: [
       [1500, 'Polonaise-Legende', 'Ganz Herne tanzt mit!'],
       [1000, 'Schwarmkönigin', 'Die ganze Wiese tanzt mit!'],
-      [700, 'Partybiene', 'Da geht die Post ab.'],
-      [500, 'Tanzprofi', 'Da ist Stimmung in der Bude.'],
+      [700, 'Partybiene', 'Rave im Bienenstock!'],
+      [500, 'Tanzprofi', 'Die Tanzfläche gehört dir.'],
       [300, 'Tanzbiene', 'Schöner Schwarm.'],
       [150, 'Taktgefühl', 'Der Rhythmus stimmt.'],
       [50, 'Schunkelbiene', 'Ein paar tanzen schon mit.'],
@@ -1180,14 +1180,14 @@
     id: 'flitzer',
     title: 'A40-Flitzer',
     ranks: [
-      [8000, 'Venlo-Rakete', 'Schneller als die Polizei erlaubt.'],
-      [5000, 'Autobahn-Legende', 'Einmal Venlo und zurück!'],
-      [3500, 'Spurwechsel-Profi', 'Elegant durch den Verkehr.'],
-      [2500, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
-      [1600, 'Pendler-Biene', 'Schöne Fahrt.'],
-      [1000, 'Sonntagsfahrer', 'Gemütlich unterwegs.'],
-      [400, 'Fahrschülerin', 'Die ersten Kilometer sitzen.'],
-      [0, 'Blechschaden', 'Anschnallen und nochmal.']
+      [8000, 'Venlo-Rakete', 'Mehr Punkte als in Flensburg!'],
+      [5000, 'Ruhrschnellweg-Profi', 'Der Feierabendverkehr hat keine Chance.'],
+      [3500, 'Spurwechsel-Profi', 'Blinker? Braucht man nicht.'],
+      [2500, 'Probezeit', 'Jetzt bloß nix riskieren.'],
+      [1600, 'Führerschein bestanden', 'Lappen in der Tasche!'],
+      [1000, 'Erste Fahrstunde', 'Der Fahrlehrer schwitzt noch.'],
+      [400, 'Fahrschüler', 'Spiegel, Schulterblick, los!'],
+      [0, 'Durchgefallen', 'Nochmal in die Theorie.']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#132219'; g.fillRect(0, 0, w, h);
@@ -1227,13 +1227,13 @@
     title: 'Website-Abriss',
     ranks: [
       [3000, 'Abrissbirne', 'Da steht kein Stein mehr.'],
-      [2000, 'Abriss-Legende', 'Von den alten Seiten ist nichts übrig.'],
-      [1500, 'Kahlschlag-Biene', 'Ordentlich aufgeräumt.'],
-      [1000, 'Abrissbiene', 'Ordentlich Kleinholz gemacht.'],
-      [700, 'Bauarbeiterbiene', 'Mit Schmackes dabei.'],
-      [400, 'Heimwerkerbiene', 'Da wackelt schon einiges.'],
-      [150, 'Hobbybastlerin', 'Ein paar Risse sind drin.'],
-      [0, 'Staubwedel', 'Die alte Seite steht noch. Nochmal!']
+      [2000, 'Presslufthammer', 'Die Nachbarn sind begeistert.'],
+      [1500, 'Bauleiter', 'Das kriegen wir bis Freitag hin.'],
+      [1000, 'Polier', 'Wird schon halten.'],
+      [700, 'Maurer', 'Pi mal Daumen. Passt.'],
+      [400, 'Handlanger', 'Drei gucken, einer arbeitet.'],
+      [150, 'Bau-Azubi', 'Holt erstmal Brötchen für alle.'],
+      [0, 'Kaffeepause', 'Die alte Seite steht noch. Erstmal \'n Bütterken. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#0E0E10'; g.fillRect(0, 0, w, h);
@@ -1277,13 +1277,13 @@
     title: 'Wespennest',
     ranks: [
       [4000, 'Nest-Orakel', 'Du siehst durch Wachs.'],
-      [2500, 'Spürbiene', 'Kein Nest bleibt unentdeckt.'],
-      [1600, 'Detektivbiene', 'Kombiniert wie im Krimi.'],
-      [1000, 'Späherbiene', 'Gute Nase für Wespen.'],
-      [600, 'Kundschafterin', 'Mutig aufgedeckt.'],
-      [300, 'Sammelbiene', 'Ordentlich aufgedeckt.'],
-      [100, 'Glückspilz', 'Ein paar Waben hast du geschafft.'],
-      [0, 'Gestochen', 'Autsch. Nochmal!']
+      [2500, 'Wespenflüsterer', 'Die Nester verraten sich von selbst.'],
+      [1600, 'Wespenradar', 'Du riechst die Nester.'],
+      [1000, 'Wespen-Entschärfer', 'Kein Nest geht hoch.'],
+      [600, 'Fingerspitzengefühl', 'Wabe für Wabe.'],
+      [300, 'Auf Zehenspitzen', 'Bloß keine Wespe aufwecken.'],
+      [100, 'Angsthase', 'Nur ganz vorsichtig angetippt.'],
+      [0, 'Ins Wespennest gestochen', 'Autsch. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#14120E'; g.fillRect(0, 0, w, h);
@@ -1319,16 +1319,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art;
   MBArcade.tile({
     id: 'wacht',
-    title: 'Wabenwacht',
+    title: 'Wespen-Invasion',
     ranks: [
-      [9000, 'Stock-Heldin', 'Die Wespen haben aufgegeben.'],
-      [6000, 'Königinnen-Garde', 'Der Stock ist sicher!'],
-      [4500, 'Elite-Stachel', 'Treffsicher bis zur letzten Welle.'],
-      [3000, 'Wächterbiene', 'Keine Wespe kommt durch.'],
-      [2000, 'Torwächterin', 'Die erste Welle hat keine Chance.'],
-      [1000, 'Stachel-Azubi', 'Gut gezielt.'],
-      [400, 'Probestachel', 'Die ersten Treffer sitzen.'],
-      [0, 'Wespenfutter', 'Die Wespen feiern. Nochmal!']
+      [9000, 'Retter des Universums', 'Möge der Stachel mit dir sein.'],
+      [6000, 'Invasions-Stopper', 'Widerstand ist zwecklos? Nicht hier.'],
+      [4500, 'Galaxie-Wächter', 'Treffsicher bis zur letzten Welle.'],
+      [3000, 'Abfangjäger', 'Keine Wespe kommt durch.'],
+      [2000, 'Stachel-Kanonier', 'Die erste Welle hat keine Chance.'],
+      [1000, 'Raumkadett', 'Die ersten Treffer sitzen.'],
+      [400, 'Sternengucker', 'Wespen, unendliche Weiten …'],
+      [0, 'Entführt', 'Die Wespen haben dich mitgenommen. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);
@@ -1361,16 +1361,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art;
   MBArcade.tile({
     id: 'pfad',
-    title: 'Pollenpfad',
+    title: 'Pollenrausch',
     ranks: [
-      [40000, 'Labyrinth-Legende', 'Du kennst jeden Gang.'],
-      [30000, 'Pollen-Legende', 'Kein Pollen bleibt liegen.'],
-      [20000, 'Wespen-Fängerin', 'Die Wespen laufen vor dir weg.'],
-      [12000, 'Sammelprofi', 'Die Wespen schauen dumm aus der Wäsche.'],
-      [7000, 'Labyrinth-Läuferin', 'Zwei Labyrinthe gemeistert.'],
-      [4000, 'Flinke Biene', 'Gut gesammelt.'],
-      [1500, 'Pollen-Naschkatze', 'Ein paar Pollen geschnappt.'],
-      [0, 'Wespenfang', 'Erwischt! Nochmal.']
+      [40000, 'Spielhallen-Legende', 'Du kennst jeden Gang.'],
+      [30000, 'Highscore-Jäger', 'Kein Pollen bleibt liegen.'],
+      [20000, 'Wespen-Jäger', 'Jetzt rennen die Wespen.'],
+      [12000, 'Vielfraß', 'Futtern wie bei Muttern.'],
+      [7000, 'Labyrinth-Läufer', 'Zwei Labyrinthe gemeistert.'],
+      [4000, 'Pollenschlucker', 'Der Magen knurrt noch.'],
+      [1500, 'Naschkatze', 'Nur mal kurz probiert.'],
+      [0, 'Insert Coin', 'Die Wespen waren schneller. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#100E09'; g.fillRect(0, 0, w, h);
@@ -1405,14 +1405,14 @@
     id: 'wabenbau',
     title: 'Wabenbau',
     ranks: [
-      [40000, 'Wabenwunder', 'Ein Bau für die Ewigkeit.'],
-      [25000, 'Baumeisterin', 'Statik? Sitzt.'],
-      [15000, 'Baubiene', 'Saubere Reihen.'],
-      [8000, 'Polierbiene', 'Da glänzt der Stock.'],
-      [4000, 'Wachs-Azubi', 'Der Stock wächst.'],
-      [2000, 'Lehrlingsbiene', 'Die ersten Reihen stehen.'],
-      [700, 'Wachsknetende', 'Das Wachs wird warm.'],
-      [0, 'Wachsklumpen', 'Das wird noch. Nochmal!']
+      [40000, 'Wabenwunder', 'Du siehst jetzt überall Waben, oder?'],
+      [25000, 'Lückenlos', 'Nicht mal ein Pollen passt dazwischen.'],
+      [15000, 'Ordnungsamt', 'Hier liegt nix schief.'],
+      [8000, 'Umzugs-Held', 'Drei Zimmer in einen Transporter.'],
+      [4000, 'Spülmaschinen-Profi', 'Alles hat seinen Platz.'],
+      [2000, 'Kofferraum-Packer', 'Urlaubsgepäck? Passt.'],
+      [700, 'Lückenfüller', 'Irgendwo passt\'s schon rein.'],
+      [0, 'Chaos-Biene', 'Das lange Teil kam nie. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#14100A'; g.fillRect(0, 0, w, h);
@@ -1440,13 +1440,13 @@
     id: 'solitaer',
     title: 'Bienen-Solitär',
     ranks: [
-      [3000, 'Kartenkönigin', 'Schneller sortiert als gemischt.'],
+      [3000, 'Abteilungsleiter', 'Jetzt spielt der Chef selber.'],
       [2500, 'Solitär-Ass', 'Blitzsauber sortiert!'],
       [2000, 'Stapelprofi', 'Alles an seinem Platz.'],
-      [1500, 'Sortiertalent', 'Fast alles im Griff.'],
-      [900, 'Kartenbiene', 'Gut gemischt.'],
-      [500, 'Stapelbiene', 'Die ersten Reihen liegen.'],
-      [200, 'Kartenzähler', 'Ein paar Karten sitzen.'],
+      [1500, 'Überstunden-Biene', 'Offiziell am Arbeiten.'],
+      [900, 'Schnell-Wegklicker', 'Keiner hat was gesehen.'],
+      [500, 'Bürobiene', 'Der Chef guckt grad nicht.'],
+      [200, 'Mittagspause', 'Nur eine Runde, versprochen.'],
       [0, 'Mischmasch', 'Die Karten waren gemein. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1487,12 +1487,12 @@
     title: 'Hummelhopser',
     ranks: [
       [200, 'Unplattbar', 'Kein Auto kriegt dich.'],
-      [140, 'Ruhrpott-Hopserin', 'Quer durchs halbe Revier.'],
+      [140, 'Ruhrpott-Hopser', 'Quer durchs halbe Revier.'],
       [100, 'Rush-Hour-Hummel', 'Feierabendverkehr? Kein Problem.'],
-      [70, 'Emscher-Springerin', 'Trockene Füße bewahrt.'],
-      [45, 'Ampelflitzerin', 'Flink über die Kreuzung.'],
-      [25, 'Zebrastreifen-Profi', 'Die ersten Straßen geschafft.'],
-      [10, 'Bordsteinhummel', 'Ein paar Hopser sitzen.'],
+      [70, 'Emscher-Springer', 'Trockene Füße bewahrt.'],
+      [45, 'Ampelflitzer', 'Bei Gelb noch rüber.'],
+      [25, 'Schülerlotse', 'Die ersten Straßen geschafft.'],
+      [10, 'Bordsteinhummel', 'Der Bordstein ist dein Freund.'],
       [0, 'Plattgefahren', 'Erst links, dann rechts schauen. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1517,13 +1517,13 @@
     id: 'honigdieb',
     title: 'Honigdieb',
     ranks: [
-      [2200, 'Unfassbar', 'Der Kammerjäger gibt auf.'],
-      [1600, 'Meisterdiebin', 'Quer durchs ganze Revier.'],
+      [2200, 'Meistgesucht', 'Dein Steckbrief hängt in jeder Imkerei.'],
+      [1600, 'Meisterdieb', 'Quer durchs ganze Revier.'],
       [1150, 'Phantom der Halde', 'Nur noch ein Summen in der Nacht.'],
-      [800, 'Fluchtkünstlerin', 'Elegant entwischt.'],
-      [520, 'Hakenschlägerin', 'Dem Spray immer einen Schritt voraus.'],
-      [300, 'Flinkflügel', 'Ganz schön flott.'],
-      [120, 'Langfinger', 'Ein paar Straßen weit gekommen.'],
+      [800, 'Ganove', 'Klebrige Finger, weiße Weste.'],
+      [520, 'Hakenschläger', 'Dem Spray immer einen Schritt voraus.'],
+      [300, 'Gelegenheitsdieb', 'Gelegenheit macht Diebe.'],
+      [120, 'Taschendieb', 'Nur ein Löffelchen Honig.'],
       [0, 'Ertappt', 'Auf frischer Tat. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1548,16 +1548,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art, rr = art.rrect;
   MBArcade.tile({
     id: 'knaller',
-    title: 'Honigknaller',
+    title: 'Bienenboom',
     ranks: [
-      [12000, 'Knallkönigin', 'Der Stock gehört dir.'],
-      [8000, 'Wespenschreck', 'Keine Wespe traut sich mehr raus.'],
-      [5000, 'Feuerwerkerin', 'Da knallt es richtig.'],
-      [3000, 'Sprengmeisterin', 'Präzise gezündet.'],
-      [1500, 'Wachsbrecherin', 'Die Blöcke fliegen.'],
-      [800, 'Zündschnur-Azubi', 'Die ersten Wespen sind weg.'],
-      [300, 'Knallfrosch', 'Ein paar Blöcke gesprengt.'],
-      [0, 'Rohrkrepierer', 'Selbst hochgegangen? Nochmal!']
+      [12000, 'Bombenerfolg', 'Der Stock gehört dir.'],
+      [8000, 'Granate', 'Du bist echt \'ne Granate.'],
+      [5000, 'Bombig', 'Läuft bei dir.'],
+      [3000, 'Kawumm-Biene', 'Da wackeln die Waben.'],
+      [1500, 'Zündstoff', 'Langsam wird\'s explosiv.'],
+      [800, 'Knallkopf', 'Erst zünden, dann denken.'],
+      [300, 'Rohrkrepierer', 'Selbst hochgegangen? Passiert.'],
+      [0, 'Blindgänger', 'Ist nicht hochgegangen. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var c = h / 5, cols = Math.ceil(w / c);
@@ -1587,13 +1587,13 @@
     id: 'flipper',
     title: 'Honigflipper',
     ranks: [
-      [150000, 'Flipperkönigin', 'Der Tisch gehört dir. Tilt? Nie gehört.'],
-      [80000, 'Bumperbaronin', 'Die Honigtöpfe glühen noch.'],
-      [40000, 'Kugelflüsterin', 'Die Kugel macht, was du willst.'],
-      [20000, 'Multiplikatorin', 'Da klingelt die Kasse.'],
-      [10000, 'Bahnenbiene', 'Die Bahnen oben kennst du.'],
-      [5000, 'Flipperbiene', 'Die ersten Kombos sitzen.'],
-      [1500, 'Kugelschubserin', 'Ein paar Bumper getroffen.'],
+      [150000, 'Flipperkönig', 'Der Tisch gehört dir. Tilt? Nie gehört.'],
+      [80000, 'Bumper-Baron', 'Die Honigtöpfe glühen noch.'],
+      [40000, 'Kugelflüsterer', 'Die Kugel macht, was du willst.'],
+      [20000, 'Stammgast', 'Der Wirt kennt deinen Namen.'],
+      [10000, 'Freispiel', 'Die nächste Runde geht aufs Haus.'],
+      [5000, 'Kugelschubser', 'Bisschen rütteln ist erlaubt.'],
+      [1500, 'Groschengrab', 'Wirf noch \'nen Euro ein.'],
       [0, 'Abflussbiene', 'Die Kugel war schneller. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1629,16 +1629,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art, rr = art.rrect;
   MBArcade.tile({
     id: 'wurf',
-    title: 'Wurfduell',
+    title: 'Haldenduell',
     ranks: [
-      [12000, 'Haldenkönigin', 'Keine Wespe traut sich mehr auf den Berg.'],
-      [8000, 'Windflüsterin', 'Du liest den Wind wie die Zeitung.'],
-      [5000, 'Scharfwerferin', 'Ein Topf, ein Treffer.'],
+      [12000, 'Haldenkönig', 'Keine Wespe traut sich mehr auf den Berg.'],
+      [8000, 'Windflüsterer', 'Du liest den Wind wie die Zeitung.'],
+      [5000, 'Augenwerfer', 'Ein Blick geworfen, Wespe getroffen.'],
       [3000, 'Honigkanone', 'Die Wespen ducken sich schon.'],
-      [1800, 'Bogenlampe', 'Die Flugbahn sitzt.'],
-      [900, 'Topfschleuder', 'Die erste Wespe ist baden gegangen.'],
-      [300, 'Kraterbiene', 'Viel Erde bewegt.'],
-      [0, 'Daneben-Biene', 'Der Wind war schuld. Nochmal!']
+      [1800, 'Parabel-Profi', 'Dein Mathelehrer wäre stolz.'],
+      [900, 'Kamelle-Werfer', 'Wie beim Rosenmontagszug.'],
+      [300, 'Dosenwerfer', 'Dose auf Dose klappert.'],
+      [0, 'Handtuchwerfer', 'Nicht gleich das Handtuch werfen. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1B1838'); gr.addColorStop(0.6, '#5A2E48'); gr.addColorStop(1, '#C2603A');
@@ -1663,13 +1663,13 @@
     id: 'blitz',
     title: 'Bienen-Blitz',
     ranks: [
-      [9000, 'Blitzkönigin', 'Schneller als jede Aufgabe.'],
+      [9000, 'Überlebenskünstler', 'Keine dumme Idee hat dich erwischt.'],
       [6000, 'Reflex-Rakete', 'Du denkst nicht, du machst.'],
       [4000, 'Turbo-Biene', 'Auch auf Stufe fünf noch locker.'],
-      [2500, 'Flinkflügel', 'Die Aufgaben kommen, du lieferst.'],
-      [1500, 'Fixe Biene', 'Gute Reflexe.'],
-      [800, 'Aufgabensammlerin', 'Die ersten Runden sitzen.'],
-      [300, 'Knopfdrückerin', 'Konntest es nicht lassen, oder?'],
+      [2500, 'Sicherheitsbeauftragter', 'Helm auf, Finger weg.'],
+      [1500, 'Warnschild-Leser', 'Hast doch mal reingeguckt.'],
+      [800, 'Anleitungs-Überspringer', 'Wer liest schon Anleitungen?'],
+      [300, 'Knopfdrücker', 'Konntest es nicht lassen, oder?'],
       [0, 'Kaboom-Biene', 'Den roten Knopf drückt man nicht. Nochmal!']
     ],
     thumb: function (g, w, h) {
@@ -1696,12 +1696,12 @@
     ranks: [
       [18000, 'Adlerauge', 'Dir entgeht nichts im ganzen Pott.'],
       [12000, 'Spürnase', 'Gefunden, bevor es gesucht wurde.'],
-      [8000, 'Detektivbiene', 'Kombiniert wie im Krimi.'],
-      [5000, 'Sucherin', 'Das Gewimmel hat keine Chance.'],
-      [3000, 'Scharfer Blick', 'Gut hingeschaut.'],
-      [1500, 'Lupenbiene', 'Die ersten Funde sitzen.'],
-      [500, 'Brillenbiene', 'Mit Brille ginge noch mehr.'],
-      [0, 'Blindschleiche', 'Wo war das nochmal? Nochmal!']
+      [8000, 'Detektiv', 'Kombiniert wie im Krimi.'],
+      [5000, 'Scharfer Blick', 'Gut hingeschaut.'],
+      [3000, 'Heuhaufen-Sucher', 'Die Nadel ist irgendwo hier.'],
+      [1500, 'Kühlschrank-Blick', 'Die Butter steht direkt vor dir.'],
+      [500, 'Brille vergessen', 'Mit Brille ginge noch mehr.'],
+      [0, 'Blindschleiche', 'Tomaten auf den Augen? Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1B1838'); gr.addColorStop(0.5, '#3A2450'); gr.addColorStop(0.5, '#2A2238'); gr.addColorStop(1, '#2A2238');

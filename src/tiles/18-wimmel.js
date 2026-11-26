@@ -8,12 +8,12 @@
     ranks: [
       [18000, 'Adlerauge', 'Dir entgeht nichts im ganzen Pott.'],
       [12000, 'Spürnase', 'Gefunden, bevor es gesucht wurde.'],
-      [8000, 'Detektivbiene', 'Kombiniert wie im Krimi.'],
-      [5000, 'Sucherin', 'Das Gewimmel hat keine Chance.'],
-      [3000, 'Scharfer Blick', 'Gut hingeschaut.'],
-      [1500, 'Lupenbiene', 'Die ersten Funde sitzen.'],
-      [500, 'Brillenbiene', 'Mit Brille ginge noch mehr.'],
-      [0, 'Blindschleiche', 'Wo war das nochmal? Nochmal!']
+      [8000, 'Detektiv', 'Kombiniert wie im Krimi.'],
+      [5000, 'Scharfer Blick', 'Gut hingeschaut.'],
+      [3000, 'Heuhaufen-Sucher', 'Die Nadel ist irgendwo hier.'],
+      [1500, 'Kühlschrank-Blick', 'Die Butter steht direkt vor dir.'],
+      [500, 'Brille vergessen', 'Mit Brille ginge noch mehr.'],
+      [0, 'Blindschleiche', 'Tomaten auf den Augen? Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1B1838'); gr.addColorStop(0.5, '#3A2450'); gr.addColorStop(0.5, '#2A2238'); gr.addColorStop(1, '#2A2238');

@@ -4,7 +4,7 @@
   var TAU = Math.PI * 2, COLS = 9, HOP_MS = 130, HONEY = 5;
   var art = MBArcade.art, rr = art.rrect;
   var CAR_COLORS = [['#2F6FD0', '#4C86E0'], ['#D3272F', '#E04A50'], ['#F2F2F2', '#FFFFFF'], ['#2E8B57', '#45A06C'], ['#E8902A', '#F0A64C'], ['#4A4F5C', '#5E6472']];
-  var MILESTONES = { 25: 'Erste Kreuzung geschafft!', 50: 'Halbe Strecke bis zur Zeche!', 100: 'Einmal quer durch Herne!', 150: 'Ruhrpott-Profi!', 200: 'Unplattbar!' };
+  var MILESTONES = { 25: 'Warum hüpft die Hummel über die Straße?', 50: 'Halbe Strecke bis zur Zeche!', 100: 'Einmal quer durch Herne!', 150: 'Ruhrpott-Profi!', 200: 'Unplattbar!' };
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
 
@@ -179,7 +179,7 @@
           ctx.fx.sparkle(x, y, ['#F7C21B', '#1C1C1C', '#FFFFFF'], 22, 260, false);
           ctx.tone(220, 50, 0.45, 'sawtooth', 0.07);
         }
-        ctx.fx.text(x, y - T, kind === 'water' ? 'PLATSCH!' : kind === 'wasp' ? 'GESCHNAPPT!' : 'PLATT!', '#FFFFFF', 28);
+        ctx.fx.text(x, y - T, why, '#FFFFFF', 22);
       }
 
       function land() {
@@ -200,7 +200,7 @@
           ctx.fx.text(sx(st.px), sy(st.pr) - T * 0.8, '+' + HONEY, '#FDC506', 20);
           ctx.tone(880, 1320, 0.08, 'triangle', 0.05); ctx.tone(1320, 1760, 0.1, 'triangle', 0.04, 0.07);
         }
-        if (row.type === 'water') { st.onLog = logAt(row, st.px); if (!st.onLog) die('Ab in die Emscher.', 'water'); }
+        if (row.type === 'water') { st.onLog = logAt(row, st.px); if (!st.onLog) die('Plumps! Ab in die Emscher.', 'water'); }
         else st.onLog = null;
         if (st.queue.length) { var q = st.queue.shift(); tryHop(q[0], q[1]); }
       }
@@ -241,18 +241,18 @@
         var row2 = rowAt(st.pr);
         if (!st.hop && row2.type === 'water' && st.onLog) {
           st.px += row2.speed * dt;
-          if (st.px < -0.4 || st.px > COLS - 0.6) die('Mit dem Kahn davongetrieben.', 'water');
+          if (st.px < -0.4 || st.px > COLS - 0.6) die('Plumps! Ab in die Emscher.', 'water');
         }
         /* Treffer auf Straße und Gleis */
         if (!st.hop) {
-          if (row2.type === 'road') row2.objs.forEach(function (o) { if (st.px > o.x - 0.7 && st.px < o.x + o.w - 0.3) die('Unters Auto gekommen.', 'car'); });
-          if (row2.type === 'rail' && row2.train && st.px > row2.train.x - 0.7 && st.px < row2.train.x + row2.train.w - 0.3) die('Die S-Bahn war schneller.', 'car');
+          if (row2.type === 'road') row2.objs.forEach(function (o) { if (st.px > o.x - 0.7 && st.px < o.x + o.w - 0.3) die(Math.random() < 0.5 ? 'Platt wie \'ne Flunder!' : 'Ups, Kühlergrill.', 'car'); });
+          if (row2.type === 'rail' && row2.train && st.px > row2.train.x - 0.7 && st.px < row2.train.x + row2.train.w - 0.3) die('Die S-Bahn war ausnahmsweise pünktlich!', 'car');
         }
         /* Kamera: folgt nach vorn und schiebt langsam nach, wer trödelt wird geschnappt */
         var target = Math.max(st.cam, st.pr - 2.5);
         st.cam += (target - st.cam) * Math.min(1, dt * 4);
         if (st.started) { st.creep = Math.min(1.1, 0.22 + st.best / 260); st.cam += st.creep * dt; }
-        if (st.pr < st.cam - 1.3 && !st.hop) die('Die Wespe hat dich geschnappt.', 'wasp');
+        if (st.pr < st.cam - 1.3 && !st.hop) die('Zu lange getrödelt!', 'wasp');
         if (st.started) { st.idleT += dt; }
       }
 

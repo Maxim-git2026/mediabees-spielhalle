@@ -4,16 +4,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art;
   MBArcade.tile({
     id: 'wacht',
-    title: 'Wabenwacht',
+    title: 'Wespen-Invasion',
     ranks: [
-      [9000, 'Stock-Heldin', 'Die Wespen haben aufgegeben.'],
-      [6000, 'Königinnen-Garde', 'Der Stock ist sicher!'],
-      [4500, 'Elite-Stachel', 'Treffsicher bis zur letzten Welle.'],
-      [3000, 'Wächterbiene', 'Keine Wespe kommt durch.'],
-      [2000, 'Torwächterin', 'Die erste Welle hat keine Chance.'],
-      [1000, 'Stachel-Azubi', 'Gut gezielt.'],
-      [400, 'Probestachel', 'Die ersten Treffer sitzen.'],
-      [0, 'Wespenfutter', 'Die Wespen feiern. Nochmal!']
+      [9000, 'Retter des Universums', 'Möge der Stachel mit dir sein.'],
+      [6000, 'Invasions-Stopper', 'Widerstand ist zwecklos? Nicht hier.'],
+      [4500, 'Galaxie-Wächter', 'Treffsicher bis zur letzten Welle.'],
+      [3000, 'Abfangjäger', 'Keine Wespe kommt durch.'],
+      [2000, 'Stachel-Kanonier', 'Die erste Welle hat keine Chance.'],
+      [1000, 'Raumkadett', 'Die ersten Treffer sitzen.'],
+      [400, 'Sternengucker', 'Wespen, unendliche Weiten …'],
+      [0, 'Entführt', 'Die Wespen haben dich mitgenommen. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);

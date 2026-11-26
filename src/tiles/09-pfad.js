@@ -4,16 +4,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art;
   MBArcade.tile({
     id: 'pfad',
-    title: 'Pollenpfad',
+    title: 'Pollenrausch',
     ranks: [
-      [40000, 'Labyrinth-Legende', 'Du kennst jeden Gang.'],
-      [30000, 'Pollen-Legende', 'Kein Pollen bleibt liegen.'],
-      [20000, 'Wespen-Fängerin', 'Die Wespen laufen vor dir weg.'],
-      [12000, 'Sammelprofi', 'Die Wespen schauen dumm aus der Wäsche.'],
-      [7000, 'Labyrinth-Läuferin', 'Zwei Labyrinthe gemeistert.'],
-      [4000, 'Flinke Biene', 'Gut gesammelt.'],
-      [1500, 'Pollen-Naschkatze', 'Ein paar Pollen geschnappt.'],
-      [0, 'Wespenfang', 'Erwischt! Nochmal.']
+      [40000, 'Spielhallen-Legende', 'Du kennst jeden Gang.'],
+      [30000, 'Highscore-Jäger', 'Kein Pollen bleibt liegen.'],
+      [20000, 'Wespen-Jäger', 'Jetzt rennen die Wespen.'],
+      [12000, 'Vielfraß', 'Futtern wie bei Muttern.'],
+      [7000, 'Labyrinth-Läufer', 'Zwei Labyrinthe gemeistert.'],
+      [4000, 'Pollenschlucker', 'Der Magen knurrt noch.'],
+      [1500, 'Naschkatze', 'Nur mal kurz probiert.'],
+      [0, 'Insert Coin', 'Die Wespen waren schneller. Nochmal!']
     ],
     thumb: function (g, w, h) {
       g.fillStyle = '#100E09'; g.fillRect(0, 0, w, h);

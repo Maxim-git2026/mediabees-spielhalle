@@ -6,13 +6,13 @@
     id: 'blitz',
     title: 'Bienen-Blitz',
     ranks: [
-      [9000, 'Blitzkönigin', 'Schneller als jede Aufgabe.'],
+      [9000, 'Überlebenskünstler', 'Keine dumme Idee hat dich erwischt.'],
       [6000, 'Reflex-Rakete', 'Du denkst nicht, du machst.'],
       [4000, 'Turbo-Biene', 'Auch auf Stufe fünf noch locker.'],
-      [2500, 'Flinkflügel', 'Die Aufgaben kommen, du lieferst.'],
-      [1500, 'Fixe Biene', 'Gute Reflexe.'],
-      [800, 'Aufgabensammlerin', 'Die ersten Runden sitzen.'],
-      [300, 'Knopfdrückerin', 'Konntest es nicht lassen, oder?'],
+      [2500, 'Sicherheitsbeauftragter', 'Helm auf, Finger weg.'],
+      [1500, 'Warnschild-Leser', 'Hast doch mal reingeguckt.'],
+      [800, 'Anleitungs-Überspringer', 'Wer liest schon Anleitungen?'],
+      [300, 'Knopfdrücker', 'Konntest es nicht lassen, oder?'],
       [0, 'Kaboom-Biene', 'Den roten Knopf drückt man nicht. Nochmal!']
     ],
     thumb: function (g, w, h) {

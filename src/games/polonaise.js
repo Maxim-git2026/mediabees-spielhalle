@@ -12,10 +12,12 @@
     w: 'up', W: 'up', s: 'down', S: 'down', a: 'left', A: 'left', d: 'right', D: 'right'
   };
   var MILESTONES = {
-    10: 'Der Bienentanz kommt in Fahrt!',
-    20: 'Da geht die Post ab!',
-    30: 'Ganz Herne tanzt mit!',
-    45: 'Jetzt tanzt auch Wanne-Eickel mit!',
+    5: 'La Cucaracha!',
+    10: 'Macarena!',
+    20: 'Conga-Line!',
+    30: 'Polonaise durch den Stock!',
+    40: 'Ganz Herne tanzt mit!',
+    50: 'Mehr los als auf der Cranger Kirmes!',
     60: 'Das ist kein Schwarm mehr, das ist ein Umzug!'
   };
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -194,6 +196,8 @@
 
       function die(x, y) {
         st.dead = true; st.deadT = st.t; st.flash = 1; shakeIt(0.45);
+        var OVER = ['Aus dem Takt!', 'Nicht in den eigenen Schwanz beißen!', 'Selbst auf den Fuß getreten!', 'Licht an, Party vorbei.', 'Der DJ hat Feierabend.'];
+        ctx.say(OVER[Math.floor(Math.random() * OVER.length)]);
         var hx = st.snake[0].x + 0.5, hy = st.snake[0].y + 0.5;
         burst((hx + x + 0.5) / 2, (hy + y + 0.5) / 2, ['#FF4A3D', '#FFFFFF', '#FDC506'], 26, 7);
         st.fly = st.snake.map(function (p, i) {

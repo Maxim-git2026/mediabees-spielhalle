@@ -7,12 +7,12 @@
     title: 'Hummelhopser',
     ranks: [
       [200, 'Unplattbar', 'Kein Auto kriegt dich.'],
-      [140, 'Ruhrpott-Hopserin', 'Quer durchs halbe Revier.'],
+      [140, 'Ruhrpott-Hopser', 'Quer durchs halbe Revier.'],
       [100, 'Rush-Hour-Hummel', 'Feierabendverkehr? Kein Problem.'],
-      [70, 'Emscher-Springerin', 'Trockene Füße bewahrt.'],
-      [45, 'Ampelflitzerin', 'Flink über die Kreuzung.'],
-      [25, 'Zebrastreifen-Profi', 'Die ersten Straßen geschafft.'],
-      [10, 'Bordsteinhummel', 'Ein paar Hopser sitzen.'],
+      [70, 'Emscher-Springer', 'Trockene Füße bewahrt.'],
+      [45, 'Ampelflitzer', 'Bei Gelb noch rüber.'],
+      [25, 'Schülerlotse', 'Die ersten Straßen geschafft.'],
+      [10, 'Bordsteinhummel', 'Der Bordstein ist dein Freund.'],
       [0, 'Plattgefahren', 'Erst links, dann rechts schauen. Nochmal!']
     ],
     thumb: function (g, w, h) {

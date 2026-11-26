@@ -4,16 +4,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art, rr = art.rrect;
   MBArcade.tile({
     id: 'wurf',
-    title: 'Wurfduell',
+    title: 'Haldenduell',
     ranks: [
-      [12000, 'Haldenkönigin', 'Keine Wespe traut sich mehr auf den Berg.'],
-      [8000, 'Windflüsterin', 'Du liest den Wind wie die Zeitung.'],
-      [5000, 'Scharfwerferin', 'Ein Topf, ein Treffer.'],
+      [12000, 'Haldenkönig', 'Keine Wespe traut sich mehr auf den Berg.'],
+      [8000, 'Windflüsterer', 'Du liest den Wind wie die Zeitung.'],
+      [5000, 'Augenwerfer', 'Ein Blick geworfen, Wespe getroffen.'],
       [3000, 'Honigkanone', 'Die Wespen ducken sich schon.'],
-      [1800, 'Bogenlampe', 'Die Flugbahn sitzt.'],
-      [900, 'Topfschleuder', 'Die erste Wespe ist baden gegangen.'],
-      [300, 'Kraterbiene', 'Viel Erde bewegt.'],
-      [0, 'Daneben-Biene', 'Der Wind war schuld. Nochmal!']
+      [1800, 'Parabel-Profi', 'Dein Mathelehrer wäre stolz.'],
+      [900, 'Kamelle-Werfer', 'Wie beim Rosenmontagszug.'],
+      [300, 'Dosenwerfer', 'Dose auf Dose klappert.'],
+      [0, 'Handtuchwerfer', 'Nicht gleich das Handtuch werfen. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1B1838'); gr.addColorStop(0.6, '#5A2E48'); gr.addColorStop(1, '#C2603A');

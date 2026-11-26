@@ -316,6 +316,7 @@
           else if (m.fail) resolve(false, m.fail);
           else if (age >= playTime()) { if (gm.timeoutBoom && !m.trap) m.boom = true; resolve(m.trap ? false : !!gm.timeout, m.trap ? gm.trapFail : gm.timeoutBoom || (gm.timeout ? null : gm.failText)); }
           if (st.phase === 'result' && st.m.res && gm.id === 'nopush' && !m.trap) ctx.fx.text(W / 2, H * 0.38, 'Stark geblieben!', '#FFE680', 20);
+          if (st.phase === 'result' && st.m.res && gm.id === 'dodge') ctx.fx.text(W / 2, H * 0.38, 'Überlebt!', '#FFE680', 20);
         } else if (st.phase === 'result' && age >= (st.nuke && st.t - st.nuke < 3000 ? 2.2 : 0.8)) {
           st.nuke = 0;
           if (st.lives <= 0) {
@@ -394,7 +395,7 @@
         if (age > 0.5) {
           g.globalAlpha = Math.min(1, (age - 0.5) * 3);
           g.font = '900 ' + Math.round(44 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.lineJoin = 'round'; g.strokeStyle = '#111';
-          g.strokeText('Oh nein!', cx, H * 0.2); g.fillStyle = '#FF7A6B'; g.fillText('Oh nein!', cx, H * 0.2);
+          g.strokeText('Das war jetzt nicht so schlau.', cx, H * 0.2, W - 20); g.fillStyle = '#FF7A6B'; g.fillText('Das war jetzt nicht so schlau.', cx, H * 0.2, W - 20);
           g.font = '700 ' + Math.round(16 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.8)';
           g.fillText('Alle Leben aufgebraucht. ' + st.wins + ' Aufgaben geschafft.', cx, H * 0.8, W - 20);
           g.globalAlpha = 1;

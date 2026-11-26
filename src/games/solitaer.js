@@ -395,7 +395,7 @@
           st.won = true; st.auto = 0;
           var secs = Math.round((st.t - st.startT) / 1000), bonus = 500 + Math.max(0, (600 - secs) * 2);
           addScore(bonus);
-          ctx.fx.banner('Gewonnen! +' + bonus, '#FDC506', 40);
+          ctx.fx.banner('Feierabend! +' + bonus, '#FDC506', 40);
           ctx.fx.flash('253,197,6', 1); ctx.fx.shake(0.3, 8);
           ctx.tone(523, 784, 0.15, 'triangle', 0.06); ctx.tone(784, 1046, 0.15, 'triangle', 0.06, 0.15); ctx.tone(1046, 1568, 0.3, 'triangle', 0.06, 0.3);
           startCascade();
@@ -404,7 +404,7 @@
         /* Alles offen und Stapel leer: der Rest geht automatisch */
         if (!st.stock.length && !st.waste.length && st.tab.every(function (col) { return col.every(function (c) { return c.up; }); }) && !st.auto) {
           st.auto = st.t + 300;
-          ctx.fx.text(cssW / 2, tabY + ch, 'Der Rest geht von allein!', '#FFE680', 22);
+          ctx.fx.text(cssW / 2, tabY + ch, 'Den Rest macht der Praktikant.', '#FFE680', 22);
         }
       }
       function autoStep() {
@@ -621,7 +621,7 @@
         if (p.y > cssH - BAR) {
           var bw2 = Math.min(140, cssW * 0.3);
           if (p.x < 10 + bw2) undo();
-          else if (p.x > cssW - bw2 - 10) { ctx.fx.banner('Aufgegeben', '#FFFFFF', 30); st.over = true; }
+          else if (p.x > cssW - bw2 - 10) { ctx.fx.banner('Der Chef kommt!', '#FFFFFF', 30); st.over = true; }
           return;
         }
         if (st.auto) return;

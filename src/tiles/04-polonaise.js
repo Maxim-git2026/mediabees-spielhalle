@@ -8,8 +8,8 @@
     ranks: [
       [1500, 'Polonaise-Legende', 'Ganz Herne tanzt mit!'],
       [1000, 'Schwarmkönigin', 'Die ganze Wiese tanzt mit!'],
-      [700, 'Partybiene', 'Da geht die Post ab.'],
-      [500, 'Tanzprofi', 'Da ist Stimmung in der Bude.'],
+      [700, 'Partybiene', 'Rave im Bienenstock!'],
+      [500, 'Tanzprofi', 'Die Tanzfläche gehört dir.'],
       [300, 'Tanzbiene', 'Schöner Schwarm.'],
       [150, 'Taktgefühl', 'Der Rhythmus stimmt.'],
       [50, 'Schunkelbiene', 'Ein paar tanzen schon mit.'],

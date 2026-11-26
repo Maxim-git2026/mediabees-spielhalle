@@ -4,16 +4,16 @@
   var TAU = Math.PI * 2, art = MBArcade.art, rr = art.rrect;
   MBArcade.tile({
     id: 'knaller',
-    title: 'Honigknaller',
+    title: 'Bienenboom',
     ranks: [
-      [12000, 'Knallkönigin', 'Der Stock gehört dir.'],
-      [8000, 'Wespenschreck', 'Keine Wespe traut sich mehr raus.'],
-      [5000, 'Feuerwerkerin', 'Da knallt es richtig.'],
-      [3000, 'Sprengmeisterin', 'Präzise gezündet.'],
-      [1500, 'Wachsbrecherin', 'Die Blöcke fliegen.'],
-      [800, 'Zündschnur-Azubi', 'Die ersten Wespen sind weg.'],
-      [300, 'Knallfrosch', 'Ein paar Blöcke gesprengt.'],
-      [0, 'Rohrkrepierer', 'Selbst hochgegangen? Nochmal!']
+      [12000, 'Bombenerfolg', 'Der Stock gehört dir.'],
+      [8000, 'Granate', 'Du bist echt \'ne Granate.'],
+      [5000, 'Bombig', 'Läuft bei dir.'],
+      [3000, 'Kawumm-Biene', 'Da wackeln die Waben.'],
+      [1500, 'Zündstoff', 'Langsam wird\'s explosiv.'],
+      [800, 'Knallkopf', 'Erst zünden, dann denken.'],
+      [300, 'Rohrkrepierer', 'Selbst hochgegangen? Passiert.'],
+      [0, 'Blindgänger', 'Ist nicht hochgegangen. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var c = h / 5, cols = Math.ceil(w / c);

@@ -5,7 +5,7 @@
   var art = MBArcade.art, rr = art.rrect;
   /* Gegner im Spiel gegen den Computer: Name, Hornisse? */
   /* Gegner: Name zufällig (Waldo und Wayne deutlich öfter), ab Runde 3 öfter Hornissen */
-  var FOE_NAMES = ['Walli', 'Ilse', 'Horst', 'Uschi', 'Waldo', 'Wayne', 'Super Siggi', 'Kalle', 'Hilde', 'Ötte', 'Heinz', 'Trude', 'Günni'];
+  var FOE_NAMES = ['Uschi', 'Waldo', 'Wayne', 'Super Siggi', 'Ilse', 'Gisela', 'Horst'];
   var NAME_WEIGHT = { Waldo: 5, Wayne: 5 };
   var FOES = [['Wespe Walli', 0]];
   function randomFoe(round, last) {
@@ -46,7 +46,7 @@
 
   MBArcade.register({
     id: 'wurf',
-    title: 'Wurfduell',
+    title: 'Haldenduell',
     duration: 0,
     startText: 'Biene gegen Wespe auf den Halden! Abwechselnd werfen, Wind beachten, Gelände wegsprengen. Allein gegen immer stärkere Wespen (mit Rangliste) oder zu zweit an einem Gerät.',
     help: {
@@ -323,7 +323,7 @@
           ctx.fx.text(SX(p.x), SY(p.y - 50), '-' + dmg, '#FF7A6B', p === direct ? 30 : 24);
           if (s.owner && !s.owner.cpu && p !== s.owner && !st.duo) {
             st.dmg += dmg; addScore(dmg * 5);
-            if (p === direct) { st.hits++; addScore(100); ctx.fx.text(SX(p.x), SY(p.y - 80), 'Volltreffer! +100', '#FFE680', 22); }
+            if (p === direct) { st.hits++; addScore(100); ctx.fx.text(SX(p.x), SY(p.y - 80), 'Volltreffer! Das gibt \'nen Teddy. +100', '#FFE680', 22); }
           }
           if (p === direct) { ctx.fx.flash('255,255,255', 0.5); st.slow = st.t + 350; }
           ctx.tone(500, 180, 0.2, 'square', 0.04);
@@ -416,7 +416,7 @@
         } else {
           var bonus = 300 * st.round;
           st.won++; addScore(bonus);
-          ctx.fx.banner(b.name + ' besiegt! +' + bonus, '#FDC506', 32); ctx.fx.flash('253,197,6', 0.6);
+          ctx.fx.banner(b.name + ' aus der Bahn geworfen! +' + bonus, '#FDC506', 32); ctx.fx.flash('253,197,6', 0.6);
           ctx.fx.sparkle(cssW / 2, cssH * 0.4, ['#FDC506', '#FFE680', '#FFFFFF', '#FF8AD8'], 40, 360);
           ctx.tone(523, 784, 0.12, 'triangle', 0.06); ctx.tone(784, 1046, 0.2, 'triangle', 0.06, 0.12);
         }
@@ -729,7 +729,7 @@
       function cancelDrag() {
         if (!drag) return;
         var p = cur();
-        if (p && !p.cpu) { p.a = drag.a0; p.p = drag.p0; p.face = Math.cos(p.a) >= 0 ? 1 : -1; ctx.fx.text(SX(p.x), SY(p.y - 70), 'Abgebrochen', '#FFFFFF', 16); ctx.tone(300, 200, 0.06, 'triangle', 0.025); }
+        if (p && !p.cpu) { p.a = drag.a0; p.p = drag.p0; p.face = Math.cos(p.a) >= 0 ? 1 : -1; ctx.fx.text(SX(p.x), SY(p.y - 70), 'Handtuch geworfen.', '#FFFFFF', 16); ctx.tone(300, 200, 0.06, 'triangle', 0.025); }
         try { cv.releasePointerCapture(drag.id); } catch (err) {}
         drag = null;
       }

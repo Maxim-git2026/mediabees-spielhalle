@@ -35,7 +35,7 @@
 
   MBArcade.register({
     id: 'wacht',
-    title: 'Wabenwacht',
+    title: 'Wespen-Invasion',
     duration: 0,
     startText: 'Die Wespen wollen an unseren Honig! Halt sie mit deinen Stacheln auf, bevor sie unten ankommen. Hinter den Honigwaben kannst du in Deckung gehen.',
     help: {
@@ -197,7 +197,7 @@
           var bonus = 100 * st.wave;
           addScore(bonus);
           st.flash = 0.5; st.flashC = '253,197,6';
-          pop(W / 2, H * 0.42, 'Welle geschafft! +' + bonus, '#FDC506', true);
+          pop(W / 2, H * 0.42, 'Invasion abgewehrt! +' + bonus, '#FDC506', true);
           ctx.fx.flash('253,197,6', 1); ctx.fx.shake(0.35, 10);
           ctx.fx.ring(p.x * k, p.y * k, '#FDC506', 200 * k, 8, 700);
           ctx.fx.sparkle(W / 2 * k, H * 0.42 * k, ['#FDC506', '#FFE680', '#FFFFFF', '#FF8A3D'], 36, 340);
@@ -214,10 +214,10 @@
         shakeIt(0.35);
         puff(st.px, PY, ['#F7B500', '#3A2410', '#FFFFFF'], 24, 260, 200);
         ctx.fx.ring(st.px * k, PY * k, '#FF5A4A', 110 * k, 7, 550);
-        if (st.lives === 1) ctx.fx.banner('Letzte Biene!', '#FF7A6B');
+        if (st.lives === 1) ctx.fx.banner('Roter Alarm! Letzte Biene.', '#FF7A6B');
         ctx.tone(220, 60, 0.35, 'sawtooth', 0.06);
-        if (st.lives <= 0) { st.dead = true; st.deadT = st.t; }
-        else pop(st.px, PY - 40, st.lives === 1 ? 'Letzte Biene!' : 'Autsch!', '#FF7A6B');
+        if (st.lives <= 0) { st.dead = true; st.deadT = st.t; pop(st.px, PY - 40, Math.random() < 0.5 ? 'Sie sind gelandet!' : 'Beam mich hoch!', '#FF7A6B', true); }
+        else pop(st.px, PY - 40, st.lives === 1 ? 'Roter Alarm! Letzte Biene.' : 'Autsch!', '#FF7A6B');
       }
 
       function update(dt) {
@@ -282,6 +282,7 @@
         if (!st.ufo && st.ufoT <= 0 && f && !st.dead) {
           var dir = Math.random() < 0.5 ? 1 : -1;
           st.ufo = { x: dir > 0 ? -40 : W + 40, y: 52, dir: dir };
+          pop(W / 2, 90, 'Mutterschiff im Anflug!', '#FFE680', false);
           st.ufoT = rnd(16, 24);
           ctx.tone(1200, 1600, 0.2, 'triangle', 0.03);
         }
@@ -298,7 +299,7 @@
             pop(st.ufo.x, st.ufo.y + 20, '+' + up, '#FFE680', false);
             puff(st.ufo.x, st.ufo.y, ['#FFE680', '#FFFFFF', '#A87400'], 26, 260, 120);
             ctx.fx.boom(st.ufo.x * k, st.ufo.y * k, '#FFE680', '253,197,6', 1.2);
-            ctx.fx.text(st.ufo.x * k, st.ufo.y * k + 50, 'GOLDWESPE!', '#FFE680', 24);
+            ctx.fx.text(st.ufo.x * k, st.ufo.y * k + 50, 'Mutterschiff getroffen!', '#FFE680', 24);
             ctx.tone(660, 1320, 0.25, 'triangle', 0.06);
             shakeIt(0.12); st.ufo = null; gone = true;
           }

@@ -18,11 +18,11 @@
     queen:    { p: 0.04, size: 1.15, speed: 0.55, r: 32, minus: 100 }
   };
   var LINES = {
-    bee: ['Halt, das war eine von uns!', 'Autsch! Kollegin!', 'Bienen sind die Guten!'],
-    bumble: ['Die Hummel hat doch nix gemacht!', 'Hummeln sind Freunde. Minus 25.'],
-    queen: ['Die Königin! Der ganze Stock ist sauer.', 'Majestätsbeleidigung! Minus 100.'],
-    hornet: ['Hornisse erwischt, doppelte Punkte!', 'Asiatische Hornisse? Nicht mit uns.'],
-    goldwasp: ['Goldwespe! Plus 50.', 'Glänzt wie ein Award. Plus 50.']
+    bee: ['Friendly Fire!', 'Teamkill! Das gibt einen Report.', 'Falsches Team, Bro!', 'WASTED.', 'Wir sind im selben Squad!', 'Erfolg freigeschaltet: Verräter', 'Das war Lag, oder?', 'Mission gescheitert. Nächstes Mal kriegen wir sie.'],
+    bumble: ['Die Hummel war nur ein NPC! Minus 25.', 'Unschuldige Zivilistin! Minus 25.', 'Die hatte nicht mal Waffen! Minus 25.', 'Hummeln sind friedlich, du Noob! Minus 25.'],
+    queen: ['Majestätsbeleidigung! Minus 100.', 'Hochverrat! Minus 100.', 'Escort-Mission gescheitert! Minus 100.', 'Königin down! Minus 100.'],
+    hornet: ['Headshot! Doppelte Punkte.', 'Mini-Boss besiegt! Doppelte Punkte.'],
+    goldwasp: ['Legendärer Drop! Plus 50.', 'Seltener Loot! Plus 50.']
   };
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
@@ -374,7 +374,7 @@
           }
         }
         if (!hit) {
-          if (st.streak >= 3) ctx.say('Serie gerissen.');
+          if (st.streak >= 3) ctx.say('Combo-Breaker!');
           st.streak = 0;
           burst(x, y, ['rgba(255,255,255,0.7)', 'rgba(255,240,180,0.7)'], 5, 120);
           return;
@@ -406,7 +406,7 @@
           else if (hit.type === 'hornet') ctx.fx.boom(hx, hy, '#E8902A', '232,144,42', 0.8);
           else ctx.fx.ring(hx, hy, '#FFFFFF', 50, 4, 320);
           if (st.streak === 5 || st.streak === 10 || st.streak === 15) {
-            ctx.fx.banner(st.streak + ' am Stück!', '#FDC506'); ctx.fx.flash('253,197,6', 0.5);
+            ctx.fx.banner('Killstreak: ' + st.streak + '!', '#FDC506'); ctx.fx.flash('253,197,6', 0.5);
             ctx.say(st.streak + ' Treffer am Stück!'); ctx.tone(660, 1320, 0.15, 'triangle', 0.06, 0.05);
           }
           if (LINES[hit.type] && (hit.type === 'goldwasp' || Math.random() < 0.5)) ctx.say(pick(LINES[hit.type]));

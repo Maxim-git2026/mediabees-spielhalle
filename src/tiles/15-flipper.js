@@ -6,13 +6,13 @@
     id: 'flipper',
     title: 'Honigflipper',
     ranks: [
-      [150000, 'Flipperkönigin', 'Der Tisch gehört dir. Tilt? Nie gehört.'],
-      [80000, 'Bumperbaronin', 'Die Honigtöpfe glühen noch.'],
-      [40000, 'Kugelflüsterin', 'Die Kugel macht, was du willst.'],
-      [20000, 'Multiplikatorin', 'Da klingelt die Kasse.'],
-      [10000, 'Bahnenbiene', 'Die Bahnen oben kennst du.'],
-      [5000, 'Flipperbiene', 'Die ersten Kombos sitzen.'],
-      [1500, 'Kugelschubserin', 'Ein paar Bumper getroffen.'],
+      [150000, 'Flipperkönig', 'Der Tisch gehört dir. Tilt? Nie gehört.'],
+      [80000, 'Bumper-Baron', 'Die Honigtöpfe glühen noch.'],
+      [40000, 'Kugelflüsterer', 'Die Kugel macht, was du willst.'],
+      [20000, 'Stammgast', 'Der Wirt kennt deinen Namen.'],
+      [10000, 'Freispiel', 'Die nächste Runde geht aufs Haus.'],
+      [5000, 'Kugelschubser', 'Bisschen rütteln ist erlaubt.'],
+      [1500, 'Groschengrab', 'Wirf noch \'nen Euro ein.'],
       [0, 'Abflussbiene', 'Die Kugel war schneller. Nochmal!']
     ],
     thumb: function (g, w, h) {

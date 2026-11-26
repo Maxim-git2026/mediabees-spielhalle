@@ -164,6 +164,8 @@
         puff(beeX, st.y, ['#F7B500', '#3A2410', '#FFFFFF'], 22, 280, false);
         ctx.fx.flash('255,74,61', 0.9); ctx.fx.ring(beeX * k, st.y * k, '#FF5A4A', 90, 6, 500); ctx.fx.shake(0.3, 8);
         ctx.tone(220, 70, 0.3, 'sawtooth', 0.06);
+        var CRASH = ['Mayday!', 'Houston, wir haben ein Problem.', 'Bruchlandung!', 'Tower an Biene: Das war nix.', 'Die Blackbox sagt: selbst schuld.', 'Bitte anschnallen!', 'Turbulenzen!'];
+        ctx.fx.text(beeX * k, (st.y - 50) * k, CRASH[Math.floor(Math.random() * CRASH.length)], '#FF7A6B', 22);
       }
 
       function update(dt) {
@@ -207,6 +209,9 @@
                 st.sign = { top: stop[0], name: stop[1], t0: st.t };
                 ctx.say(st.score === 100 ? 'Einmal ums ganze Revier. Respekt!' : stop[0] + ' ' + stop[1] + '!');
                 ctx.tone(660, 990, 0.12, 'triangle', 0.06, 0.08);
+              } else if (st.score === 35 || st.score === 85) {
+                ctx.say(st.score === 35 ? 'Schallmauer durchbrochen!' : 'Autopilot? Nee, alles Handarbeit.');
+                ctx.fx.sparkle(beeX * k, st.y * k, ['#FDC506', '#FFFFFF'], 14, 200);
               }
             }
           }

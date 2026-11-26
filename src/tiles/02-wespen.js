@@ -6,14 +6,14 @@
     id: 'wespen',
     title: 'Bienenstich',
     ranks: [
-      [2200, 'Wespen-Albtraum', 'Die Wespen erzählen sich Geschichten über dich.'],
-      [1600, 'Hornissen-Schreck', 'Der Stock ist sicher!'],
-      [1200, 'Scharfschützin', 'Kaum ein Schuss daneben.'],
-      [900, 'Wächterbiene', 'Starke Verteidigung.'],
-      [600, 'Arbeiterbiene', 'Solide Schicht.'],
-      [350, 'Flugschülerin', 'Das Zielen klappt schon.'],
-      [150, 'Drohne', 'Da summt noch Luft nach oben.'],
-      [0, 'Daneben-Biene', 'Zielwasser trinken und nochmal!']
+      [2200, 'General', 'Die Wespen erzählen sich Geschichten über dich.'],
+      [1600, 'Scharfschütze', 'Ein Schuss, ein Treffer.'],
+      [1200, 'Artillerie', 'Schweres Geschütz aufgefahren.'],
+      [900, 'Feldwebel', 'Der Stock steht stramm.'],
+      [600, 'Unteroffizier', 'Die Truppe hört auf dich.'],
+      [350, 'Gefreiter', 'Die ersten Treffer sitzen.'],
+      [150, 'Flieger', 'Zum Dienst gemeldet.'],
+      [0, 'Rekrut', 'Grundausbildung läuft noch. Nochmal!']
     ],
     thumb: function (g, w, h) {
       var gr = g.createLinearGradient(0, 0, 0, h);

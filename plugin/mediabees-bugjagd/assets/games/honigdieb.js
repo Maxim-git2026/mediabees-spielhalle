@@ -185,11 +185,11 @@
         if (st.gap <= 0 || (close && st.gap < 0.2)) {
           st.caught = st.t; st.gap = 0;
           ctx.fx.flash('255,74,61', 1); ctx.fx.shake(0.5, 13);
-          ctx.fx.banner('Geschnappt!', '#FF7A6B');
+          ctx.fx.banner('Geschnappt! Ab in den Bau.', '#FF7A6B');
           ctx.tone(220, 50, 0.6, 'sawtooth', 0.07);
         } else {
           ctx.fx.flash('255,74,61', 0.6); ctx.fx.ring(PX * k, (st.y - 20 + TOPW) * k, '#FF5A4A', 70 * k, 5, 450);
-          ctx.fx.text(PX * k, (st.y - 70 + TOPW) * k, 'Gestolpert!', '#FF7A6B', 24);
+          ctx.fx.text(PX * k, (st.y - 70 + TOPW) * k, 'Auf die Nase gefallen!', '#FF7A6B', 24);
           ctx.tone(260, 120, 0.25, 'sawtooth', 0.05);
         }
       }

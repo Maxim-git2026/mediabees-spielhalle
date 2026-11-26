@@ -249,14 +249,13 @@
           shakeIt(0.25); st.flash = 0.35;
           ctx.tone(1400, 600, 0.18, 'sawtooth', 0.04); ctx.tone(90, 50, 0.15, 'square', 0.04, 0.03);
           if (st.rail >= 3) {
-            pop(st.px, PY - 60 * sc, 'Totalschaden an der Leitplanke!', '#FF7A6B');
+            pop(st.px, PY - 60 * sc, 'Totalschaden!', '#FF7A6B');
             st.dead = true; st.deadT = st.t; st.flash = 1;
             st.spinV = (d < 0 ? 1 : -1) * rnd(6, 9);
             ctx.fx.flash('255,74,61', 1); ctx.tone(200, 50, 0.4, 'sawtooth', 0.07);
             return;
           }
-          var lines = ['Leitplanke geknutscht!', 'Funkenflug!', 'Das gibt Kratzer!', 'Mama, guck mal, Funken!', 'Die Werkstatt freut sich!'];
-          pop(st.px, PY - 60 * sc, st.rail === 1 ? 'NICHT DER LACK!' : lines[Math.floor(Math.random() * lines.length)], '#FF7A6B');
+          pop(st.px, PY - 60 * sc, st.rail === 1 ? 'NICHT DER LACK!' : 'Mama, guck mal, Funken!', '#FF7A6B');
           return;
         }
         st.lane = nl;
@@ -272,13 +271,15 @@
           st.traffic.splice(st.traffic.indexOf(o), 1);
           puff(ox, oy, ['#FDC506', '#FFE680', '#FFFFFF', o.c[0]], 26, 300, 0, 0.6);
           shakeIt(0.25); st.flash = 0.6;
-          pop(st.px, PY - 50 * sc, 'Schild weg!', '#FFE680');
+          pop(st.px, PY - 50 * sc, 'Vollkasko weg!', '#FFE680');
           ctx.fx.boom(ox * k, oy * k, '#FDC506', '253,197,6', 0.9);
           ctx.tone(700, 200, 0.25, 'square', 0.05);
           return;
         }
         st.dead = true; st.deadT = st.t; st.flash = 1;
         shakeIt(0.45);
+        var CRASH = ['Unfall auf der A40!', 'Auffahrunfall!', 'Das zahlt keine Versicherung.'];
+        pop(st.px, PY - 60 * sc, CRASH[Math.floor(Math.random() * CRASH.length)], '#FF7A6B');
         st.spinV = (st.px < ox ? -1 : 1) * rnd(6, 9);
         o.hit = true;
         var cx = (st.px + ox) / 2, cy = Math.max(o.y + o.len - 4, PY - CAR_L * sc / 2);
@@ -359,7 +360,7 @@
               ctx.tone(880, 1320, 0.08, 'triangle', 0.05); ctx.tone(1320, 1760, 0.1, 'triangle', 0.04, 0.07);
             } else {
               st.shield = true;
-              pop(ix, it.y - 20 * sc, 'Wabenschild!', '#FFE680');
+              pop(ix, it.y - 20 * sc, 'Vollkasko an!', '#FFE680');
               puff(ix, it.y, ['#FDC506', '#FFFFFF'], 18, 220, 0, 0.6);
               ctx.fx.boom(ix * k, it.y * k, '#FDC506', '253,197,6', 0.8);
               ctx.tone(520, 1040, 0.2, 'triangle', 0.06);

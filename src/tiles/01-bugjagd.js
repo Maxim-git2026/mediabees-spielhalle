@@ -6,13 +6,13 @@
     id: 'bugjagd',
     title: 'Käfer-Jagd',
     ranks: [
-      [50, 'Bug-Terminator', 'Kein Käfer hat eine Chance.'],
-      [40, 'Chef-Biene', 'Das ist ja großartig!'],
+      [50, 'Kammerjäger!', 'Kein Käfer hat eine Chance.'],
+      [40, 'Boss-Biene', 'Das ist ja großartig!'],
       [32, 'Senior-Biene', 'Routiniert gejagt.'],
-      [25, 'Programmier-Biene', 'Sauberer Code, saubere Waben.'],
-      [18, 'Webdesign-Biene', 'Schick gejagt.'],
-      [12, 'Junior-Biene', 'Ordentlich gejagt.'],
-      [6, 'Praktikanten-Biene', 'Da geht noch was.'],
+      [25, 'Webdesigner', 'Sauberer Code, saubere Waben.'],
+      [18, 'Azubiene', 'Schick gejagt.'],
+      [12, 'Praktikant', 'Ordentlich gejagt.'],
+      [6, 'Kindergarten', 'Da geht noch was.'],
       [0, 'Frisch geschlüpft', 'Erstmal warm werden. Nochmal!']
     ],
     thumb: function (g, w, h) {
