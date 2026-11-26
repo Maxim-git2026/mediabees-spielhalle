@@ -123,3 +123,80 @@
   .mbbj-savebar span{display:none}
 }
 @media (prefers-reduced-motion:reduce){.mbbj-hero-bee,.mbbj-bee-demo{animation:none}}
+
+/* ---------------------------------------------------------------- Darstellung: Hell / Auto / Dunkel */
+.mbbj-theme{position:absolute;right:18px;top:16px;z-index:2;display:flex;gap:2px;padding:3px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15)}
+.mbbj-theme label{cursor:pointer}
+.mbbj-theme input{position:absolute;opacity:0;pointer-events:none}
+.mbbj-theme span{display:block;padding:6px 11px;border-radius:99px;font-size:12px;font-weight:700;color:#d8d4c8;transition:background .15s ease,color .15s ease}
+.mbbj-theme input:checked+span{background:var(--y);color:#141414}
+.mbbj-theme input:focus-visible+span{outline:2px solid #fff}
+
+/* ---------------------------------------------------------------- Knopf anpassen */
+.mbbj-custom{display:grid;grid-template-columns:1fr 1fr;gap:18px 26px;padding:18px;border-radius:14px;background:#faf7ee;border:1px solid var(--line)}
+.mbbj-field--wide{grid-column:1/-1}
+.mbbj-seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.mbbj-seg label{cursor:pointer}
+.mbbj-seg input{position:absolute;opacity:0;pointer-events:none}
+.mbbj-seg span{display:block;padding:8px 14px;border-radius:9px;font-weight:700;font-size:13px;color:#4a4638;transition:background .15s ease,color .15s ease}
+.mbbj-seg label:hover span{background:#f6efd5}
+.mbbj-seg input:checked+span{background:#141414;color:var(--y)}
+.mbbj-seg input:focus-visible+span{outline:2px solid var(--y)}
+.mbbj-textwrap{margin-top:10px}
+.mbbj-textwrap[hidden]{display:none}
+.mbbj-colors{margin-top:14px}
+.mbbj-admin.is-colors-off .mbbj-colors{opacity:.45;filter:grayscale(.7)}
+.mbbj-presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.mbbj-preset{display:inline-flex;align-items:center;gap:3px;padding:5px 10px 5px 6px;border:2px solid var(--line);border-radius:99px;background:#fff;cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;color:#2a2a2a;transition:border-color .15s ease,transform .15s ease}
+.mbbj-preset:hover{border-color:var(--y);transform:translateY(-1px)}
+.mbbj-preset i{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+.mbbj-preset span{margin-left:5px}
+.mbbj-colorgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mbbj-color{display:flex;align-items:center;gap:10px;padding:8px;border:2px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+.mbbj-color:hover{border-color:#e8d48a}
+.mbbj-color input[type=color]{flex:0 0 42px;width:42px;height:42px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer}
+.mbbj-color input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.mbbj-color input[type=color]::-webkit-color-swatch{border:2px solid rgba(0,0,0,.15);border-radius:10px}
+.mbbj-color input[type=color]::-moz-color-swatch{border:2px solid rgba(0,0,0,.15);border-radius:10px}
+.mbbj-color span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mbbj-color strong{font-size:12.5px;line-height:1.3}
+.mbbj-color code{align-self:flex-start;font-size:11.5px}
+.mbbj-bgtoggle{display:flex;align-items:center;gap:6px;margin:14px 0 0}
+.mbbj-bgtoggle button{padding:6px 12px;border:2px solid var(--line);border-radius:99px;background:#fff;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;color:#2a2a2a}
+.mbbj-bgtoggle button.is-on{background:#141414;border-color:#141414;color:var(--y)}
+.mbbj-admin.is-preview-light .mbbj-preview{background:radial-gradient(circle at 50% 120%,#ffffff,#ece8dc)}
+.mbbj-preview{height:110px;overflow:hidden}
+@media (max-width:960px){.mbbj-custom{grid-template-columns:1fr}.mbbj-colorgrid{grid-template-columns:1fr 1fr}.mbbj-theme{position:static;align-self:flex-start;margin-bottom:6px}.mbbj-hero{flex-direction:column;align-items:stretch}}
+
+/* ---------------------------------------------------------------- Dunkles Design */
+body.mbbj-dark #wpcontent,body.mbbj-dark #wpfooter{background:#0d0d0d}
+body.mbbj-dark #wpfooter{color:#8b8676}
+body.mbbj-dark .mbbj-admin{--line:#2d2d2d;--muted:#a39d8c;color:#ece8dc}
+body.mbbj-dark .mbbj-card{background:#171717;box-shadow:none}
+body.mbbj-dark .mbbj-card p,body.mbbj-dark .mbbj-steps p{color:#c9c3b3}
+body.mbbj-dark .mbbj-admin code{background:#262626;color:#f1e9cf}
+body.mbbj-dark .mbbj-steps li,body.mbbj-dark .mbbj-custom{background:#1f1f1f}
+body.mbbj-dark .mbbj-steps li::before{background:var(--y);color:#141414}
+body.mbbj-dark .mbbj-steps li.is-done::before{background:#2e7d32;color:#fff}
+body.mbbj-dark .mbbj-warn{color:#ffcf5a!important}
+body.mbbj-dark .mbbj-admin a:not(.mbbj-btn){color:var(--y)}
+body.mbbj-dark .mbbj-chip,body.mbbj-dark .mbbj-choice-box,body.mbbj-dark .mbbj-seg,body.mbbj-dark .mbbj-color,body.mbbj-dark .mbbj-preset,body.mbbj-dark .mbbj-bgtoggle button{background:#1f1f1f;color:#ece8dc}
+body.mbbj-dark .mbbj-chip code{color:#f1e9cf}
+body.mbbj-dark .mbbj-chip-hint{background:var(--y);color:#141414}
+body.mbbj-dark .mbbj-seg span{color:#c9c3b3}
+body.mbbj-dark .mbbj-seg label:hover span{background:#2a2a2a}
+body.mbbj-dark .mbbj-seg input:checked+span,body.mbbj-dark .mbbj-bgtoggle button.is-on{background:var(--y);color:#141414;border-color:var(--y)}
+body.mbbj-dark .mbbj-choice:hover .mbbj-choice-box{border-color:#6b5b1f}
+body.mbbj-dark .mbbj-mock{background:#2a2a2a}
+body.mbbj-dark .mbbj-mock i{background:#3a3a3a;box-shadow:0 16px 0 #333,0 32px 0 #333}
+body.mbbj-dark .mbbj-mock--footer::after{background:#000}
+body.mbbj-dark .mbbj-admin input[type=number],body.mbbj-dark .mbbj-input{background:#111!important;color:#ece8dc!important;border-color:#333!important}
+body.mbbj-dark .mbbj-summary{background:#241f0c;border-color:#5a4a12;color:#f1e3b0}
+body.mbbj-dark .mbbj-bee-stage{background:linear-gradient(180deg,#0d1b33,#1c2f52 70%,#1d3a1f 70%,#14301a)}
+body.mbbj-dark .mbbj-toast{background:#12301a;border-color:#2e7d32;color:#b7f0bf}
+body.mbbj-dark .mbbj-savebar{background:#000;border:1px solid #2d2d2d}
+body.mbbj-dark .mbbj-help{color:#a39d8c!important}
+body.mbbj-dark .notice{background:#1f1f1f;color:#ece8dc}
+.mbbj-bubble-demo{color:#111}
+body.mbbj-dark .mbbj-btn--dark{background:transparent;border-color:var(--y);color:var(--y)!important}
+body.mbbj-dark .mbbj-btn--dark:hover{background:var(--y);color:#141414!important}

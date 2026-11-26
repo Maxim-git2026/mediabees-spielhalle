@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.26.0
+Stable tag: 2.27.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.27.0 – 26.11.2026 =
+* Roter Knopf zum Anpassen: Standardtext, eigener Text (bis 28 Zeichen) oder ganz ohne Schild, drei Größen und eigene Farben für Knopf, Schild, Schrift und Akzent. Dazu fertige Farbsets (MediaBees, Feuerwehr, Giftgrün, Eisblau, Pink, Schwarz-Weiß).
+* Die Vorschau zeigt jede Änderung sofort, wahlweise auf dunklem oder hellem Footer.
+* Die Einstellungsseite gibt es jetzt auch dunkel: oben rechts Hell, Auto (wie das Gerät) oder Dunkel wählen.
 
 = 2.26.0 – 26.11.2026 =
 * Einstellungen → Spielhalle im neuen MediaBees-Look: Knopf-Looks und Positionen als Bilder zum Anklicken, animierte Bienen-Vorschau, Schalter zum An- und Ausschalten, Shortcodes mit einem Klick kopieren.

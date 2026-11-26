@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.26.0
+ * Version: 2.27.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.26.0' );
+define( 'MBBJ_VERSION', '2.27.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -94,6 +94,15 @@ function mbbj_teaser_settings() {
 		'bee_first' => 40,       // erste Biene nach so vielen Sekunden
 		'bee_every' => 120,      // danach alle so vielen Sekunden
 		'bee_max'   => 2,        // höchstens so viele Bienen pro Seitenaufruf
+		'k_text_mode' => 'std',  // std = Standardtext, custom = eigener Text, none = ohne Schild
+		'k_text'      => '',
+		'k_size'      => 'm',    // s, m, l
+		'k_colors'    => 0,      // 1 = eigene Farben
+		'k_cap'       => '#E5322D',
+		'k_tagbg'     => '#1A1A1A',
+		'k_tagfg'     => '#FDC506',
+		'k_accent'    => '#FDC506',
+		'admin_theme' => 'auto', // Einstellungsseite: auto, light, dark
 		'exclude'   => '',
 	) );
 }
@@ -123,10 +132,48 @@ function mbbj_knopf_html( $style = '', $extra_class = '' ) {
 	if ( ! isset( $styles[ $style ] ) ) {
 		$style = 'notaus';
 	}
-	$label = 'klappe' === $style ? 'Streng geheim!' : 'Nicht drücken!';
-	return '<a class="mbbj-k mbbj-k--' . esc_attr( $style ) . ( $extra_class ? ' ' . esc_attr( $extra_class ) : '' ) . '" href="' . esc_url( mbbj_teaser_url() ) . '" aria-label="' . esc_attr( $label . ' (führt zur MediaBees-Spielhalle)' ) . '">'
+	$t     = mbbj_teaser_settings();
+	$std   = 'klappe' === $style ? 'Streng geheim!' : 'Nicht drücken!';
+	$label = $std;
+	if ( 'custom' === $t['k_text_mode'] && '' !== trim( (string) $t['k_text'] ) ) {
+		$label = (string) $t['k_text'];
+	}
+	$no_label = 'none' === $t['k_text_mode'];
+	return '<a class="mbbj-k mbbj-k--' . esc_attr( $style ) . ( $no_label ? ' is-nolabel' : '' ) . ( $extra_class ? ' ' . esc_attr( $extra_class ) : '' ) . '" href="' . esc_url( mbbj_teaser_url() ) . '" style="' . esc_attr( mbbj_knopf_vars() ) . '" data-std="' . esc_attr( $std ) . '" aria-label="' . esc_attr( ( $no_label ? $std : $label ) . ' (führt zur MediaBees-Spielhalle)' ) . '">'
 		. '<span class="mbbj-k-box" aria-hidden="true"><span class="mbbj-k-cap"></span>' . ( 'klappe' === $style ? '<span class="mbbj-k-lid"></span>' : '' ) . '</span>'
 		. '<span class="mbbj-k-label" aria-hidden="true">' . esc_html( $label ) . '</span></a>';
+}
+
+/* Hex-Farbe mischen: $t = 0 → $hex, 1 → $to */
+function mbbj_hex_mix( $hex, $to, $t ) {
+	$a = sscanf( ltrim( $hex, '#' ), '%02x%02x%02x' );
+	$b = sscanf( ltrim( $to, '#' ), '%02x%02x%02x' );
+	$o = '#';
+	for ( $i = 0; $i < 3; $i++ ) {
+		$o .= sprintf( '%02x', (int) round( $a[ $i ] + ( $b[ $i ] - $a[ $i ] ) * $t ) );
+	}
+	return $o;
+}
+
+function mbbj_size_factor( $size ) {
+	$f = array( 's' => 0.8, 'm' => 1, 'l' => 1.25 );
+	return isset( $f[ $size ] ) ? $f[ $size ] : 1;
+}
+
+/* CSS-Variablen für Größe und eigene Farben (die Optik selbst steht in teaser.css) */
+function mbbj_knopf_vars() {
+	$t   = mbbj_teaser_settings();
+	$css = '--mbbj-size:' . mbbj_size_factor( $t['k_size'] ) . ';';
+	if ( $t['k_colors'] ) {
+		$cap  = sanitize_hex_color( $t['k_cap'] ) ? $t['k_cap'] : '#E5322D';
+		$css .= '--mbbj-cap-hi:' . mbbj_hex_mix( $cap, '#ffffff', 0.55 ) . ';--mbbj-cap-mid:' . mbbj_hex_mix( $cap, '#ffffff', 0.18 ) . ';--mbbj-cap:' . $cap . ';--mbbj-cap-lo:' . mbbj_hex_mix( $cap, '#000000', 0.38 ) . ';--mbbj-cap-edge:' . mbbj_hex_mix( $cap, '#000000', 0.58 ) . ';';
+		foreach ( array( 'k_tagbg' => 'tagbg', 'k_tagfg' => 'tagfg', 'k_accent' => 'accent' ) as $key => $var ) {
+			if ( sanitize_hex_color( $t[ $key ] ) ) {
+				$css .= '--mbbj-' . $var . ':' . $t[ $key ] . ';';
+			}
+		}
+	}
+	return $css;
 }
 
 /*
@@ -607,6 +654,10 @@ add_action( 'admin_init', function () {
 		$place = isset( $_POST['mbbj_place'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_place'] ) ) : 'footer';
 		$style = isset( $_POST['mbbj_style'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_style'] ) ) : 'notaus';
 		$url   = isset( $_POST['mbbj_url'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['mbbj_url'] ) ) ) : '';
+		$col   = function ( $key, $def ) {
+			$v = isset( $_POST[ $key ] ) ? sanitize_hex_color( wp_unslash( $_POST[ $key ] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return $v ? strtoupper( $v ) : $def;
+		};
 		$num   = function ( $key, $min, $max, $def ) {
 			$v = isset( $_POST[ $key ] ) ? (int) $_POST[ $key ] : $def; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			return max( $min, min( $max, $v ) );
@@ -620,6 +671,15 @@ add_action( 'admin_init', function () {
 			'bee_first' => $num( 'mbbj_bee_first', 3, 3600, 40 ),
 			'bee_every' => $num( 'mbbj_bee_every', 10, 3600, 120 ),
 			'bee_max'   => $num( 'mbbj_bee_max', 1, 20, 2 ),
+			'k_text_mode' => in_array( $tm = ( isset( $_POST['mbbj_k_text_mode'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_k_text_mode'] ) ) : 'std' ), array( 'std', 'custom', 'none' ), true ) ? $tm : 'std',
+			'k_text'      => isset( $_POST['mbbj_k_text'] ) ? mb_substr( sanitize_text_field( wp_unslash( $_POST['mbbj_k_text'] ) ), 0, 28 ) : '',
+			'k_size'      => in_array( $sz = ( isset( $_POST['mbbj_k_size'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_k_size'] ) ) : 'm' ), array( 's', 'm', 'l' ), true ) ? $sz : 'm',
+			'k_colors'    => empty( $_POST['mbbj_k_colors'] ) ? 0 : 1,
+			'k_cap'       => $col( 'mbbj_k_cap', '#E5322D' ),
+			'k_tagbg'     => $col( 'mbbj_k_tagbg', '#1A1A1A' ),
+			'k_tagfg'     => $col( 'mbbj_k_tagfg', '#FDC506' ),
+			'k_accent'    => $col( 'mbbj_k_accent', '#FDC506' ),
+			'admin_theme' => in_array( $th = ( isset( $_POST['mbbj_admin_theme'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_admin_theme'] ) ) : 'auto' ), array( 'auto', 'light', 'dark' ), true ) ? $th : 'auto',
 			'exclude'   => isset( $_POST['mbbj_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['mbbj_exclude'] ) ) : '',
 		), true );
 		wp_safe_redirect( admin_url( 'options-general.php?page=mbbj-settings&done=1' ) );
@@ -717,6 +777,15 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	wp_enqueue_script( 'mbbj-admin', plugins_url( 'assets/admin.js', MBBJ_FILE ), array( 'mbbj-teaser' ), MBBJ_VERSION, true );
 } );
 
+/* Dunkles Design der Einstellungsseite: Klasse am <body>, damit auch der Hintergrund von WordPress mitzieht */
+add_filter( 'admin_body_class', function ( $classes ) {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( $screen && 'settings_page_mbbj-settings' === $screen->id ) {
+		$classes .= ' mbbj-theme-' . sanitize_html_class( mbbj_teaser_settings()['admin_theme'] );
+	}
+	return $classes;
+} );
+
 /* Kleiner Kopier-Chip für Shortcodes */
 function mbbj_copy_chip( $code ) {
 	return '<button type="button" class="mbbj-chip" data-copy="' . esc_attr( $code ) . '"><code>' . esc_html( $code ) . '</code><span class="mbbj-chip-hint">Kopieren</span></button>';
@@ -753,6 +822,11 @@ function mbbj_settings_page() {
 				</div>
 			</div>
 			<div class="mbbj-hero-art" aria-hidden="true"><div class="mbbj-hero-bee" data-bee></div></div>
+			<div class="mbbj-theme" role="radiogroup" aria-label="Darstellung dieser Seite">
+				<?php foreach ( array( 'light' => '☀ Hell', 'auto' => 'Auto', 'dark' => '☾ Dunkel' ) as $k => $lbl ) : ?>
+					<label><input type="radio" form="mbbj-form" name="mbbj_admin_theme" value="<?php echo esc_attr( $k ); ?>" <?php checked( $k, $t['admin_theme'] ); ?>><span><?php echo esc_html( $lbl ); ?></span></label>
+				<?php endforeach; ?>
+			</div>
 		</header>
 
 		<?php if ( isset( $_GET['done'] ) ) : // phpcs:ignore ?>
@@ -783,7 +857,7 @@ function mbbj_settings_page() {
 			</ol>
 		</section>
 
-		<form method="post" class="mbbj-form">
+		<form method="post" class="mbbj-form" id="mbbj-form">
 			<?php wp_nonce_field( 'mbbj_admin' ); ?>
 			<input type="hidden" name="mbbj_action" value="teaser">
 
@@ -806,6 +880,57 @@ function mbbj_settings_page() {
 						</label>
 					<?php endforeach; ?>
 				</div>
+
+				<h3>Anpassen</h3>
+				<div class="mbbj-custom">
+					<div class="mbbj-field">
+						<span class="mbbj-label">Beschriftung</span>
+						<div class="mbbj-seg">
+							<?php foreach ( array( 'std' => 'Standard', 'custom' => 'Eigener Text', 'none' => 'Ohne Text' ) as $k => $lbl ) : ?>
+								<label><input type="radio" name="mbbj_k_text_mode" value="<?php echo esc_attr( $k ); ?>" <?php checked( $k, $t['k_text_mode'] ); ?>><span><?php echo esc_html( $lbl ); ?></span></label>
+							<?php endforeach; ?>
+						</div>
+						<div class="mbbj-textwrap" data-show-if="custom">
+							<input type="text" class="mbbj-input" name="mbbj_k_text" maxlength="28" value="<?php echo esc_attr( $t['k_text'] ); ?>" placeholder="z. B. Bloß nicht anfassen!">
+							<p class="mbbj-help">Höchstens 28 Zeichen. Ideen: „Finger weg!“, „Geheim!“, „Nur für Profis“, „Pause?“</p>
+						</div>
+					</div>
+					<div class="mbbj-field">
+						<span class="mbbj-label">Größe</span>
+						<div class="mbbj-seg">
+							<?php foreach ( array( 's' => 'Klein', 'm' => 'Normal', 'l' => 'Groß' ) as $k => $lbl ) : ?>
+								<label><input type="radio" name="mbbj_k_size" value="<?php echo esc_attr( $k ); ?>" <?php checked( $k, $t['k_size'] ); ?>><span><?php echo esc_html( $lbl ); ?></span></label>
+							<?php endforeach; ?>
+						</div>
+					</div>
+					<div class="mbbj-field mbbj-field--wide">
+						<label class="mbbj-switch"><input type="checkbox" name="mbbj_k_colors" value="1" <?php checked( $t['k_colors'] ); ?>><span></span><em>Eigene Farben</em></label>
+						<div class="mbbj-colors" data-colors>
+							<div class="mbbj-presets">
+								<span class="mbbj-help">Schnell wählen:</span>
+								<?php
+								$mbbj_presets = array(
+									'MediaBees' => array( '#E5322D', '#1A1A1A', '#FDC506', '#FDC506' ),
+									'Feuerwehr' => array( '#E5322D', '#FFFFFF', '#C1121F', '#C1121F' ),
+									'Giftgrün'  => array( '#2ECC40', '#0F1A10', '#7CFF8A', '#2ECC40' ),
+									'Eisblau'   => array( '#1E88E5', '#0D1B2A', '#8FD3FF', '#1E88E5' ),
+									'Pink'      => array( '#FF3E9E', '#1A0B14', '#FFB3DA', '#FF3E9E' ),
+									'Schwarz-Weiß' => array( '#222222', '#FFFFFF', '#111111', '#111111' ),
+								);
+								foreach ( $mbbj_presets as $pn => $pc ) :
+									?>
+									<button type="button" class="mbbj-preset" data-preset="<?php echo esc_attr( implode( ',', $pc ) ); ?>" title="<?php echo esc_attr( $pn ); ?>"><i style="background:<?php echo esc_attr( $pc[0] ); ?>"></i><i style="background:<?php echo esc_attr( $pc[1] ); ?>"></i><i style="background:<?php echo esc_attr( $pc[2] ); ?>"></i><span><?php echo esc_html( $pn ); ?></span></button>
+								<?php endforeach; ?>
+							</div>
+							<div class="mbbj-colorgrid">
+								<?php foreach ( array( 'k_cap' => 'Knopf', 'k_tagbg' => 'Schild', 'k_tagfg' => 'Schrift', 'k_accent' => 'Akzent (Streifen, Rahmen)' ) as $k => $lbl ) : ?>
+									<label class="mbbj-color"><input type="color" name="mbbj_<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( strtolower( $t[ $k ] ) ); ?>"><span><strong><?php echo esc_html( $lbl ); ?></strong><code data-hex><?php echo esc_html( strtoupper( $t[ $k ] ) ); ?></code></span></label>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mbbj-bgtoggle"><span class="mbbj-help">Vorschau auf:</span> <button type="button" data-bg="dark" class="is-on">dunklem Footer</button><button type="button" data-bg="light">hellem Footer</button></div>
 
 				<h3>Wo soll er sitzen?</h3>
 				<div class="mbbj-choices mbbj-choices--3">
