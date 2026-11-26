@@ -135,15 +135,10 @@ class MBBJ_Elementor_Knopf extends \Elementor\Widget_Base {
 		$this->end_controls_section();
 	}
 
-	private function is_editor() {
-		$e = \Elementor\Plugin::$instance;
-		return ( isset( $e->editor ) && $e->editor->is_edit_mode() ) || ( isset( $e->preview ) && $e->preview->is_preview_mode() );
-	}
-
 	protected function render() {
 		$s      = $this->get_settings_for_display();
 		$global = mbbj_teaser_settings();
-		$editor = $this->is_editor();
+		$editor = mbbj_in_builder();
 
 		if ( ! $editor ) {
 			// Hauptschalter „Knopf zeigen“ und „Nicht auf diesen Seiten“ gelten auch für das Widget.

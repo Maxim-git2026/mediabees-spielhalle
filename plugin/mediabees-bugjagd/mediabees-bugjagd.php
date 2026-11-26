@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.28.0
+ * Version: 2.28.1
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.28.0' );
+define( 'MBBJ_VERSION', '2.28.1' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -192,7 +192,7 @@ add_shortcode( 'mediabees_knopf', function ( $atts = array() ) {
 	if ( ! $s['button'] ) {
 		return '';
 	}
-	if ( isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Vorschau im Elementor-Editor: Knopf zeigen, aber ohne Biene
+	if ( mbbj_in_builder() ) { // Vorschau im Elementor-Editor: Knopf immer zeigen, aber ohne Biene
 		wp_enqueue_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
 		return '<span class="mbbj-k-wrap">' . mbbj_knopf_html( sanitize_key( $atts['stil'] ) ) . '</span>';
 	}
@@ -209,6 +209,31 @@ function mbbj_teaser_path( $url ) {
 	$path = '/' . trim( $path, '/' );
 	return strtolower( $path );
 }
+
+/*
+ * Läuft gerade der Elementor-Editor? Dazu zählen die Vorschau (?elementor-preview) und die AJAX-Anfragen,
+ * mit denen Elementor ein Widget nach jeder Änderung neu zeichnet (dort ist is_admin() wahr).
+ */
+function mbbj_in_builder() {
+	if ( isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		return true;
+	}
+	if ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+		return true;
+	}
+	if ( class_exists( 'Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance ) ) {
+		$e = \Elementor\Plugin::$instance;
+		if ( ( isset( $e->editor ) && $e->editor->is_edit_mode() ) || ( isset( $e->preview ) && $e->preview->is_preview_mode() ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/* Im Elementor-Editor das Knopf-CSS immer laden, damit neu eingefügte Widgets sofort richtig aussehen */
+add_action( 'elementor/preview/enqueue_styles', function () {
+	wp_enqueue_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
+} );
 
 function mbbj_teaser_active() {
 	if ( is_admin() || is_404() || is_feed() || is_customize_preview() || wp_doing_ajax() ) {
