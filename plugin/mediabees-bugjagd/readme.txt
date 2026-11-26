@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.23.3
+Stable tag: 2.23.4
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.23.4 – 26.11.2026 =
+* Bienen-Blitz: Am Spielende steht über der umgekippten Biene jetzt jedes Mal ein anderer lustiger Spruch, zum Beispiel „Biene k.o.!“, „Summ … summ … zzz“ oder „Bitte nicht stören!“.
 
 = 2.23.3 – 26.11.2026 =
 * Sprüche in allen Spielen: Lange Sprüche ragen auf dem Handy nicht mehr über den Rand. Sie werden umgebrochen und bei Bedarf etwas kleiner, und längere Sprüche bleiben länger stehen.

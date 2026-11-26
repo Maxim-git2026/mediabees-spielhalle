@@ -434,8 +434,10 @@
         }
         if (age > 0.5) {
           g.globalAlpha = Math.min(1, (age - 0.5) * 3);
-          g.font = '900 ' + Math.round(44 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.lineJoin = 'round'; g.strokeStyle = '#111';
-          g.strokeText('Das war jetzt nicht so schlau.', cx, H * 0.2, W - 20); g.fillStyle = '#FF7A6B'; g.fillText('Das war jetzt nicht so schlau.', cx, H * 0.2, W - 20);
+          /* Lustiger Spruch über der umgekippten Biene, jedes Mal ein anderer */
+          if (!st.deadLine) st.deadLine = pick(['Biene k.o.!', 'Kurz mal hinlegen …', 'Summ … summ … zzz', 'Bitte nicht stören!', 'Feierabend für heute!', 'Mittagsschlaf!']);
+          g.font = '900 ' + Math.round(40 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.lineJoin = 'round'; g.strokeStyle = '#111'; g.textAlign = 'center';
+          g.strokeText(st.deadLine, cx, H * 0.2, W - 24); g.fillStyle = '#FDC506'; g.fillText(st.deadLine, cx, H * 0.2, W - 24);
           g.font = '700 ' + Math.round(16 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.8)';
           g.fillText('Alle Leben aufgebraucht. ' + st.wins + ' Aufgaben geschafft.', cx, H * 0.8, W - 20);
           g.globalAlpha = 1;
