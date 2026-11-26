@@ -279,7 +279,8 @@
         /* Pollenbombe nehmen, wenn der Topf nicht gut durchkommt (Hügel im Weg) oder ab und zu zur Abwechslung */
         var pick = best;
         if (bestB && bestB.sc < 30 && (best.sc > 45 || Math.random() < 0.3)) pick = bestB;
-        var lvl = st.round - 1, errA = Math.max(0.012, 0.1 * Math.pow(0.8, lvl)), errP = Math.max(0.012, 0.08 * Math.pow(0.8, lvl));
+        /* Runde 1 und 2 zielt die Wespe deutlich ungenauer, damit der Einstieg lockerer ist */
+        var lvl = st.round - 1, easy = st.round === 1 ? 1.7 : st.round === 2 ? 1.35 : 1, errA = Math.max(0.012, 0.1 * Math.pow(0.8, lvl)) * easy, errP = Math.max(0.012, 0.08 * Math.pow(0.8, lvl)) * easy;
         if (pick.w) { errA *= 0.6; errP *= 0.6; }
         var wall = !hasWall(p) && p.hp <= p.maxHp * 0.6 && Math.random() < 0.5;
         return { a: pick.a + gauss() * errA, P: clamp(pick.P * (1 + gauss() * errP), 0.2, 1), w: pick.w, wall: wall };

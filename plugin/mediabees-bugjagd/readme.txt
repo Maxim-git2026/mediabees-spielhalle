@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.23.0
+Stable tag: 2.23.1
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,12 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.23.1 – 26.11.2026 =
+* Wimmelpott: Auch ein Tipp ins Leere kostet jetzt 3 Sekunden, dazu kommt ein Spruch wie „Tomaten auf den Augen?“ oder „Kalt, ganz kalt!“. Die Bilder unten sehen jetzt genauso aus wie im Gewimmel (vorher war z. B. der Ballon unten gespiegelt).
+* Bienen-Blitz: Wer den roten Knopf drückt, sieht jetzt ein eigenes Bild mit einer riesigen Pilzwolke über dem Ruhrpott. Der Honigtropfen fällt schneller. Neue Aufgabe „WESPEN HAUEN!“: Aus den Waben schauen Wespen und Bienen, nur die Wespen hauen.
+* Haldenduell: In Runde 1 und 2 zielen die Wespen ungenauer, ab Runde 3 wie bisher.
+* Honigdieb auf dem Handy: Auch rechts nach unten wischen duckt die Biene. Man kann mit zwei Fingern gleichzeitig spielen (links ducken, rechts springen).
 
 = 2.23.0 – 26.11.2026 =
 * Neue Texte in allen 18 Spielen: neue Titel in den Ranglisten und viele neue Sprüche im Spiel.

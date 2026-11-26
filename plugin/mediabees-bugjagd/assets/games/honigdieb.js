@@ -43,6 +43,7 @@
     id: 'honigdieb',
     title: 'Honigdieb',
     duration: 0,
+    multiTouch: true,
     startText: 'Die Biene hat ein Glas Honig stibitzt und der Kammerjäger ist ihr auf den Fersen! Spring über Hindernisse, duck dich unter Spinnweben durch und lauf so weit du kannst.',
     help: {
       legendTitle: 'So läuft die Flucht',
@@ -71,7 +72,7 @@
       cv.setAttribute('aria-hidden', 'true');
       ctx.screen.appendChild(cv);
       var g = cv.getContext('2d');
-      var W = 960, k = 1, dpr = 1, TOPW = 0, sky = null, far = null, raf = 0, idleRaf = 0, ptr = null;
+      var W = 960, k = 1, dpr = 1, TOPW = 0, sky = null, far = null, raf = 0, idleRaf = 0, ptrs = {};
       var st = fresh();
 
       function fresh() {
@@ -215,7 +216,7 @@
           }
         }
         st.duck = Math.max(0, st.duck - dt);
-        if (ptr && ptr.hold) st.duck = Math.max(st.duck, 0.12);
+        if (holding()) st.duck = Math.max(st.duck, 0.12);
         /* Hindernisse */
         if (st.started && !st.caught) { st.nextObs -= dx; if (st.nextObs <= 0) spawn(); }
         var me = rect();
@@ -378,7 +379,7 @@
         /* Handy: Hälften unten markieren */
         if (ctx.touch() && st.on) {
           g.textBaseline = 'middle'; g.font = '800 15px Poppins, sans-serif';
-          var dk = ptr && ptr.hold, jp = ptr && !ptr.hold;
+          var dk = holding(), jp = Object.keys(ptrs).some(function (id) { return !ptrs[id].hold; });
           [[W * 0.25, '▼ ducken', dk], [W * 0.75, '▲ springen', jp]].forEach(function (z) {
             var tw2 = 120, zy = H - 26;
             g.globalAlpha = z[2] ? 0.95 : 0.4;
@@ -410,7 +411,7 @@
         raf = requestAnimationFrame(frame);
       }
       function idle(now) { if (st.on) return; st.t = now; render(); idleRaf = requestAnimationFrame(idle); }
-      function stop() { st.on = false; ptr = null; cancelAnimationFrame(raf); cancelAnimationFrame(idleRaf); }
+      function stop() { st.on = false; ptrs = {}; cancelAnimationFrame(raf); cancelAnimationFrame(idleRaf); }
       function finish() { stop(); render(); ctx.finish(st.score, { meters: Math.floor(st.dist * M_PER_PX), honey: st.honey, city: CITIES[st.city] }); }
 
       /* Tippen = springen (halten = höher), nach unten wischen = ducken */
@@ -422,17 +423,26 @@
         var p = local(e), r = cv.getBoundingClientRect();
         try { cv.setPointerCapture(e.pointerId); } catch (err) {}
         /* Finger: linke Hälfte = ducken (solange gehalten), rechte Hälfte = springen. Maus: Klick springt */
-        if (e.pointerType !== 'mouse' && p.x < r.width / 2) { ptr = { id: e.pointerId, x: p.x, y: p.y, ducked: true, hold: true }; duck(); return; }
-        ptr = { id: e.pointerId, x: p.x, y: p.y, ducked: false };
+        /* Mehrere Finger gleichzeitig erlaubt: links halten duckt, rechts tippen springt */
+        if (e.pointerType !== 'mouse' && p.x < r.width / 2) { ptrs[e.pointerId] = { x: p.x, y: p.y, ducked: true, hold: true }; duck(); return; }
+        ptrs[e.pointerId] = { x: p.x, y: p.y, ducked: false, t0: st.t, wasGround: st.ground };
         jump();
       });
       cv.addEventListener('pointermove', function (e) {
-        if (!ptr || e.pointerId !== ptr.id || ptr.ducked) return;
+        var q = ptrs[e.pointerId];
+        if (!q || q.ducked) return;
         var p = local(e);
-        if (p.y - ptr.y > 26) { ptr.ducked = true; st.hold = false; duck(); }
+        /* Rechts nach unten wischen duckt auch. Gerade erst abgesprungen? Dann Sprung zurücknehmen */
+        if (p.y - q.y > 26) {
+          q.ducked = true; q.hold = true; st.hold = false;
+          if (q.wasGround && st.t - q.t0 < 220 && !st.ground) { st.y = GROUND; st.vy = 0; st.ground = true; }
+          duck();
+        }
       });
-      cv.addEventListener('pointerup', function (e) { if (ptr && e.pointerId === ptr.id) { st.hold = false; ptr = null; } });
-      cv.addEventListener('pointercancel', function () { st.hold = false; ptr = null; });
+      function release(e) { if (ptrs[e.pointerId]) { delete ptrs[e.pointerId]; if (!Object.keys(ptrs).some(function (id) { return !ptrs[id].hold; })) st.hold = false; } }
+      cv.addEventListener('pointerup', release);
+      cv.addEventListener('pointercancel', release);
+      function holding() { return Object.keys(ptrs).some(function (id) { return ptrs[id].hold; }); }
       function onKeyUp(e) { if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') st.hold = false; }
       document.addEventListener('keyup', onKeyUp);
 
@@ -447,7 +457,7 @@
           ctx.stage.focus({ preventScroll: true });
           raf = requestAnimationFrame(frame);
         },
-        setPaused: function (on) { st.paused = on; st.hold = false; ptr = null; if (!on) { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); } },
+        setPaused: function (on) { st.paused = on; st.hold = false; ptrs = {}; if (!on) { st.last = performance.now(); ctx.stage.focus({ preventScroll: true }); } },
         abort: function () { stop(); st = fresh(); resize(); },
         unmount: function () { stop(); document.removeEventListener('keyup', onKeyUp); },
         resize: resize,

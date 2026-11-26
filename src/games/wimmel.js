@@ -107,7 +107,7 @@
           return true;
         }
         targets.forEach(function (t) {
-          for (var n = 0; n < 400; n++) { var x = rnd(a.x + R, a.x + a.w - R), y = rnd(a.y + R, a.y + a.h - R); if (free(x, y, R, true)) { list.push({ x: x, y: y, r: R, type: t.type, v: t.v, flip: Math.random() < 0.5, rot: rnd(-0.2, 0.2), target: t }); break; } }
+          for (var n = 0; n < 400; n++) { var x = rnd(a.x + R, a.x + a.w - R), y = rnd(a.y + R, a.y + a.h - R); if (free(x, y, R, true)) { list.push({ x: x, y: y, r: R, type: t.type, v: t.v, flip: false, rot: rnd(-0.2, 0.2), target: t }); break; } }
         });
         var want = Math.round(Math.min(130, (a.w * a.h) / (R * R * 4.2) * Math.min(1, 0.55 + st.level * 0.09)));
         var tries = 0;
@@ -118,7 +118,7 @@
           if (!opts.length) continue;
           var x2 = rnd(a.x + R, a.x + a.w - R), y2 = rnd(a.y + R, a.y + a.h - R), r2 = R * rnd(0.85, 1.05);
           if (!free(x2, y2, r2)) continue;
-          list.push({ x: x2, y: y2, r: r2, type: ty2, v: pick(opts)[0], flip: Math.random() < 0.5, rot: rnd(-0.25, 0.25) });
+          list.push({ x: x2, y: y2, r: r2, type: ty2, v: pick(opts)[0], flip: ['bee', 'wasp', 'car'].indexOf(ty2.id) >= 0 && Math.random() < 0.5, rot: rnd(-0.25, 0.25) });
         }
         /* Ziele nicht zuletzt zeichnen, damit sie nicht herausstechen */
         st.objs = shuffle(list); st.targets = targets; st.marks = []; st.done = 0; st.hint = null;
@@ -155,7 +155,8 @@
         if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) { useHint(); return; }
         if (py > H - BAR) return;
         var o = hit(px, py);
-        if (!o) return;
+        /* Ins Leere getippt zählt auch als daneben */
+        if (!o) o = { x: px, y: py, r: R * 0.7, empty: true };
         if (o.target && !o.target.found) {
           o.target.found = true; st.found++; st.done++;
           var pts = 100 * st.level; st.score += pts; ctx.setScore(st.score);
@@ -168,7 +169,9 @@
         } else if (!o.target) {
           st.wrong++; st.time = Math.max(0, st.time - WRONG_S);
           st.marks.push({ x: o.x, y: o.y, r: o.r, ok: false, t0: st.t });
-          ctx.fx.shake(0.15, 4); ctx.fx.text(o.x, o.y - o.r - 8, pick(['Nee!', 'Falsch!', 'Das nicht!', 'Leider nein!', 'Kalt, ganz kalt!', 'Brille putzen!']) + ' −' + WRONG_S + ' s', '#FF7A6B', 18);
+          ctx.fx.shake(0.15, 4);
+          ctx.fx.text(o.x, o.y - o.r - 12, pick(['Nee!', 'Falsch!', 'Das nicht!', 'Leider nein!', 'Kalt, ganz kalt!', 'Brille putzen!', 'Tomaten auf den Augen?']), '#FF7A6B', 20);
+          ctx.fx.text(o.x, o.y + o.r + 14, '−' + WRONG_S + ' s', '#FF5A4A', 26);
           ctx.tone(220, 140, 0.15, 'square', 0.04);
         }
       }

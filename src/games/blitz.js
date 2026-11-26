@@ -62,7 +62,7 @@
     },
     {
       id: 'catch', text: function (m) { return m.trap ? 'HONIG NICHT FANGEN!' : 'HONIG AUFFANGEN!'; }, timeout: false, failText: 'Daneben gekleckert!', trappable: true, trapFailIsWin: true,
-      init: function (m, W, H, u, lvl, T) { m.x = rnd(W * 0.15, W * 0.85); m.y = H * 0.18; m.jy = H * 0.84; m.vy = (m.jy - m.y) / (T * 0.82); m.jx = W / 2; m.jw = 60 * u; m.W = W; m.sway = rnd(-1, 1) * W * 0.12; m.x0 = m.x; m.t = 0; m.T = T; },
+      init: function (m, W, H, u, lvl, T) { m.x = rnd(W * 0.15, W * 0.85); m.y = H * 0.18; m.jy = H * 0.84; m.vy = (m.jy - m.y) / (T * 0.5); m.jx = W / 2; m.jw = 60 * u; m.W = W; m.sway = rnd(-1, 1) * W * 0.12; m.x0 = m.x; m.t = 0; m.T = T * 0.5; },
       update: function (m, dt, keys, u) {
         m.t += dt; m.y += m.vy * dt; m.x = m.x0 + Math.sin(m.t / m.T * Math.PI) * m.sway;
         var sp = 520 * u; if (keys.left) m.jx -= sp * dt; if (keys.right) m.jx += sp * dt; m.jx = Math.max(m.jw, Math.min(m.W - m.jw, m.jx));
@@ -197,6 +197,46 @@
         var px = bx + bw * m.p;
         g.save(); g.translate(px, by + bh / 2); g.scale(u * 0.7, u * 0.7); art.bee(g, Math.sin(t / 20)); g.restore();
         g.fillStyle = 'rgba(255,255,255,0.7)'; g.font = '700 ' + Math.round(15 * u) + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.fillText('Tippen oder Leertaste', m.W / 2, by + bh + 34 * u);
+      }
+    },
+    {
+      /* Wespen hauen: Aus den Waben schauen Wespen (hauen) und Bienen (Finger weg) */
+      id: 'whack', text: function (m) { return m.trap ? 'KEINE WESPE HAUEN!' : 'WESPEN HAUEN!'; }, timeout: false, failText: 'Zu langsam!', trappable: true,
+      time: function (l) { return Math.max(3.5, 5 - l * 0.3); },
+      init: function (m, W, H, u, lvl) {
+        m.holes = []; m.u = u; m.r = Math.min(46 * u, W * 0.11);
+        for (var r = 0; r < 2; r++) for (var c = 0; c < 3; c++) m.holes.push({ x: W * (0.25 + c * 0.25) + (r ? W * 0.06 : -W * 0.06), y: H * (0.44 + r * 0.26) });
+        m.need = 3 + Math.min(2, Math.floor(lvl / 2)); m.hits = 0; m.up = null; m.next = 0.25; m.stay = Math.max(0.5, 0.85 - lvl * 0.06);
+      },
+      update: function (m, dt) {
+        m.next -= dt;
+        if (m.up) { m.up.t += dt; if (m.up.t > m.stay) { m.up = null; m.next = rnd(0.08, 0.25); } }
+        if (!m.up && m.next <= 0) { var i = Math.floor(Math.random() * m.holes.length); if (m.last === i) i = (i + 1) % m.holes.length; m.last = i; m.up = { i: i, bee: Math.random() < 0.3, t: 0 }; }
+      },
+      tap: function (m, x, y) {
+        var hi = -1;
+        m.holes.forEach(function (h, i) { if (Math.hypot(x - h.x, y - (h.y - m.r * 0.4)) < m.r * 1.2) hi = i; });
+        if (hi < 0 || !m.up || m.up.i !== hi) { if (!m.trap) m.fail = 'Daneben!'; return; }
+        if (m.up.bee) { m.fail = 'Das war eine Kollegin!'; return; }
+        if (m.trap) { m.fail = 'Reingefallen!'; return; }
+        m.hits++; m.pop = { x: m.holes[hi].x, y: m.holes[hi].y - m.r * 0.5 }; m.up = null; m.next = 0.12;
+        if (m.hits >= m.need) m.win = true;
+      },
+      draw: function (m, g, t, u) {
+        m.holes.forEach(function (h, i) {
+          /* Wabenloch */
+          art.hex(g, h.x, h.y, m.r * 1.05, '#E9A800', '#7A5410', 3);
+          g.beginPath(); g.ellipse(h.x, h.y + m.r * 0.1, m.r * 0.7, m.r * 0.32, 0, 0, TAU); g.fillStyle = '#2A1A08'; g.fill();
+          if (m.up && m.up.i === i) {
+            var rise = Math.min(1, m.up.t / 0.1) * (m.up.t > m.stay - 0.1 ? Math.max(0, (m.stay - m.up.t) / 0.1) : 1);
+            g.save(); g.beginPath(); g.rect(h.x - m.r * 1.5, h.y - m.r * 2.4, m.r * 3, m.r * 2.5); g.clip();
+            g.translate(h.x, h.y + m.r * 0.4 - rise * m.r * 1.0); g.rotate(-Math.PI / 2); g.scale(u * 0.95, u * 0.95);
+            if (m.up.bee) art.bee(g, Math.sin(t / 20)); else art.wasp(g, Math.sin(t / 20));
+            g.restore();
+          }
+        });
+        g.fillStyle = '#FFFFFF'; g.font = '900 ' + Math.round(20 * u) + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+        if (!m.trap) g.fillText(m.hits + ' / ' + m.need, m.holes[1].x + m.holes[1].x * 0, m.holes[0].y - m.r * 2.6);
       }
     }
   ];
@@ -405,16 +445,24 @@
       function drawNuke(k) {
         var gx = W / 2, gy = H * 0.9, top = H * 0.62 - Math.min(1, k / 1.2) * H * 0.34, grow = Math.min(1, k * 1.6);
         g.save();
-        g.globalAlpha = Math.min(0.75, k * 2) * Math.max(0, 1 - (k - 1.6) * 2); g.fillStyle = '#5A1A08'; g.fillRect(0, 0, W, H);
-        g.globalAlpha = 1;
+        /* Eigenes Bild: Himmel glüht, Stadt am Horizont, Boden */
+        var glow0 = Math.max(0, 1 - k * 0.5);
+        var sky = g.createLinearGradient(0, 0, 0, gy);
+        sky.addColorStop(0, '#1A0604'); sky.addColorStop(0.55, glow0 > 0.4 ? '#8A2A0A' : '#4A1608'); sky.addColorStop(1, glow0 > 0.3 ? '#FF8A2A' : '#A8401A');
+        g.fillStyle = sky; g.fillRect(0, 0, W, H);
+        art.skyline(g, -20, W + 40, gy, '#1A0A06', art.rng(11), 'rgba(255,190,90,0.6)');
+        g.save(); g.translate(W * 0.18, gy); g.strokeStyle = '#1A0A06'; g.lineWidth = 5 * u; g.lineCap = 'round';
+        g.beginPath(); g.moveTo(-30 * u, 0); g.lineTo(-5 * u, -H * 0.26); g.moveTo(30 * u, 0); g.lineTo(5 * u, -H * 0.26); g.moveTo(-18 * u, -H * 0.1); g.lineTo(18 * u, -H * 0.1); g.stroke();
+        g.beginPath(); g.arc(0, -H * 0.28, 12 * u, 0, TAU); g.stroke(); g.restore();
+        g.fillStyle = '#120806'; g.fillRect(0, gy, W, H - gy);
         /* Druckwelle am Boden */
         g.beginPath(); g.ellipse(gx, gy, k * W * 0.9, k * 40 * u, 0, 0, TAU); g.strokeStyle = 'rgba(255,230,180,' + Math.max(0, 0.8 - k * 0.5) + ')'; g.lineWidth = 6 * u; g.stroke();
         /* Stamm */
-        var sw = 34 * u * grow + 10 * u;
+        var sw = 48 * u * grow + 12 * u;
         var sg = g.createLinearGradient(0, top, 0, gy); sg.addColorStop(0, '#FFB13B'); sg.addColorStop(0.5, '#C8501A'); sg.addColorStop(1, '#4A2A1A');
         g.beginPath(); g.moveTo(gx - sw, gy); g.quadraticCurveTo(gx - sw * 0.5, (gy + top) / 2, gx - sw * 0.7, top + 20 * u); g.lineTo(gx + sw * 0.7, top + 20 * u); g.quadraticCurveTo(gx + sw * 0.5, (gy + top) / 2, gx + sw, gy); g.closePath(); g.fillStyle = sg; g.fill();
         /* Pilzhut aus mehreren Wolkenkugeln */
-        var cr = H * 0.17 * grow + 10 * u, glow = Math.max(0, 1 - k * 0.6);
+        var cr = H * 0.24 * grow + 10 * u, glow = Math.max(0, 1 - k * 0.6);
         for (var i = 0; i < 9; i++) {
           var a = i / 9 * TAU + k * 0.8, rx = gx + Math.cos(a) * cr * 0.9, ry = top + Math.sin(a) * cr * 0.4, r = cr * (0.55 + (i % 3) * 0.08);
           var cg = g.createRadialGradient(rx, ry - r * 0.3, 2, rx, ry, r);
@@ -436,6 +484,12 @@
       function render() {
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         var m = st.m;
+        if (st.nuke) {
+          drawNuke((st.t - st.nuke) / 1000);
+          st.parts.forEach(function (p) { g.globalAlpha = Math.max(0, 1 - p.t / p.life); g.fillStyle = p.c; g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
+          g.globalAlpha = 1;
+          return;
+        }
         if (st.phase === 'card' || st.phase === 'dead') {
           var ag = (st.t - st.pt) / 1000;
           if (st.phase === 'card') drawCard(ag); else drawDead(ag);
@@ -456,7 +510,6 @@
         }
         st.parts.forEach(function (p) { g.globalAlpha = Math.max(0, 1 - p.t / p.life); g.fillStyle = p.c; g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
         g.globalAlpha = 1;
-        if (st.nuke) { drawNuke((st.t - st.nuke) / 1000); return; }
         /* Aufgabe nur ganz kurz am Anfang groß in der Mitte, danach steht nichts mehr da */
         if (m && st.phase === 'intro') {
           var txt = st.gm.text(m), intro = st.phase === 'intro';
