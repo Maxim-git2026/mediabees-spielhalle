@@ -879,7 +879,7 @@
     help: {
       legendTitle: 'Gegner',
       controls: [
-        { icons: ['kbd:WASD'], text: 'Laufen und seitlich gehen (Shift = langsam)', kb: true },
+        { icons: ['kbd:WASD'], text: 'Laufen und seitlich gehen (Shift = langsam gehen, im Menü auf Sprinten umstellbar)', kb: true },
         { icons: ['kbd:Maus'], text: 'Umsehen und zielen (ins Bild klicken fängt die Maus). Ohne Maus: Pfeiltasten', kb: true },
         { icons: ['kbd:Klick', 'kbd:Strg'], text: 'Schießen', kb: true },
         { icons: ['kbd:E', 'kbd:Leertaste'], text: 'Benutzen: Türen, Schalter, verdächtige Wände', kb: true },
@@ -913,7 +913,7 @@
       var g = cv.getContext('2d');
       var lc = document.createElement('canvas'), lg = lc.getContext('2d');
       var TX = null, SP = null;
-      var set = { sens: 1, invert: false, music: 0.6, sfx: 0.9, joyLeft: true, skin: 'braun' };
+      var set = { sens: 1, invert: false, music: 0.6, sfx: 0.9, joyLeft: true, skin: 'braun', bob: false, sprint: false };
       var au = makeAudio(ctx, set);
       var cssW = 0, cssH = 0, dpr = 1, W = 320, Hv = 180, hudH = 60, img = null, buf = null, zbuf = null, proj = 1;
       var raf = 0, held = {}, selfUnlock = false, locked = false, touchMode = false;
@@ -1379,7 +1379,8 @@
         if (held.ArrowLeft) turn -= 1;
         if (held.ArrowRight) turn += 1;
         if (joy) { fwd += clamp(-joy.dy, -1, 1); side += clamp(joy.dx, -1, 1); }
-        var spd = (held.ShiftLeft || held.ShiftRight ? 2.1 : 3.9);
+        var shift = held.ShiftLeft || held.ShiftRight;
+        var spd = set.sprint ? (shift ? 5.8 : 3.4) : (shift ? 2.8 : 5.8);
         var len = Math.hypot(fwd, side); if (len > 1) { fwd /= len; side /= len; }
         P.a += turn * 2.6 * dt * set.sens;
         var ca = Math.cos(P.a), sa = Math.sin(P.a);
@@ -1521,7 +1522,7 @@
       /* ---------------------------------------------------------------- 3D-Bild */
       function render3D() {
         var dirX = Math.cos(P.a), dirY = Math.sin(P.a), K = 0.66, plX = -dirY * K, plY = dirX * K;
-        var bobY = ctx.reduce ? 0 : Math.sin(P.bob * 2) * 1.3 * P.bobAmt * (W / 320);
+        var bobY = ctx.reduce || !set.bob ? 0 : Math.sin(P.bob * 2) * 1.3 * P.bobAmt * (W / 320);
         var dead = P.dead ? Math.min(1, P.deadT / 0.8) : 0;
         var hor = Hv / 2 + P.pitch + bobY + dead * Hv * 0.22;
         st.hor = hor;
@@ -1852,7 +1853,9 @@
       }
       function settingRows() {
         return [
-          { t: 'Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
+          { t: (touchMode ? 'Wisch-Tempo: ' : 'Maus-Tempo: ') + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
+          { t: 'Shift: ' + (set.sprint ? 'Sprinten' : 'Langsam gehen'), go: function () { set.sprint = !set.sprint; }, adj: function () { set.sprint = !set.sprint; } },
+          { t: 'Kopf wippt beim Laufen: ' + (set.bob ? 'An' : 'Aus'), go: function () { set.bob = !set.bob; }, adj: function () { set.bob = !set.bob; } },
           { t: 'Maus umkehren: ' + (set.invert ? 'An' : 'Aus'), go: function () { set.invert = !set.invert; }, adj: function () { set.invert = !set.invert; } },
           { t: 'Musik: ' + bar(set.music), adj: function (d) { set.music = clamp(Math.round((set.music + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
           { t: 'Effekte: ' + bar(set.sfx), adj: function (d) { set.sfx = clamp(Math.round((set.sfx + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
@@ -1876,7 +1879,7 @@
       function bar(v) { var n = Math.round(v * 10), s = ''; for (var i = 0; i < 10; i++) s += i < n ? '▮' : '▯'; return s; }
       function back() { showCodeInput(false); st.menu = 'main'; st.sel = 0; au.menu(); }
       var PAGES = {
-        controls: [['PC', 'W A S D laufen · Maus umsehen und zielen (ins Bild klicken)', 'Klick oder Strg schießen · E oder Leertaste benutzen', '1 2 3, Q oder Mausrad: Waffe wechseln · Shift: langsam', 'Ohne Maus: Pfeiltasten drehen · + und − : Maus-Tempo · Esc: Pause'], ['Handy (quer halten!)', 'Linker Daumen: Stick zum Laufen', 'Rechts wischen: umsehen (nach oben/unten zielt das Spiel selbst)', 'FEUER halten: schießen · ✋ benutzen · ⇄ Waffe wechseln'], ['Tipp', 'Verdächtige Wände mit Riss? Benutzen! Dahinter liegen Geheimnisse.']],
+        controls: [['PC', 'W A S D laufen · Maus umsehen und zielen (ins Bild klicken)', 'Klick oder Strg schießen · E oder Leertaste benutzen', '1 2 3, Q oder Mausrad: Waffe wechseln · Shift: langsam gehen (oder sprinten, siehe Einstellungen)', 'Ohne Maus: Pfeiltasten drehen · + und − : Maus-Tempo · Esc: Pause'], ['Handy (quer halten!)', 'Linker Daumen: Stick zum Laufen', 'Rechts wischen: umsehen (nach oben/unten zielt das Spiel selbst)', 'FEUER halten: schießen · ✋ benutzen · ⇄ Waffe wechseln'], ['Tipp', 'Verdächtige Wände mit Riss? Benutzen! Dahinter liegen Geheimnisse.']],
         credits: [['BOOM 2026', 'Eine MediaBees-Produktion. Glück auf!'], ['Crew', 'Sprücheklopfer · Die Maschine · Allesmacher', 'und der Rest vom Bienenstock'], ['Sound', 'Alle Riffs selbst gebaut, live im Browser erzeugt'], ['Danke', 'an alle Kumpel, die sich in die Zeche trauen']]
       };
       function drawMenu() {
@@ -2092,7 +2095,7 @@
         au.select(); au.music('level'); au.setIntensity(0);
       }
       function introTotal() { return STORY.reduce(function (a, p) { return a + p.t.length + INTRO_PAUSE; }, 0); }
-      var INTRO_RATE = 38, INTRO_PAUSE = 26;
+      var INTRO_RATE = 70, INTRO_PAUSE = 30;
       function introSkipOrGo() {
         if (st.introT * INTRO_RATE < introTotal()) { st.introT = introTotal() / INTRO_RATE + 0.01; au.menu(); }
         else beginLevel(st.diff);

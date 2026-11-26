@@ -64,7 +64,7 @@
       /* ---------------------------------------------------------------- 3D-Bild */
       function render3D() {
         var dirX = Math.cos(P.a), dirY = Math.sin(P.a), K = 0.66, plX = -dirY * K, plY = dirX * K;
-        var bobY = ctx.reduce ? 0 : Math.sin(P.bob * 2) * 1.3 * P.bobAmt * (W / 320);
+        var bobY = ctx.reduce || !set.bob ? 0 : Math.sin(P.bob * 2) * 1.3 * P.bobAmt * (W / 320);
         var dead = P.dead ? Math.min(1, P.deadT / 0.8) : 0;
         var hor = Hv / 2 + P.pitch + bobY + dead * Hv * 0.22;
         st.hor = hor;

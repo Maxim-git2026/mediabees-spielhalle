@@ -6,7 +6,7 @@
         au.select(); au.music('level'); au.setIntensity(0);
       }
       function introTotal() { return STORY.reduce(function (a, p) { return a + p.t.length + INTRO_PAUSE; }, 0); }
-      var INTRO_RATE = 38, INTRO_PAUSE = 26;
+      var INTRO_RATE = 70, INTRO_PAUSE = 30;
       function introSkipOrGo() {
         if (st.introT * INTRO_RATE < introTotal()) { st.introT = introTotal() / INTRO_RATE + 0.01; au.menu(); }
         else beginLevel(st.diff);

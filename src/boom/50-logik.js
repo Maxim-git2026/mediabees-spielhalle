@@ -11,7 +11,7 @@
     help: {
       legendTitle: 'Gegner',
       controls: [
-        { icons: ['kbd:WASD'], text: 'Laufen und seitlich gehen (Shift = langsam)', kb: true },
+        { icons: ['kbd:WASD'], text: 'Laufen und seitlich gehen (Shift = langsam gehen, im Menü auf Sprinten umstellbar)', kb: true },
         { icons: ['kbd:Maus'], text: 'Umsehen und zielen (ins Bild klicken fängt die Maus). Ohne Maus: Pfeiltasten', kb: true },
         { icons: ['kbd:Klick', 'kbd:Strg'], text: 'Schießen', kb: true },
         { icons: ['kbd:E', 'kbd:Leertaste'], text: 'Benutzen: Türen, Schalter, verdächtige Wände', kb: true },
@@ -45,7 +45,7 @@
       var g = cv.getContext('2d');
       var lc = document.createElement('canvas'), lg = lc.getContext('2d');
       var TX = null, SP = null;
-      var set = { sens: 1, invert: false, music: 0.6, sfx: 0.9, joyLeft: true, skin: 'braun' };
+      var set = { sens: 1, invert: false, music: 0.6, sfx: 0.9, joyLeft: true, skin: 'braun', bob: false, sprint: false };
       var au = makeAudio(ctx, set);
       var cssW = 0, cssH = 0, dpr = 1, W = 320, Hv = 180, hudH = 60, img = null, buf = null, zbuf = null, proj = 1;
       var raf = 0, held = {}, selfUnlock = false, locked = false, touchMode = false;

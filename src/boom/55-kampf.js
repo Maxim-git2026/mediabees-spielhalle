@@ -227,7 +227,8 @@
         if (held.ArrowLeft) turn -= 1;
         if (held.ArrowRight) turn += 1;
         if (joy) { fwd += clamp(-joy.dy, -1, 1); side += clamp(joy.dx, -1, 1); }
-        var spd = (held.ShiftLeft || held.ShiftRight ? 2.1 : 3.9);
+        var shift = held.ShiftLeft || held.ShiftRight;
+        var spd = set.sprint ? (shift ? 5.8 : 3.4) : (shift ? 2.8 : 5.8);
         var len = Math.hypot(fwd, side); if (len > 1) { fwd /= len; side /= len; }
         P.a += turn * 2.6 * dt * set.sens;
         var ca = Math.cos(P.a), sa = Math.sin(P.a);
