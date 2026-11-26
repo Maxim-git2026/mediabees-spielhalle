@@ -23,7 +23,7 @@ Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, rein
 
 = 2.30.2 – 26.11.2026 =
 * BOOM 2026: Wer länger als 2 Sekunden am Stück feuert, bei dem verzieht die Biene in der Statusleiste das Gesicht zur wütenden Fratze mit gefletschten Zähnen (wie bei den Klassikern).
-* BOOM 2026: Neues Vorschaubild in der Spielauswahl: der grimmige Kumpel mit Grubenhelm vor Feuer.
+* BOOM 2026: Neues Vorschaubild in der Spielauswahl: der grimmige Kumpel mit Grubenhelm vor Feuer. Rote Augen haben nur die Gegner, die Biene hat immer schwarze Pupillen.
 * BOOM 2026: Das rote Wut-Gesicht beim Berserker-Honig wird jetzt auch wirklich angezeigt.
 
 = 2.30.1 – 26.11.2026 =

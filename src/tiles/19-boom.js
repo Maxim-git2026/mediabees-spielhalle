@@ -22,7 +22,7 @@
       var rg = art.rng(26);
       for (var i = 0; i < 40; i++) { var fx = rg() * w, fh = h * (0.15 + rg() * 0.35); g.fillStyle = 'rgba(255,' + Math.floor(90 + rg() * 120) + ',20,' + (0.15 + rg() * 0.25) + ')'; g.beginPath(); g.moveTo(fx - 6, h); g.quadraticCurveTo(fx + (rg() - 0.5) * 14, h - fh * 0.6, fx, h - fh); g.quadraticCurveTo(fx + 4, h - fh * 0.5, fx + 6, h); g.fill(); }
       /* Grimmiger Kumpel mit Grubenhelm */
-      var s = h / 64, cx = w / 2, cy = h * 0.58;
+      var s = h / 70, cx = w / 2, cy = h * 0.53;
       g.save(); g.translate(cx, cy); g.scale(s, s);
       g.strokeStyle = '#111'; g.lineWidth = 2.2; g.lineCap = 'round';
       g.beginPath(); g.moveTo(-6, -14); g.quadraticCurveTo(-11, -24, -15, -25); g.moveTo(6, -14); g.quadraticCurveTo(11, -24, 15, -25); g.stroke();
@@ -37,7 +37,7 @@
       [-6, 6].forEach(function (ex, k) {
         var sd = k ? -1 : 1;
         g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 2.6, 0, 0, TAU); g.fill();
-        g.fillStyle = '#E5322D'; g.beginPath(); g.arc(ex, 3.8, 1.8, 0, TAU); g.fill();
+        g.fillStyle = '#111'; g.beginPath(); g.arc(ex, 3.8, 1.8, 0, TAU); g.fill();
         g.strokeStyle = '#111'; g.lineWidth = 3; g.beginPath(); g.moveTo(ex - 5 * sd, -4.5); g.lineTo(ex + 4 * sd, 1.6); g.stroke();
       });
       g.fillStyle = '#3A0A08'; g.beginPath(); g.moveTo(-9, 9.5); g.lineTo(9, 9.5); g.lineTo(7, 15.5); g.lineTo(-7, 15.5); g.closePath(); g.fill();
@@ -51,7 +51,7 @@
       g.lineWidth = fs * 0.16; g.strokeStyle = '#120806'; g.strokeText('BOOM', 0, 0); g.fillStyle = tg; g.fillText('BOOM', 0, 0);
       g.restore();
       g.font = '900 ' + Math.round(fs * 0.38) + 'px Poppins, sans-serif'; g.lineWidth = 3; g.strokeStyle = '#120806';
-      g.strokeText('2026', w * 0.84, h * 0.86); g.fillStyle = '#E5322D'; g.fillText('2026', w * 0.84, h * 0.86);
+      g.strokeText('2026', w * 0.5, h * 0.9); g.fillStyle = '#FFFFFF'; g.fillText('2026', w * 0.5, h * 0.9);
     }
   });
 })();

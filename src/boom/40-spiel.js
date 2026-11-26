@@ -42,7 +42,7 @@
       [-6, 6].forEach(function (ex, i) {
         var sd = i ? -1 : 1;
         g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
-        g.fillStyle = f.rage ? '#E5322D' : '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
+        g.fillStyle = '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
         /* Augenbrauen: immer schräg nach innen (grimmig), beim fiesen Grinsen noch steiler */
         var hard = f.grin || f.rage || f.rampage;
         g.strokeStyle = '#111'; g.lineWidth = f.rampage ? 3 : hard ? 2.6 : 2.2;
