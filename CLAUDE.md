@@ -2,13 +2,14 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.25.1**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.26.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
 - Spiele kommen **einzeln** dazu: bauen → Nutzer testet (Juice, Handy) → Feedback → nächstes Spiel.
 - **Kein Backup bei jedem Schritt.** Ein WPvivid-Backup gibt es erst ganz am Ende.
 - MediaBees-CD: Schrift Poppins, Gelb `#FDC506`, dunkle Karten. Viel Juice, Handy zuerst.
+- **Auch Backend-Seiten immer gleich schön gestalten** (Vorschauen, Karten, Schalter), nicht nur WordPress-Standardformulare. Der Nutzer will das nicht extra sagen müssen.
 - Keine Original-Grafiken, -Namen oder -Figuren bekannter Spiele (Tetris, Pac-Man, Dino usw.).
   Nur das Spielprinzip übernehmen, Figuren und Namen selbst erfinden (Bienen, Käfer, Wespen, Ruhrgebiet).
 - DSGVO-schlank: keine Cookies, kein localStorage, keine externen Dienste.
@@ -18,7 +19,8 @@ und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **
 src/core.js          Kern der Spielhalle (Kacheln, Overlay, Rangliste, Sound, Juice, Lazy-Load)
 src/tiles/NN-<id>.js Kachel je Spiel (zweistellig nummeriert, das ist die Reihenfolge): MBArcade.tile({id, title, thumb})  -> landet in arcade.js
 src/games/<id>.js    Das Spiel selbst: MBArcade.register({...})          -> wird erst beim Antippen geladen
-src/teaser.js        Knopf „Nicht drücken!“ + fliegende Biene auf allen Seiten -> assets/teaser.js (CSS: assets/teaser.css)
+src/teaser.js        Knopf „Nicht drücken!“ + fliegende Biene auf allen Seiten -> assets/teaser.js (CSS: assets/teaser.css), stellt `window.MBBJTeaserBee()` (Bienen-SVG) bereit
+src/admin.js         Einstellungsseite: Bienen-Vorschau, Kopier-Chips, Zeit-Zusammenfassung -> assets/admin.js (CSS: assets/admin.css, nur auf settings_page_mbbj-settings)
 plugin/mediabees-bugjagd/   Das WordPress-Plugin (Ordnername bleibt so, sonst verliert WP die Zuordnung)
   mediabees-bugjagd.php     Hauptdatei: MBBJ_VERSION, mbbj_games(), REST-API, Shortcode, Admin
   templates/404.php         404-Template (Filter template_include, Elementor-Header/-Footer bleiben)
@@ -150,7 +152,7 @@ Die alte Option `intro` wird ignoriert.
 - **Roter Knopf** kommt als HTML aus PHP (`mbbj_knopf_html`, ein `<a>`-Link, geht auch ohne JS). Standard: **im Footer** per Shortcode `[mediabees_knopf]` (Nutzer setzt ihn in die Elementor-Footer-Vorlage), optional `stil="notaus|klappe|arcade"`. Alternativ schwebend unten links/rechts (`place`, Ausgabe in `wp_footer`). Looks: Not-Aus (gelb-schwarzer Kasten, Standard), Glasklappe (Label „Streng geheim!“, Klappe öffnet bei Hover, lugt beim Wackeln kurz auf), Arcade (Chromring). Nutzer fand den ersten schwebenden Knopf nicht gut und wollte ihn im Footer.
 - **Biene**: gezeichnetes SVG (Verlauf, Streifen, flatternde Flügel), ist ein `<div role="button">`, KEIN `<button>`: Theme/Elementor-Kit stylt Buttons gelb mit Polster (Nutzer sah nur einen gelben Knopf). CSS mit doppelten Klassen + `!important` gegen Theme-Styles; getestet mit feindlichem Test-CSS (`site/t/footer.html` im Scratchpad).
 - Klick → Vollbild „STRENG GEHEIM!“ (kurzer Alarm) → Weiterleitung zur Spielhalle. Strg/Cmd-Klick öffnet normal.
-- Einstellungen: Option `mbbj_teaser` (button, bee, url = `/spielhalle/`, place = footer|left|right, style, bee_first = 40 s, bee_every = 120 s, bee_max = 2 (1–20), exclude = Pfade je Zeile, Unterseiten zählen mit, `/` = nur Startseite). Zeiten ±15 % Zufall. Formular unter Einstellungen → Spielhalle (`mbbj_settings_page`, mit Beschreibung des Plugins, Link „Einstellungen“ in der Plugin-Liste neben „Deaktivieren“; KEIN zweiter Link hinter „Nach Updates suchen“, Nutzer fand das doppelt). Ranglisten bleiben unter Werkzeuge → Arcade-Rangliste.
+- Einstellungen: Option `mbbj_teaser` (button, bee, url = `/spielhalle/`, place = footer|left|right, style, bee_first = 40 s, bee_every = 120 s, bee_max = 2 (1–20), exclude = Pfade je Zeile, Unterseiten zählen mit, `/` = nur Startseite). Zeiten ±15 % Zufall. Formular unter Einstellungen → Spielhalle (`mbbj_settings_page`, seit 2.26 im MediaBees-Look: Kopf mit Biene, 3 Einrichtungs-Schritte inkl. Prüfung ob die Seite existiert (`url_to_postid`), Knopf-Looks/Positionen als Bildkacheln mit echter Vorschau, Schalter, Kopier-Chips `mbbj_copy_chip`, klebende Speicherleiste; mit Beschreibung des Plugins, Link „Einstellungen“ in der Plugin-Liste neben „Deaktivieren“; KEIN zweiter Link hinter „Nach Updates suchen“, Nutzer fand das doppelt). Ranglisten bleiben unter Werkzeuge → Arcade-Rangliste.
 - Nicht auf: 404, der Spielhallen-Adresse, Seiten mit `#mb404`, ausgeschlossenen Pfaden (Shortcode gibt dort nichts aus). In der Elementor-Vorschau zeigt der Shortcode den Knopf (nur CSS). „Weniger Bewegung“ = keine Biene. `?mbbj_biene=1` lässt die Biene sofort fliegen.
 - Die eigene Seite heißt „Spielhalle“ (`/spielhalle/`), der Nutzer legt sie in Elementor an (Shortcode-Widget). Die 404 bleibt zusätzlich.
 

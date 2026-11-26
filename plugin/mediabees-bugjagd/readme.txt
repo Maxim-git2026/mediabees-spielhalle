@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.25.1
+Stable tag: 2.26.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.26.0 – 26.11.2026 =
+* Einstellungen → Spielhalle im neuen MediaBees-Look: Knopf-Looks und Positionen als Bilder zum Anklicken, animierte Bienen-Vorschau, Schalter zum An- und Ausschalten, Shortcodes mit einem Klick kopieren.
+* Die Seite zeigt jetzt, ob es die Spielhallen-Seite schon gibt, und erklärt die Einrichtung in drei Schritten.
+* Die Bienen-Zeiten stehen zusätzlich als Satz da, z. B. „Die erste Biene kommt nach etwa 40 Sekunden …“.
 
 = 2.25.1 – 26.11.2026 =
 * Der doppelte Link „Einstellungen (Knopf & Biene)“ hinter „Nach Updates suchen“ ist weg. Die Einstellungen erreichst du über den Link „Einstellungen“ neben „Deaktivieren“.

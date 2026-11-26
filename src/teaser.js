@@ -9,6 +9,44 @@
  */
 (function () {
   'use strict';
+  /* ------------------------------------------------------------ Biene */
+  var uid = 0;
+  function beeSvg() {
+    var id = 'mbbjb' + (++uid);
+    return '<svg viewBox="-48 -44 100 84" aria-hidden="true" focusable="false">' +
+      '<defs>' +
+      '<radialGradient id="' + id + 'g" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFE680"/><stop offset=".55" stop-color="#FDC506"/><stop offset="1" stop-color="#D99A00"/></radialGradient>' +
+      '<radialGradient id="' + id + 'h" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#FFE680"/><stop offset="1" stop-color="#E9A800"/></radialGradient>' +
+      '<clipPath id="' + id + 'c"><ellipse cx="-6" cy="6" rx="25" ry="18"/></clipPath>' +
+      '</defs>' +
+      /* hinterer Flügel */
+      '<g class="mbbj-t-wing mbbj-t-wing-b"><ellipse cx="2" cy="-20" rx="11" ry="17" transform="rotate(24 2 -20)" fill="rgba(210,235,255,.55)" stroke="#2a2a2a" stroke-width="1.6"/></g>' +
+      /* Beinchen */
+      '<path d="M-14 22 l-3 7 M-4 23 l-1 8 M6 22 l2 7" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" fill="none"/>' +
+      /* Stachel */
+      '<path d="M-30 4 L-44 7 L-30 11 Z" fill="#1a1a1a"/>' +
+      /* Körper mit Streifen */
+      '<ellipse cx="-6" cy="6" rx="25" ry="18" fill="url(#' + id + 'g)"/>' +
+      '<g clip-path="url(#' + id + 'c)" fill="#1a1a1a"><rect x="-22" y="-14" width="7" height="40" rx="2" transform="rotate(8 -18 6)"/><rect x="-9" y="-14" width="7" height="40" rx="2" transform="rotate(6 -5 6)"/><rect x="4" y="-14" width="6" height="40" rx="2" transform="rotate(4 7 6)"/></g>' +
+      '<ellipse cx="-6" cy="6" rx="25" ry="18" fill="none" stroke="#1a1a1a" stroke-width="2.6"/>' +
+      '<ellipse cx="-12" cy="-3" rx="9" ry="4" fill="rgba(255,255,255,.45)" transform="rotate(-12 -12 -3)"/>' +
+      /* Kopf */
+      '<circle cx="24" cy="0" r="14" fill="url(#' + id + 'h)" stroke="#1a1a1a" stroke-width="2.6"/>' +
+      '<ellipse cx="29" cy="-3" rx="5" ry="6" fill="#fff" stroke="#1a1a1a" stroke-width="1.4"/>' +
+      '<circle cx="30.5" cy="-2" r="3.2" fill="#1a1a1a"/><circle cx="31.6" cy="-3.4" r="1.2" fill="#fff"/>' +
+      '<ellipse cx="22" cy="5" rx="3.2" ry="2" fill="#FF9AAE" opacity=".8"/>' +
+      '<path d="M26 7 Q31 12 36 6" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+      /* Fühler */
+      '<path d="M20 -13 Q18 -26 11 -31 M27 -13 Q31 -26 38 -29" stroke="#1a1a1a" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="11" cy="-31" r="2.8" fill="#1a1a1a"/><circle cx="38" cy="-29" r="2.8" fill="#1a1a1a"/>' +
+      /* vorderer Flügel */
+      '<g class="mbbj-t-wing mbbj-t-wing-f"><ellipse cx="-8" cy="-20" rx="13" ry="20" transform="rotate(-22 -8 -20)" fill="rgba(225,242,255,.75)" stroke="#2a2a2a" stroke-width="1.6"/>' +
+      '<path d="M-12 -32 Q-8 -22 -6 -10" stroke="rgba(255,255,255,.9)" stroke-width="2" fill="none" stroke-linecap="round"/></g>' +
+      '</svg>';
+  }
+
+  window.MBBJTeaserBee = beeSvg; /* für die Vorschau im Backend */
+
   var C = window.MBBJ_TEASER;
   if (!C || !C.url || window.__mbbjTeaser) return;
   window.__mbbjTeaser = true;
@@ -104,42 +142,6 @@
         }, 6000 + Math.random() * 7000);
       })();
     }
-  }
-
-  /* ------------------------------------------------------------ Biene */
-  var uid = 0;
-  function beeSvg() {
-    var id = 'mbbjb' + (++uid);
-    return '<svg viewBox="-48 -44 100 84" aria-hidden="true" focusable="false">' +
-      '<defs>' +
-      '<radialGradient id="' + id + 'g" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFE680"/><stop offset=".55" stop-color="#FDC506"/><stop offset="1" stop-color="#D99A00"/></radialGradient>' +
-      '<radialGradient id="' + id + 'h" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#FFE680"/><stop offset="1" stop-color="#E9A800"/></radialGradient>' +
-      '<clipPath id="' + id + 'c"><ellipse cx="-6" cy="6" rx="25" ry="18"/></clipPath>' +
-      '</defs>' +
-      /* hinterer Flügel */
-      '<g class="mbbj-t-wing mbbj-t-wing-b"><ellipse cx="2" cy="-20" rx="11" ry="17" transform="rotate(24 2 -20)" fill="rgba(210,235,255,.55)" stroke="#2a2a2a" stroke-width="1.6"/></g>' +
-      /* Beinchen */
-      '<path d="M-14 22 l-3 7 M-4 23 l-1 8 M6 22 l2 7" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" fill="none"/>' +
-      /* Stachel */
-      '<path d="M-30 4 L-44 7 L-30 11 Z" fill="#1a1a1a"/>' +
-      /* Körper mit Streifen */
-      '<ellipse cx="-6" cy="6" rx="25" ry="18" fill="url(#' + id + 'g)"/>' +
-      '<g clip-path="url(#' + id + 'c)" fill="#1a1a1a"><rect x="-22" y="-14" width="7" height="40" rx="2" transform="rotate(8 -18 6)"/><rect x="-9" y="-14" width="7" height="40" rx="2" transform="rotate(6 -5 6)"/><rect x="4" y="-14" width="6" height="40" rx="2" transform="rotate(4 7 6)"/></g>' +
-      '<ellipse cx="-6" cy="6" rx="25" ry="18" fill="none" stroke="#1a1a1a" stroke-width="2.6"/>' +
-      '<ellipse cx="-12" cy="-3" rx="9" ry="4" fill="rgba(255,255,255,.45)" transform="rotate(-12 -12 -3)"/>' +
-      /* Kopf */
-      '<circle cx="24" cy="0" r="14" fill="url(#' + id + 'h)" stroke="#1a1a1a" stroke-width="2.6"/>' +
-      '<ellipse cx="29" cy="-3" rx="5" ry="6" fill="#fff" stroke="#1a1a1a" stroke-width="1.4"/>' +
-      '<circle cx="30.5" cy="-2" r="3.2" fill="#1a1a1a"/><circle cx="31.6" cy="-3.4" r="1.2" fill="#fff"/>' +
-      '<ellipse cx="22" cy="5" rx="3.2" ry="2" fill="#FF9AAE" opacity=".8"/>' +
-      '<path d="M26 7 Q31 12 36 6" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>' +
-      /* Fühler */
-      '<path d="M20 -13 Q18 -26 11 -31 M27 -13 Q31 -26 38 -29" stroke="#1a1a1a" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="11" cy="-31" r="2.8" fill="#1a1a1a"/><circle cx="38" cy="-29" r="2.8" fill="#1a1a1a"/>' +
-      /* vorderer Flügel */
-      '<g class="mbbj-t-wing mbbj-t-wing-f"><ellipse cx="-8" cy="-20" rx="13" ry="20" transform="rotate(-22 -8 -20)" fill="rgba(225,242,255,.75)" stroke="#2a2a2a" stroke-width="1.6"/>' +
-      '<path d="M-12 -32 Q-8 -22 -6 -10" stroke="rgba(255,255,255,.9)" stroke-width="2" fill="none" stroke-linecap="round"/></g>' +
-      '</svg>';
   }
 
   var BUBBLES = ['Psst! Lust auf ein Spiel?', 'Tipp mich an!', 'Komm mit in die Spielhalle!',

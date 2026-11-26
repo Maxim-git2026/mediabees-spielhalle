@@ -1,0 +1,125 @@
+/* MediaBees Spielhalle – Einstellungsseite (Einstellungen → Spielhalle) */
+.mbbj-admin{--y:#FDC506;--ink:#141414;--ink2:#1f1f1f;--line:#e6e2d6;--muted:#6b6658;max-width:1100px;font-family:Poppins,-apple-system,"Segoe UI",system-ui,sans-serif;color:#1d1d1d}
+.mbbj-admin *,.mbbj-admin *::before,.mbbj-admin *::after{box-sizing:border-box}
+.mbbj-admin h2,.mbbj-admin h3{font-family:inherit}
+.mbbj-admin code{background:#f4efe0;border-radius:5px;padding:2px 6px;font-size:12.5px}
+
+/* Kopfbereich */
+.mbbj-hero{position:relative;display:flex;align-items:center;gap:24px;margin:18px 0 20px;padding:30px 34px;border-radius:20px;overflow:hidden;color:#fff;background:radial-gradient(circle at 85% 30%,rgba(253,197,6,.28),transparent 45%),linear-gradient(135deg,#1b1b1b,#0e0e0e)}
+.mbbj-hero::before{content:"";position:absolute;inset:0;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='48' viewBox='0 0 56 48'%3E%3Cpath d='M14 2h28l14 22-14 22H14L0 24z' fill='none' stroke='%23FDC506' stroke-width='2'/%3E%3C/svg%3E");background-size:56px 48px;pointer-events:none}
+.mbbj-hero-text{position:relative;flex:1;min-width:0}
+.mbbj-hero h2{margin:10px 0 8px;font-size:34px;line-height:1.1;font-weight:800;color:#fff}
+.mbbj-hero h2 span{color:var(--y)}
+.mbbj-hero p{max-width:600px;margin:0 0 18px;font-size:14.5px;line-height:1.6;color:#d8d4c8}
+.mbbj-hero-links{display:flex;flex-wrap:wrap;gap:10px}
+.mbbj-badge{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(253,197,6,.15);color:var(--y);font-size:12px;font-weight:700;letter-spacing:.04em}
+.mbbj-hero-art{position:relative;flex:0 0 170px;height:140px}
+.mbbj-hero-bee{width:170px;height:140px;animation:mbbj-hover 2.4s ease-in-out infinite}
+@keyframes mbbj-hover{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+
+/* Knöpfe */
+.mbbj-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13.5px;line-height:1;text-decoration:none;cursor:pointer;border:2px solid transparent;transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
+.mbbj-btn:hover{transform:translateY(-1px)}
+.mbbj-btn:focus{box-shadow:0 0 0 3px rgba(253,197,6,.5);outline:0}
+.mbbj-btn--yellow{background:var(--y);color:#141414!important;box-shadow:0 4px 0 #c99a00}
+.mbbj-btn--yellow:hover{background:#ffd21f;color:#141414}
+.mbbj-btn--ghost{border-color:rgba(255,255,255,.25);color:#fff!important}
+.mbbj-btn--ghost:hover{border-color:var(--y);color:var(--y)!important}
+.mbbj-btn--dark{background:var(--ink);color:#fff!important}
+.mbbj-btn--dark:hover{background:#2a2a2a;color:var(--y)!important}
+.mbbj-btn--big{padding:14px 30px;font-size:15px}
+
+/* Meldung */
+.mbbj-toast{margin:0 0 18px;padding:12px 18px;border-radius:12px;background:#e9f8e9;border:1px solid #9ad39a;color:#1b5e20;font-weight:600}
+
+/* Karten */
+.mbbj-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 26px;margin:0 0 18px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.mbbj-card h2{margin:0 0 4px;font-size:20px;font-weight:800}
+.mbbj-card h3{margin:22px 0 10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mbbj-card p{color:#4a4638}
+.mbbj-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.mbbj-card-head p{margin:0}
+
+/* Schritte */
+.mbbj-steps{counter-reset:s;list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mbbj-steps li{counter-increment:s;position:relative;margin:0;padding:18px 18px 18px 64px;border-radius:14px;background:#faf7ee;border:1px solid var(--line)}
+.mbbj-steps li::before{content:counter(s);position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--y);font-weight:800;font-size:16px}
+.mbbj-steps li.is-done::before{content:"✓";background:#2e7d32;color:#fff}
+.mbbj-steps strong{display:block;font-size:14.5px;margin-bottom:4px}
+.mbbj-steps p{margin:0 0 10px;font-size:13px;line-height:1.55}
+.mbbj-warn{color:#8a5a00!important}
+
+/* Kopier-Chip */
+.mbbj-chip{display:inline-flex;align-items:center;gap:10px;padding:6px 6px 6px 12px;border:2px dashed #d9cfa8;border-radius:10px;background:#fff;cursor:pointer;font:inherit;transition:border-color .15s ease,background .15s ease}
+.mbbj-chip code{background:none;padding:0;font-size:13px;font-weight:600;color:#141414}
+.mbbj-chip-hint{padding:5px 9px;border-radius:7px;background:var(--ink);color:var(--y);font-size:11.5px;font-weight:700}
+.mbbj-chip:hover{border-color:var(--y);background:#fffbea}
+.mbbj-chip.is-copied{border-style:solid;border-color:#2e7d32}
+.mbbj-chip.is-copied .mbbj-chip-hint{background:#2e7d32;color:#fff}
+
+/* Schalter */
+.mbbj-switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.mbbj-switch input{position:absolute;opacity:0;pointer-events:none}
+.mbbj-switch span{position:relative;width:52px;height:30px;border-radius:99px;background:#cfcabb;transition:background .2s ease}
+.mbbj-switch span::after{content:"";position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s ease}
+.mbbj-switch input:checked+span{background:var(--y)}
+.mbbj-switch input:checked+span::after{transform:translateX(22px)}
+.mbbj-switch input:focus-visible+span{box-shadow:0 0 0 3px rgba(253,197,6,.5)}
+.mbbj-switch em{font-style:normal;font-weight:700;font-size:13.5px}
+
+/* Auswahl-Kacheln */
+.mbbj-choices{display:grid;gap:12px}
+.mbbj-choices--3{grid-template-columns:repeat(3,1fr)}
+.mbbj-choice{position:relative;display:block;cursor:pointer}
+.mbbj-choice input{position:absolute;opacity:0;pointer-events:none}
+.mbbj-choice-box{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;height:100%;padding:14px 14px 16px;border:2px solid var(--line);border-radius:14px;background:#fff;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+.mbbj-choice:hover .mbbj-choice-box{border-color:#e8d48a;transform:translateY(-2px)}
+.mbbj-choice input:checked+.mbbj-choice-box{border-color:var(--y);box-shadow:0 0 0 3px rgba(253,197,6,.35)}
+.mbbj-choice input:checked+.mbbj-choice-box::after{content:"✓";position:absolute;right:10px;top:10px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--y);color:#141414;font-weight:800;font-size:13px}
+.mbbj-choice input:focus-visible+.mbbj-choice-box{outline:2px solid #141414;outline-offset:2px}
+.mbbj-choice strong{font-size:14px;margin-top:6px}
+.mbbj-choice small{font-size:12.5px;color:var(--muted);line-height:1.45}
+.mbbj-preview{display:flex;align-items:center;justify-content:center;width:100%;height:96px;border-radius:10px;background:radial-gradient(circle at 50% 120%,#2a2a2a,#111)}
+.mbbj-preview a.mbbj-k.mbbj-k{pointer-events:none!important}
+
+/* Mini-Bildschirme für die Position */
+.mbbj-mock{position:relative;display:block;width:100%;height:96px;border-radius:10px;background:#f1ede2;overflow:hidden}
+.mbbj-mock i{position:absolute;left:10%;right:10%;top:14px;height:8px;border-radius:4px;background:#d9d3c2;box-shadow:0 16px 0 #e3ddcd,0 32px 0 #e3ddcd}
+.mbbj-mock b{position:absolute;width:16px;height:16px;border-radius:50%;background:#e5322d;box-shadow:0 0 0 3px #141414,0 0 10px rgba(229,50,45,.6)}
+.mbbj-mock--footer::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28px;background:#141414}
+.mbbj-mock--footer b{left:50%;bottom:6px;margin-left:-8px;z-index:1;box-shadow:0 0 0 3px #FDC506}
+.mbbj-mock--left b{left:10px;bottom:10px}
+.mbbj-mock--right b{right:10px;bottom:10px}
+
+/* Biene */
+.mbbj-bee-row{display:grid;grid-template-columns:260px 1fr;gap:26px;align-items:center;margin-top:16px}
+.mbbj-bee-stage{position:relative;height:190px;border-radius:14px;background:linear-gradient(180deg,#bfe4ff,#eaf6ff 70%,#d9efc8 70%,#c4e3a9);overflow:hidden}
+.mbbj-bee-demo{position:absolute;left:50%;top:84px;width:110px;height:92px;margin-left:-55px;animation:mbbj-hover 2s ease-in-out infinite}
+.mbbj-bubble-demo{position:absolute;left:50%;top:22px;transform:translateX(-50%);padding:7px 12px;border:2px solid #111;border-radius:12px;background:#fff;font-weight:700;font-size:13px;white-space:nowrap}
+.mbbj-bubble-demo::after{content:"";position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top-color:#111}
+.mbbj-bee-set{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.mbbj-num{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mbbj-num label{min-width:130px;font-weight:600}
+.mbbj-num span{display:inline-flex;align-items:center;gap:8px;color:var(--muted)}
+.mbbj-admin input[type=number]{width:88px;height:40px;padding:0 10px;border:2px solid var(--line);border-radius:10px;font-size:15px;font-weight:700;text-align:center}
+.mbbj-admin input[type=number]:focus,.mbbj-input:focus{border-color:var(--y)!important;box-shadow:0 0 0 3px rgba(253,197,6,.3)!important;outline:0}
+.mbbj-summary{margin:4px 0 6px!important;padding:10px 14px;border-radius:10px;background:#fffbea;border:1px solid #f1dd8f;font-size:13px}
+.mbbj-admin.is-bee-off .mbbj-bee-row .mbbj-bee-stage,.mbbj-admin.is-bee-off .mbbj-num{opacity:.4;filter:grayscale(.8)}
+.mbbj-admin.is-btn-off .mbbj-choices{opacity:.4;filter:grayscale(.8)}
+
+/* Feinschliff */
+.mbbj-grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:14px}
+.mbbj-label{display:block;font-weight:700;margin-bottom:6px}
+.mbbj-input{width:100%;padding:9px 12px!important;border:2px solid var(--line)!important;border-radius:10px!important;font-size:14px}
+.mbbj-help{margin:6px 0 0;font-size:12.5px;color:var(--muted)!important}
+
+/* Speicherleiste */
+.mbbj-savebar{position:sticky;bottom:12px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px 14px 24px;border-radius:16px;background:#141414;color:#d8d4c8;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+@media (max-width:960px){
+  .mbbj-steps,.mbbj-choices--3,.mbbj-grid2{grid-template-columns:1fr}
+  .mbbj-bee-row{grid-template-columns:1fr}
+  .mbbj-hero-art{display:none}
+  .mbbj-savebar span{display:none}
+}
+@media (prefers-reduced-motion:reduce){.mbbj-hero-bee,.mbbj-bee-demo{animation:none}}
