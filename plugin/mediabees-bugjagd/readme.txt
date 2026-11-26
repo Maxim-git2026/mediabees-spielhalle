@@ -21,7 +21,7 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
 
 = 2.23.4 – 26.11.2026 =
-* Bienen-Blitz: Am Spielende steht über der umgekippten Biene jetzt jedes Mal ein anderer lustiger Spruch, zum Beispiel „Biene k.o.!“, „Summ … summ … zzz“ oder „Bitte nicht stören!“.
+* Bienen-Blitz: Am Spielende steht über der umgekippten Biene jetzt abwechselnd „DU HAST VERLOREN! (peinlich)“, „Manchmal muss man loslassen, um festzuhalten, was wirklich zählt.“ oder ein Goethe-Zitat.
 * Bienenboom: Wer sich selbst wegsprengt, bekommt jetzt abwechselnd „Gut gemacht!“, „Selbstkill!“ oder „Peinlich!“.
 
 = 2.23.3 – 26.11.2026 =

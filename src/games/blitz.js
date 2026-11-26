@@ -434,10 +434,20 @@
         }
         if (age > 0.5) {
           g.globalAlpha = Math.min(1, (age - 0.5) * 3);
-          /* Lustiger Spruch über der umgekippten Biene, jedes Mal ein anderer */
-          if (!st.deadLine) st.deadLine = pick(['Biene k.o.!', 'Kurz mal hinlegen …', 'Summ … summ … zzz', 'Bitte nicht stören!', 'Feierabend für heute!', 'Mittagsschlaf!']);
-          g.font = '900 ' + Math.round(40 * u) + 'px Poppins, sans-serif'; g.lineWidth = 7; g.lineJoin = 'round'; g.strokeStyle = '#111'; g.textAlign = 'center';
-          g.strokeText(st.deadLine, cx, H * 0.2, W - 24); g.fillStyle = '#FDC506'; g.fillText(st.deadLine, cx, H * 0.2, W - 24);
+          /* Spruch über der umgekippten Biene, jedes Mal einer der drei. Lange Sprüche werden umgebrochen */
+          if (!st.deadLine) st.deadLine = pick([
+            ['DU HAST VERLOREN! (peinlich)', ''],
+            ['Manchmal muss man loslassen, um festzuhalten, was wirklich zählt.', ''],
+            ['„Wo viel verloren wird, ist manches zu gewinnen.“', '– Johann Wolfgang von Goethe']
+          ]);
+          var dl = st.deadLine, big = dl[0].length < 32, fs = Math.round((big ? 34 : 24) * u), maxW = W - 36;
+          g.font = '900 ' + fs + 'px Poppins, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+          var words = dl[0].split(' '), lines = [], cur = '';
+          words.forEach(function (w) { var test = cur ? cur + ' ' + w : w; if (g.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; } else cur = test; });
+          lines.push(cur);
+          var lh = fs * 1.2, y0 = H * 0.18 - (lines.length - 1) * lh / 2;
+          lines.forEach(function (ln, i) { g.lineWidth = 6; g.strokeStyle = '#111'; g.strokeText(ln, cx, y0 + i * lh, maxW); g.fillStyle = '#FDC506'; g.fillText(ln, cx, y0 + i * lh, maxW); });
+          if (dl[1]) { g.font = 'italic 700 ' + Math.round(15 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.75)'; g.fillText(dl[1], cx, y0 + lines.length * lh + 4, maxW); }
           g.font = '700 ' + Math.round(16 * u) + 'px Poppins, sans-serif'; g.fillStyle = 'rgba(255,255,255,0.8)';
           g.fillText('Alle Leben aufgebraucht. ' + st.wins + ' Aufgaben geschafft.', cx, H * 0.8, W - 20);
           g.globalAlpha = 1;
