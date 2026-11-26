@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.24.1
+Stable tag: 2.24.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.24.2 – 26.11.2026 =
+* In der Plugin-Liste steht jetzt hinter „Nach Updates suchen“ der Link „Einstellungen (Knopf & Biene)“.
 
 = 2.24.1 – 26.11.2026 =
 * Neu im Backend: Einstellungen → Spielhalle. Dort steht, was das Plugin macht, und dort stellst du den roten Knopf und die Biene ein. In der Plugin-Liste gibt es dafür jetzt auch den Link „Einstellungen“.
