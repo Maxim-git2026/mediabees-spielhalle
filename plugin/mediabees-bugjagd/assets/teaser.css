@@ -79,3 +79,4 @@ div.mbbj-t-bee:focus-visible{outline:3px solid #FDC506!important;outline-offset:
 .mbbj-t-secret.is-calm .mbbj-t-stamp{transform:rotate(-8deg);opacity:1}
 @media (prefers-reduced-motion:reduce){.mbbj-k.is-wobble .mbbj-k-box,.mbbj-k.is-wobble .mbbj-k-label,.mbbj-k--klappe.is-wobble .mbbj-k-lid{animation:none}}
 @media print{.mbbj-k-wrap,.mbbj-k-float,.mbbj-t-bee{display:none!important}}
+@media (max-width:640px){.mbbj-k-float.is-hide-mobile{display:none!important}}

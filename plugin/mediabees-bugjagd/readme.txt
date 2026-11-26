@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.27.0
+Stable tag: 2.28.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,10 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.28.0 – 26.11.2026 =
+* Neu in Elementor: das Widget „Spielhallen-Knopf“. Einfach reinziehen und nur für diesen Knopf Look, Text, Größe und Farben einstellen. Frei verschieben mit px oder % geht über Elementor (Erweitert → Positionierung), für PC, Tablet und Handy getrennt.
+* Schwebender Knopf: Abstand zum Rand und nach unten in Pixeln einstellbar, dazu „Auf dem Handy ausblenden“.
 
 = 2.27.0 – 26.11.2026 =
 * Roter Knopf zum Anpassen: Standardtext, eigener Text (bis 28 Zeichen) oder ganz ohne Schild, drei Größen und eigene Farben für Knopf, Schild, Schrift und Akzent. Dazu fertige Farbsets (MediaBees, Feuerwehr, Giftgrün, Eisblau, Pink, Schwarz-Weiß).

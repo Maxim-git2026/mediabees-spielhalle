@@ -117,4 +117,12 @@
     });
   });
   updKnopf();
+  /* Abstände nur zeigen, wenn der Knopf schwebt */
+  function updFloat() {
+    var fs = root.querySelector('[data-float-set]'); if (!fs) return;
+    var pl = root.querySelector('[name=mbbj_place]:checked');
+    fs.hidden = !pl || pl.value === 'footer';
+  }
+  root.addEventListener('change', updFloat);
+  updFloat();
 })();

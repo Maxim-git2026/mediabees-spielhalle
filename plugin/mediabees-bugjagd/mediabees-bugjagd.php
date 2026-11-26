@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.27.0
+ * Version: 2.28.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.27.0' );
+define( 'MBBJ_VERSION', '2.28.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -103,6 +103,9 @@ function mbbj_teaser_settings() {
 		'k_tagfg'     => '#FDC506',
 		'k_accent'    => '#FDC506',
 		'admin_theme' => 'auto', // Einstellungsseite: auto, light, dark
+		'float_x'     => 14,     // schwebend: Abstand zum Seitenrand in px
+		'float_y'     => 14,     // schwebend: Abstand nach unten in px
+		'float_hide_mobile' => 0, // schwebend: auf dem Handy ausblenden
 		'exclude'   => '',
 	) );
 }
@@ -124,22 +127,25 @@ function mbbj_teaser_url() {
 }
 
 /* HTML des Knopfs. Ein normaler Link, damit er auch ohne JavaScript zur Spielhalle führt. */
-function mbbj_knopf_html( $style = '', $extra_class = '' ) {
+/* $over: einzelne Einstellungen nur für diesen Knopf ersetzen (z. B. aus dem Elementor-Widget) */
+function mbbj_knopf_html( $style = '', $extra_class = '', $over = array() ) {
+	$t      = array_merge( mbbj_teaser_settings(), array_filter( (array) $over, function ( $v ) {
+		return '' !== $v && null !== $v;
+	} ) );
 	$styles = mbbj_knopf_styles();
 	if ( ! isset( $styles[ $style ] ) ) {
-		$style = mbbj_teaser_settings()['style'];
+		$style = $t['style'];
 	}
 	if ( ! isset( $styles[ $style ] ) ) {
 		$style = 'notaus';
 	}
-	$t     = mbbj_teaser_settings();
 	$std   = 'klappe' === $style ? 'Streng geheim!' : 'Nicht drücken!';
 	$label = $std;
 	if ( 'custom' === $t['k_text_mode'] && '' !== trim( (string) $t['k_text'] ) ) {
 		$label = (string) $t['k_text'];
 	}
 	$no_label = 'none' === $t['k_text_mode'];
-	return '<a class="mbbj-k mbbj-k--' . esc_attr( $style ) . ( $no_label ? ' is-nolabel' : '' ) . ( $extra_class ? ' ' . esc_attr( $extra_class ) : '' ) . '" href="' . esc_url( mbbj_teaser_url() ) . '" style="' . esc_attr( mbbj_knopf_vars() ) . '" data-std="' . esc_attr( $std ) . '" aria-label="' . esc_attr( ( $no_label ? $std : $label ) . ' (führt zur MediaBees-Spielhalle)' ) . '">'
+	return '<a class="mbbj-k mbbj-k--' . esc_attr( $style ) . ( $no_label ? ' is-nolabel' : '' ) . ( $extra_class ? ' ' . esc_attr( $extra_class ) : '' ) . '" href="' . esc_url( mbbj_teaser_url() ) . '" style="' . esc_attr( mbbj_knopf_vars( $t ) ) . '" data-std="' . esc_attr( $std ) . '" aria-label="' . esc_attr( ( $no_label ? $std : $label ) . ' (führt zur MediaBees-Spielhalle)' ) . '">'
 		. '<span class="mbbj-k-box" aria-hidden="true"><span class="mbbj-k-cap"></span>' . ( 'klappe' === $style ? '<span class="mbbj-k-lid"></span>' : '' ) . '</span>'
 		. '<span class="mbbj-k-label" aria-hidden="true">' . esc_html( $label ) . '</span></a>';
 }
@@ -161,8 +167,8 @@ function mbbj_size_factor( $size ) {
 }
 
 /* CSS-Variablen für Größe und eigene Farben (die Optik selbst steht in teaser.css) */
-function mbbj_knopf_vars() {
-	$t   = mbbj_teaser_settings();
+function mbbj_knopf_vars( $t = null ) {
+	$t   = $t ? $t : mbbj_teaser_settings();
 	$css = '--mbbj-size:' . mbbj_size_factor( $t['k_size'] ) . ';';
 	if ( $t['k_colors'] ) {
 		$cap  = sanitize_hex_color( $t['k_cap'] ) ? $t['k_cap'] : '#E5322D';
@@ -252,6 +258,7 @@ function mbbj_teaser_enqueue() {
 }
 
 add_action( 'wp_enqueue_scripts', function () {
+	wp_register_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
 	if ( mbbj_teaser_active() ) {
 		mbbj_teaser_enqueue();
 	}
@@ -263,7 +270,9 @@ add_action( 'wp_footer', function () {
 	if ( ! $s['button'] || 'footer' === $s['place'] || ! mbbj_teaser_active() ) {
 		return;
 	}
-	echo '<div class="mbbj-k-float mbbj-k-float--' . ( 'right' === $s['place'] ? 'right' : 'left' ) . '">' . mbbj_knopf_html() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- in mbbj_knopf_html escaped
+	$side = 'right' === $s['place'] ? 'right' : 'left';
+	$pos  = $side . ':' . max( 0, min( 400, (int) $s['float_x'] ) ) . 'px;bottom:' . max( 0, min( 400, (int) $s['float_y'] ) ) . 'px';
+	echo '<div class="mbbj-k-float mbbj-k-float--' . $side . ( $s['float_hide_mobile'] ? ' is-hide-mobile' : '' ) . '" style="' . esc_attr( $pos ) . '">' . mbbj_knopf_html() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- in mbbj_knopf_html escaped
 }, 5 );
 
 add_shortcode( 'mediabees_arcade', 'mbbj_render' );
@@ -679,6 +688,9 @@ add_action( 'admin_init', function () {
 			'k_tagbg'     => $col( 'mbbj_k_tagbg', '#1A1A1A' ),
 			'k_tagfg'     => $col( 'mbbj_k_tagfg', '#FDC506' ),
 			'k_accent'    => $col( 'mbbj_k_accent', '#FDC506' ),
+			'float_x'     => $num( 'mbbj_float_x', 0, 400, 14 ),
+			'float_y'     => $num( 'mbbj_float_y', 0, 400, 14 ),
+			'float_hide_mobile' => empty( $_POST['mbbj_float_hide_mobile'] ) ? 0 : 1,
 			'admin_theme' => in_array( $th = ( isset( $_POST['mbbj_admin_theme'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_admin_theme'] ) ) : 'auto' ), array( 'auto', 'light', 'dark' ), true ) ? $th : 'auto',
 			'exclude'   => isset( $_POST['mbbj_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['mbbj_exclude'] ) ) : '',
 		), true );
@@ -752,6 +764,12 @@ function mbbj_admin_page() {
 	</div>
 	<?php
 }
+
+/* Elementor-Widget „Spielhallen-Knopf“ (nur wenn Elementor aktiv ist) */
+add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
+	require_once __DIR__ . '/includes/elementor-knopf.php';
+	$widgets_manager->register( new MBBJ_Elementor_Knopf() );
+} );
 
 /* ------------------------------------------------------------------ *
  * Backend: Einstellungen > Spielhalle
@@ -944,6 +962,15 @@ function mbbj_settings_page() {
 							</span>
 						</label>
 					<?php endforeach; ?>
+				</div>
+				<div class="mbbj-float-set" data-float-set>
+					<div class="mbbj-num"><label for="mbbj_float_x">Abstand zum Rand</label><span><input type="number" id="mbbj_float_x" min="0" max="400" name="mbbj_float_x" value="<?php echo (int) $t['float_x']; ?>"> px</span></div>
+					<div class="mbbj-num"><label for="mbbj_float_y">Abstand nach unten</label><span><input type="number" id="mbbj_float_y" min="0" max="400" name="mbbj_float_y" value="<?php echo (int) $t['float_y']; ?>"> px</span></div>
+					<label class="mbbj-switch"><input type="checkbox" name="mbbj_float_hide_mobile" value="1" <?php checked( $t['float_hide_mobile'] ); ?>><span></span><em>Auf dem Handy ausblenden</em></label>
+					<p class="mbbj-help">Nur für den schwebenden Knopf. Tipp: Den Abstand nach unten erhöhen, wenn er ein Chat-Fenster oder einen Cookie-Hinweis verdeckt.</p>
+				</div>
+				<div class="mbbj-elementor-hint">
+					<strong>Ganz frei platzieren?</strong> In Elementor gibt es das Widget <b>„Spielhallen-Knopf“</b> (Widget-Suche: „Knopf“ oder „Spielhalle“). Dort stellst du Look, Text, Farben und Größe nur für diesen einen Knopf ein. Unter <b>Erweitert → Positionierung</b> kannst du ihn mit px oder % frei verschieben, für PC, Tablet und Handy getrennt.
 				</div>
 			</section>
 

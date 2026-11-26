@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.27.0**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.28.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -28,6 +28,7 @@ plugin/mediabees-bugjagd/   Das WordPress-Plugin (Ordnername bleibt so, sonst ve
   assets/arcade.css         Styles
   assets/arcade.js          GEBAUT aus src/core.js + src/tiles/*.js – nicht direkt bearbeiten
   assets/games/*.js         GEBAUT (Kopie aus src/games)
+  includes/elementor-knopf.php  Elementor-Widget „Spielhallen-Knopf“ (Klasse MBBJ_Elementor_Knopf, geladen über `elementor/widgets/register`)
   uninstall.php             Löscht beim Entfernen alle mbbj_-Optionen und Transients
   vendor/plugin-update-checker/  Holt Updates aus den GitHub-Releases (nicht bearbeiten)
   readme.txt                Changelog
@@ -152,6 +153,8 @@ Die alte Option `intro` wird ignoriert.
 - **Roter Knopf** kommt als HTML aus PHP (`mbbj_knopf_html`, ein `<a>`-Link, geht auch ohne JS). Standard: **im Footer** per Shortcode `[mediabees_knopf]` (Nutzer setzt ihn in die Elementor-Footer-Vorlage), optional `stil="notaus|klappe|arcade"`. Alternativ schwebend unten links/rechts (`place`, Ausgabe in `wp_footer`). Looks: Not-Aus (gelb-schwarzer Kasten, Standard), Glasklappe (Label „Streng geheim!“, Klappe öffnet bei Hover, lugt beim Wackeln kurz auf), Arcade (Chromring). Nutzer fand den ersten schwebenden Knopf nicht gut und wollte ihn im Footer.
 - **Biene**: gezeichnetes SVG (Verlauf, Streifen, flatternde Flügel), ist ein `<div role="button">`, KEIN `<button>`: Theme/Elementor-Kit stylt Buttons gelb mit Polster (Nutzer sah nur einen gelben Knopf). CSS mit doppelten Klassen + `!important` gegen Theme-Styles; getestet mit feindlichem Test-CSS (`site/t/footer.html` im Scratchpad).
 - **Anpassbar (2.27)**: `k_text_mode` std|custom|none, `k_text` (max. 28), `k_size` s|m|l (0,8/1/1,25 über `--mbbj-size`), `k_colors` + `k_cap`/`k_tagbg`/`k_tagfg`/`k_accent`. PHP setzt CSS-Variablen per `style` (`mbbj_knopf_vars`, Schattierungen des Knopfs per `mbbj_hex_mix`, gleiche Rechnung in `admin.js` für die Live-Vorschau). CSS nutzt `var(--…, Standard je Look)`. Farbsets: MediaBees, Feuerwehr, Giftgrün, Eisblau, Pink, Schwarz-Weiß. Vorschau auf dunklem/hellem Footer umschaltbar.
+- **Elementor-Widget „Spielhallen-Knopf“ (2.28)**: eigene Werte je Widget für Look, Text, Größe, Farben (leer = „Wie in den Einstellungen“), Ausrichtung responsiv; Position/Abstände/Geräte über Elementors „Erweitert“-Reiter (bewusst kein eigenes px-System im Backend, Elementor-Editor ist die bessere Vorschau). `mbbj_knopf_html($style, $class, $over)` nimmt Überschreibungen. Hauptschalter und „Nicht auf diesen Seiten“ gelten auch fürs Widget, im Editor wird es immer gezeigt.
+- Schwebend: `float_x`/`float_y` (px, 0–400), `float_hide_mobile`.
 - Einstellungsseite hell/dunkel: `admin_theme` auto|light|dark (Umschalter oben rechts im Kopf, `form="mbbj-form"`), Klasse `mbbj-dark` am `<body>` per JS, Regeln am Ende von `admin.css`.
 - Klick → Vollbild „STRENG GEHEIM!“ (kurzer Alarm) → Weiterleitung zur Spielhalle. Strg/Cmd-Klick öffnet normal.
 - Einstellungen: Option `mbbj_teaser` (button, bee, url = `/spielhalle/`, place = footer|left|right, style, bee_first = 40 s, bee_every = 120 s, bee_max = 2 (1–20), exclude = Pfade je Zeile, Unterseiten zählen mit, `/` = nur Startseite). Zeiten ±15 % Zufall. Formular unter Einstellungen → Spielhalle (`mbbj_settings_page`, seit 2.26 im MediaBees-Look: Kopf mit Biene, 3 Einrichtungs-Schritte inkl. Prüfung ob die Seite existiert (`url_to_postid`), Knopf-Looks/Positionen als Bildkacheln mit echter Vorschau, Schalter, Kopier-Chips `mbbj_copy_chip`, klebende Speicherleiste; mit Beschreibung des Plugins, Link „Einstellungen“ in der Plugin-Liste neben „Deaktivieren“; KEIN zweiter Link hinter „Nach Updates suchen“, Nutzer fand das doppelt). Ranglisten bleiben unter Werkzeuge → Arcade-Rangliste.
