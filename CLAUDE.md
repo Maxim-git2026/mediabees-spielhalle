@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.23.1**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.23.2**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -131,6 +131,7 @@ Die Liste lässt sich jederzeit neu erzeugen (alle `ranks`, `startText`, `cta` u
 
 ## Oberfläche
 - Handy (≤ 640 px): Kacheln als Raster mit 3 Spalten (ohne Rekordzeile). Darüber Knopf `.mb4-pick` („▶ aktuelles Spiel | Alle N Spiele ▾“). Nach Antippen einer Kachel klappt das Raster ein (`.mb4-carousel.is-collapsed`), beim Aufklappen werden die Vorschaubilder neu gezeichnet. Mit `spiel=`-Startspiel startet es eingeklappt. Karussell-Pfeile/-Punkte sind per CSS aus (Code noch da).
+- Sprung zum Spielfeld (`ensureVisible`): misst feste/klebende Kopfleisten der Website (`headerOffset`, `elementsFromPoint` oben), scrollt bündig darunter (+12 px) und korrigiert nach 0,5 s und 1 s nach (bricht ab, wenn der Nutzer selbst scrollt). Beim Antippen einer Kachel immer bündig (`force`), sonst nur wenn das Spielfeld nicht ganz sichtbar ist. Auf dem Handy erst Raster zuklappen, dann scrollen.
 - Unter der Top 10: Knopf „Ranglisten aller Spiele“ → `[data-all]`, Handy Top 3, Desktop Top 5 je Spiel.
 
 ## Shortcode

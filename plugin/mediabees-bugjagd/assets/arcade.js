@@ -537,10 +537,46 @@
       }, { threshold: 0.15 }).observe(player);
     }
 
-    function ensureVisible() {
+    /* Höhe von festen oder klebenden Kopfleisten der Website messen (Elementor-Header usw.) */
+    function headerOffset() {
+      var best = 0, seen = [];
+      [0.25, 0.5, 0.75].forEach(function (fx) {
+        var list = document.elementsFromPoint ? document.elementsFromPoint(window.innerWidth * fx, 2) : [];
+        list.forEach(function (el) {
+          for (var n = el; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+            if (seen.indexOf(n) >= 0 || root.contains(n) || n.contains(root)) continue;
+            seen.push(n);
+            var cs = window.getComputedStyle(n);
+            if (cs.position !== 'fixed' && cs.position !== 'sticky') continue;
+            var r = n.getBoundingClientRect();
+            if (r.top <= 2 && r.bottom > 0 && r.bottom < window.innerHeight * 0.45) best = Math.max(best, r.bottom);
+          }
+        });
+      });
+      return best + 12;
+    }
+    /* Zum Spielfeld scrollen und kurz danach nachkorrigieren, falls sich die Seite verschoben hat
+       (Spiel lädt nach, Auswahl klappt zu, Kopfleiste taucht beim Scrollen auf) */
+    var scrollFix = [];
+    /* Scrollt jemand selbst, keine Nachkorrektur mehr */
+    ['wheel', 'touchmove', 'keydown'].forEach(function (ev) { window.addEventListener(ev, function (e) { if (ev !== 'keydown' || /^(Arrow|Page|Home|End| )/.test(e.key)) { scrollFix.forEach(clearTimeout); scrollFix = []; } }, { passive: true }); });
+    function scrollToPlayer(smooth) {
+      var top = window.pageYOffset + player.getBoundingClientRect().top - headerOffset();
+      window.scrollTo({ top: Math.max(0, top), behavior: smooth && !reduce ? 'smooth' : 'auto' });
+    }
+    function ensureVisible(force) {
       if (isFs()) return;
-      var r = player.getBoundingClientRect();
-      if (r.top < 100 || r.bottom > window.innerHeight) player.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      var r = player.getBoundingClientRect(), off = headerOffset();
+      if (!force && r.top >= off - 4 && r.bottom <= window.innerHeight) return;
+      if (force && Math.abs(r.top - off) < 6) return;
+      scrollFix.forEach(clearTimeout);
+      requestAnimationFrame(function () { scrollToPlayer(true); });
+      scrollFix = [500, 1000].map(function (ms) {
+        return setTimeout(function () {
+          var d = player.getBoundingClientRect().top - headerOffset();
+          if (Math.abs(d) > 8 && !isFs()) scrollToPlayer(false);
+        }, ms);
+      });
     }
 
     /* Ranglisten */
@@ -887,7 +923,7 @@
     function select(id, scroll) {
       var t = null;
       tiles.forEach(function (x) { if (x.id === id) t = x; });
-      if (!t || id === S.sel) { if (scroll) ensureVisible(); return; }
+      if (!t || id === S.sel) { if (scroll) ensureVisible(true); return; }
       teardown();
       S.sel = id;
       tiles.forEach(function (x) { x._tile.setAttribute('aria-pressed', String(x === t)); });
@@ -907,7 +943,7 @@
       renderAll();
       if (S.booted) loadTop(id);
       showView('start');
-      if (scroll) ensureVisible();
+      if (scroll) ensureVisible(true);
       loadGame(id, function (g) {
         if (S.sel !== id) return;
         if (!g) { startText.textContent = 'Das Spiel ließ sich nicht laden. Lade die Seite bitte neu.'; return; }
@@ -933,7 +969,7 @@
       b.setAttribute('aria-pressed', 'false');
       b.innerHTML = '<span class="mb4-tile-pic" aria-hidden="true"><canvas></canvas></span><span class="mb4-tile-name"></span><span class="mb4-tile-rec"> </span>';
       b.querySelector('.mb4-tile-name').textContent = g.title;
-      b.addEventListener('click', function () { select(g.id, true); updPick(); if (mobile()) setCollapsed(true); });
+      b.addEventListener('click', function () { if (mobile()) setCollapsed(true); select(g.id, true); updPick(); });
       ['pointerenter', 'focus', 'touchstart'].forEach(function (ev) { b.addEventListener(ev, function () { loadGame(g.id); }, { passive: true }); });
       tilesEl.appendChild(b);
       g._tile = b;

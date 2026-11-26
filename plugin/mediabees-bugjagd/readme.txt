@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.23.1
+Stable tag: 2.23.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.23.2 – 26.11.2026 =
+* Spielhalle: Beim Antippen eines Spiels springt die Seite jetzt genau zum Spielfeld, direkt unter die Kopfleiste der Website. Vorher landete der Sprung vor allem auf dem Handy manchmal zu hoch oder zu tief, weil die Spielauswahl erst nach dem Scrollen zuklappte und die Kopfleiste fest mit 120 Pixeln angenommen war.
 
 = 2.23.1 – 26.11.2026 =
 * Wimmelpott: Auch ein Tipp ins Leere kostet jetzt 3 Sekunden, dazu kommt ein Spruch wie „Tomaten auf den Augen?“ oder „Kalt, ganz kalt!“. Die Bilder unten sehen jetzt genauso aus wie im Gewimmel (vorher war z. B. der Ballon unten gespiegelt).
