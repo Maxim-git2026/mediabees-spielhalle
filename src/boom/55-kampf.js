@@ -258,7 +258,8 @@
         if (P.pickT > 0) P.pickT -= dt;
         if (P.rageT > 0) P.rageT -= dt;
         /* Feuern (Maus, Strg oder Touch-Knopf gedrückt halten) */
-        if ((held.mouse || held.ControlLeft || held.ControlRight || held.KeyF || held.touchFire) && !P.dead) fire();
+        if ((held.mouse || held.ControlLeft || held.ControlRight || held.KeyF || held.touchFire) && !P.dead) { fire(); P.holdT = (P.holdT || 0) + dt; }
+        else P.holdT = 0;
         /* Gesicht schaut ab und zu herum */
         P.lookT -= dt;
         if (P.lookT <= 0) { P.lookT = rnd(0.8, 2.2); P.look = pick([-1, 0, 0, 1]); if (Math.random() < 0.12) P.smirk = 1.2; }

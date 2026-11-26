@@ -108,7 +108,7 @@
       function newPlayer(x, y) {
         return { x: x, y: y, a: -PI / 2, pitch: 0, hp: 100, ar: 0, ammo: { sta: 50, pol: 0 }, has: [true, true, false], wp: 1, want: 1, lower: 0,
           anim: 0, cool: 0, flash: 0, bob: 0, bobAmt: 0, keys: {}, lamp: false, berserk: 0, hurtT: 0, hurtDir: 0, grin: 0, pickT: 0, dead: false, deadT: 0,
-          vx: 0, vy: 0, kick: 0, spreadT: 0, shots: 0, hits: 0, dmgTaken: 0, look: 0, lookT: 0, heartT: 0, reload: 0, rageT: 0 };
+          vx: 0, vy: 0, kick: 0, spreadT: 0, painFace: 0, ouch: false, holdT: 0, smirk: 0, shots: 0, hits: 0, dmgTaken: 0, look: 0, lookT: 0, heartT: 0, reload: 0, rageT: 0 };
       }
       function newFoe(type, x, y) {
         var d = FOES[type];

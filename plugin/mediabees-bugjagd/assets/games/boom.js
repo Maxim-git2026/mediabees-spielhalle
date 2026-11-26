@@ -763,18 +763,24 @@
       if (!f.ouch) { g.fillStyle = '#FFF'; g.fillRect(-4, 11, 8, 1.4); }
     } else {
       /* Augen: leicht zusammengekniffen, entschlossen */
-      var half = f.hurt >= 4 ? 0.45 : f.grin ? 0.85 : 0.72;
+      var half = f.hurt >= 4 ? 0.45 : f.rampage ? 0.55 : f.grin ? 0.85 : 0.72;
       [-6, 6].forEach(function (ex, i) {
         var sd = i ? -1 : 1;
         g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 4.6 * half, 0, 0, TAU); g.fill();
         g.fillStyle = f.rage ? '#E5322D' : '#111'; g.beginPath(); g.arc(ex + lx, 3.8, 2, 0, TAU); g.fill();
         /* Augenbrauen: immer schräg nach innen (grimmig), beim fiesen Grinsen noch steiler */
-        g.strokeStyle = '#111'; g.lineWidth = f.grin || f.rage ? 2.6 : 2.2;
-        g.beginPath(); g.moveTo(ex - 5 * sd, f.grin || f.rage ? -3.5 : -2); g.lineTo(ex + 4 * sd, f.grin || f.rage ? 0.5 : -0.2); g.stroke();
+        var hard = f.grin || f.rage || f.rampage;
+        g.strokeStyle = '#111'; g.lineWidth = f.rampage ? 3 : hard ? 2.6 : 2.2;
+        g.beginPath(); g.moveTo(ex - 5 * sd, f.rampage ? -4.5 : hard ? -3.5 : -2); g.lineTo(ex + 4 * sd, f.rampage ? 1.6 : hard ? 0.5 : -0.2); g.stroke();
       });
       if (f.hurt >= 3) { g.fillStyle = 'rgba(120,60,140,0.8)'; g.beginPath(); g.ellipse(6, 3.4, 6, 6, 0, 0, TAU); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(6, 3.4, 3.5, 2.2, 0, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(6 + lx, 3.6, 1.6, 0, TAU); g.fill(); }
       /* Mund */
-      if (f.grin) {
+      if (f.rampage) {
+        /* Dauerfeuer: gefletschte Zähne, wütend verzogen */
+        g.fillStyle = '#3A0A08'; g.beginPath(); g.moveTo(-9, 9.5); g.lineTo(9, 9.5); g.lineTo(7, 15.5); g.lineTo(-7, 15.5); g.closePath(); g.fill();
+        g.fillStyle = '#FFF'; for (var t3 = -8; t3 < 8; t3 += 2.8) { g.fillRect(t3, 9.8, 2, 2.4); g.fillRect(t3 + 0.6, 13, 2, 2.3); }
+        g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-11, 8); g.lineTo(-8, 10); g.moveTo(11, 8); g.lineTo(8, 10); g.stroke();
+      } else if (f.grin) {
         g.fillStyle = '#111'; g.beginPath(); g.moveTo(-9, 9); g.quadraticCurveTo(0, 19, 9, 9); g.closePath(); g.fill();
         g.fillStyle = '#FFF'; for (var t = -7; t < 7; t += 3.4) g.fillRect(t, 9.6, 2.4, 2.6);
       } else if (f.rage || f.hurt >= 2) {
@@ -958,7 +964,7 @@
       function newPlayer(x, y) {
         return { x: x, y: y, a: -PI / 2, pitch: 0, hp: 100, ar: 0, ammo: { sta: 50, pol: 0 }, has: [true, true, false], wp: 1, want: 1, lower: 0,
           anim: 0, cool: 0, flash: 0, bob: 0, bobAmt: 0, keys: {}, lamp: false, berserk: 0, hurtT: 0, hurtDir: 0, grin: 0, pickT: 0, dead: false, deadT: 0,
-          vx: 0, vy: 0, kick: 0, spreadT: 0, shots: 0, hits: 0, dmgTaken: 0, look: 0, lookT: 0, heartT: 0, reload: 0, rageT: 0 };
+          vx: 0, vy: 0, kick: 0, spreadT: 0, painFace: 0, ouch: false, holdT: 0, smirk: 0, shots: 0, hits: 0, dmgTaken: 0, look: 0, lookT: 0, heartT: 0, reload: 0, rageT: 0 };
       }
       function newFoe(type, x, y) {
         var d = FOES[type];
@@ -1391,7 +1397,8 @@
         if (P.pickT > 0) P.pickT -= dt;
         if (P.rageT > 0) P.rageT -= dt;
         /* Feuern (Maus, Strg oder Touch-Knopf gedrückt halten) */
-        if ((held.mouse || held.ControlLeft || held.ControlRight || held.KeyF || held.touchFire) && !P.dead) fire();
+        if ((held.mouse || held.ControlLeft || held.ControlRight || held.KeyF || held.touchFire) && !P.dead) { fire(); P.holdT = (P.holdT || 0) + dt; }
+        else P.holdT = 0;
         /* Gesicht schaut ab und zu herum */
         P.lookT -= dt;
         if (P.lookT <= 0) { P.lookT = rnd(0.8, 2.2); P.look = pick([-1, 0, 0, 1]); if (Math.random() < 0.12) P.smirk = 1.2; }
@@ -1728,7 +1735,7 @@
           } else if (k === 'face') {
             g.fillStyle = '#0D0E10'; g.fillRect(x + 6, y + 7, w - 12, h - 13);
             var hurt = P.hp > 80 ? 0 : P.hp > 60 ? 1 : P.hp > 40 ? 2 : P.hp > 20 ? 3 : 4;
-            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0, skin: set.skin });
+            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0, skin: set.skin, rampage: P.holdT > 2 && P.painFace <= 0 && P.grin <= 0 });
             if (narrow) st.hudWeapons = { x: x, y: y, w: w, h: h };
           } else if (k === 'marken') {
             var r = Math.min(w * 0.22, h * 0.17);

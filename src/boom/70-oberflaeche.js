@@ -85,7 +85,7 @@
           } else if (k === 'face') {
             g.fillStyle = '#0D0E10'; g.fillRect(x + 6, y + 7, w - 12, h - 13);
             var hurt = P.hp > 80 ? 0 : P.hp > 60 ? 1 : P.hp > 40 ? 2 : P.hp > 20 ? 3 : 4;
-            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0, skin: set.skin });
+            drawFace(g, cx, y + h * 0.56, Math.min((w - 14) / 42, (h - 10) / 46), { look: P.painFace > 0 ? clamp(P.hurtDir * 1.5, -1, 1) : P.look, hurt: hurt, pain: P.painFace > 0, ouch: P.ouch, grin: P.grin > 0, rage: P.rageT > 0 && P.painFace <= 0 && P.grin <= 0, dead: P.dead, smirk: P.smirk > 0, skin: set.skin, rampage: P.holdT > 2 && P.painFace <= 0 && P.grin <= 0 });
             if (narrow) st.hudWeapons = { x: x, y: y, w: w, h: h };
           } else if (k === 'marken') {
             var r = Math.min(w * 0.22, h * 0.17);
