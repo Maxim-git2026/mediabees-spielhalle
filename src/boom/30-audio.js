@@ -186,6 +186,7 @@
       bite: function (pan, vol) { noise(0.05, 'highpass', 4000, 3000, 0.2 * vol, 0, pan); },
       lever: function () { tone('square', 120, 90, 0.15, 0.25); noise(0.2, 'lowpass', 900, 200, 0.3); },
       menu: function () { tone('square', 440, 440, 0.04, 0.08); },
+      type: function () { noise(0.015, 'highpass', 3000 + Math.random() * 1500, 2500, 0.06); },
       select: function () { tone('square', 660, 880, 0.08, 0.1); },
       gibs: function (pan, vol) { noise(0.25, 'bandpass', 1400, 300, 0.35 * vol, 0, pan, 1.5); }
     };

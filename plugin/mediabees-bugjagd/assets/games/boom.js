@@ -150,6 +150,17 @@
   };
   var LEVELS = [LEVEL1];
 
+  /* Intro (Story vom Nutzer, überarbeitet): s = Stil (head, em, big), sfx = Geräusch beim Erscheinen */
+  var STORY = [
+    { t: 'Ruhrgebiet, 2026.', s: 'head' },
+    { t: 'Die letzte Zeche im Revier soll dichtmachen. Ein Konzern hat sie für ’n Appel und ’n Ei gekauft: die Gelb-Schwarz AG. Feine Anzüge, große Versprechen, alle haben unterschrieben.' },
+    { t: 'Nur einer nicht. Du bist der letzte Steiger im Revier. Du hast von Anfang an gerochen, dass da was faul ist. Die wollen das Revier nicht retten. Die wollen die Kohle. Alles. Für sich.' },
+    { t: 'Nach der Spätschicht nickst du im Förderkorb kurz ein. Als du aufwachst, steht der Korb tief unten auf Sohle 1. Das Licht flackert. Es ist still. Zu still.' },
+    { t: 'Dann hörst du es: ein Summen.', s: 'em', sfx: 'buzz' },
+    { t: 'Die Gelb-Schwarz AG war nie ein Konzern.', s: 'em' },
+    { t: 'Glück auf, Kumpel.', s: 'big', sfx: 'riff' }
+  ];
+
   /* Pixel-Schrift 3×5 für die Statusleiste (wie früher) */
   var FONT = {
     '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001',
@@ -719,6 +730,7 @@
       bite: function (pan, vol) { noise(0.05, 'highpass', 4000, 3000, 0.2 * vol, 0, pan); },
       lever: function () { tone('square', 120, 90, 0.15, 0.25); noise(0.2, 'lowpass', 900, 200, 0.3); },
       menu: function () { tone('square', 440, 440, 0.04, 0.08); },
+      type: function () { noise(0.015, 'highpass', 3000 + Math.random() * 1500, 2500, 0.06); },
       select: function () { tone('square', 660, 880, 0.08, 0.1); },
       gibs: function (pan, vol) { noise(0.25, 'bandpass', 1400, 300, 0.35 * vol, 0, pan, 1.5); }
     };
@@ -2010,6 +2022,48 @@
           g.fillText(ctx.touch() ? 'Antippen: weiter zur Rangliste' : 'Enter oder Klick: weiter zur Rangliste', cssW / 2, cssH - 24 * u);
         }
       }
+      /* Intro: Schreibmaschine vor dunklem Hintergrund */
+      function drawIntro() {
+        fireStep();
+        g.fillStyle = '#050404'; g.fillRect(0, 0, cssW, cssH);
+        g.imageSmoothingEnabled = false; g.globalAlpha = 0.22; g.drawImage(fc, 0, cssH * 0.7, cssW, cssH * 0.3); g.globalAlpha = 1;
+        /* flackerndes Grubenlicht und Staub */
+        var fl = Math.sin(st.t * 23) > 0.92 ? 0.02 : 0.07, lg2 = g.createRadialGradient(cssW / 2, 0, 10, cssW / 2, 0, cssH * 0.9);
+        lg2.addColorStop(0, 'rgba(255,240,200,' + fl + ')'); lg2.addColorStop(1, 'rgba(255,240,200,0)'); g.fillStyle = lg2; g.fillRect(0, 0, cssW, cssH);
+        g.fillStyle = 'rgba(220,210,190,0.25)';
+        for (var d = 0; d < 40; d++) { var dx = (d * 97.3 + st.t * (8 + d % 5)) % cssW, dy = (d * 53.1 + st.t * (14 + d % 7)) % cssH; g.fillRect(dx, dy, 1.5, 1.5); }
+        var u = clamp(Math.min(cssW / 760, cssH / 520), 0.55, 1.2), maxW = Math.min(cssW - 40, 720 * u);
+        var shown = Math.floor(st.introT * INTRO_RATE), acc = 0, blocks = [];
+        STORY.forEach(function (p) {
+          var n = clamp(shown - acc, 0, p.t.length); acc += p.t.length + INTRO_PAUSE;
+          if (n <= 0) return;
+          var size = p.s === 'big' ? 34 : p.s === 'em' ? 19 : p.s === 'head' ? 15 : 16.5;
+          g.font = (p.s ? '800 ' : '500 ') + Math.round(size * u) + 'px Poppins, sans-serif';
+          var words = p.t.slice(0, n).split(' '), lines = [], cur = '';
+          words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; });
+          lines.push(cur);
+          blocks.push({ p: p, lines: lines, size: size * u, lh: size * u * 1.42, typing: n < p.t.length });
+        });
+        var total = blocks.reduce(function (a, b) { return a + b.lines.length * b.lh + 14 * u; }, 0), y = Math.max(24 * u, (cssH - total) / 2);
+        g.textAlign = 'center'; g.textBaseline = 'top';
+        blocks.forEach(function (b) {
+          var p = b.p;
+          g.font = (p.s ? '800 ' : '500 ') + Math.round(b.size) + 'px Poppins, sans-serif';
+          b.lines.forEach(function (ln, i) {
+            var last = i === b.lines.length - 1, txt = ln + (last && b.typing && Math.floor(st.t * 4) % 2 ? '▌' : '');
+            if (p.s === 'big') { g.lineWidth = 7; g.strokeStyle = '#120806'; g.strokeText(txt, cssW / 2, y); g.shadowColor = 'rgba(253,197,6,0.6)'; g.shadowBlur = 18; }
+            g.fillStyle = p.s === 'head' ? '#E5322D' : p.s ? '#FDC506' : '#E9DFC8';
+            g.fillText(txt, cssW / 2, y);
+            g.shadowBlur = 0;
+            y += b.lh;
+          });
+          y += 14 * u;
+        });
+        var done = shown >= introTotal();
+        g.font = '700 ' + Math.round(13 * u) + 'px Poppins, sans-serif'; g.textBaseline = 'middle';
+        g.fillStyle = done ? (Math.floor(st.t * 2.5) % 2 ? '#FDC506' : '#E9DFC8') : 'rgba(233,223,200,0.5)';
+        g.fillText(done ? (touchMode ? 'Antippen: einfahren!' : 'Klick oder Enter: einfahren!') : (touchMode ? 'Antippen: überspringen' : 'Klick oder Enter: überspringen'), cssW / 2, cssH - 20 * u);
+      }
       function fmtT(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
       function drawDeadText() {
         var vh = cssH - hudH, u = clamp(cssH / 560, 0.62, 1.15);
@@ -2031,8 +2085,19 @@
         ctx.finish(Math.round(st.score * DIFFS[st.diff].mult), { won: won, diff: st.diff, kills: L.kills, killsTotal: L.killsTotal, secrets: L.secrets, secretsTotal: L.secretsTotal, time: L.time, code: won ? st.code : '' });
       }
 
-      /* ---------------------------------------------------------------- Spiel starten */
+      /* ---------------------------------------------------------------- Spiel starten: erst das Intro, dann die Sohle */
       function startGame(diff) {
+        st.diff = diff; st.phase = 'intro'; st.introT = 0; st.introDone = -1;
+        showCodeInput(false);
+        au.select(); au.music('level'); au.setIntensity(0);
+      }
+      function introTotal() { return STORY.reduce(function (a, p) { return a + p.t.length + INTRO_PAUSE; }, 0); }
+      var INTRO_RATE = 38, INTRO_PAUSE = 26;
+      function introSkipOrGo() {
+        if (st.introT * INTRO_RATE < introTotal()) { st.introT = introTotal() / INTRO_RATE + 0.01; au.menu(); }
+        else beginLevel(st.diff);
+      }
+      function beginLevel(diff) {
         st.diff = diff; st.score = 0; st.ended = false; st.msg = []; st.t = 0; st.lockMsgT = 0; st.killWin = 0; st.killWinT = 0; st.lightFlash = 0; st.exitT = 0;
         ctx.setScore(0);
         loadLevel(0);
@@ -2069,12 +2134,26 @@
         if (st.phase === 'play' && !st.menuOpen) updatePlay(dt);
         else if (st.phase === 'dead') { P.deadT += dt; updatePlay(dt); if (P.deadT > 3.4) endRound(); }
         else if (st.phase === 'tally') { st.tallyT += dt; st.t += dt; }
+        else if (st.phase === 'intro') {
+          var before = Math.floor(st.introT * INTRO_RATE);
+          st.introT += dt; st.t += dt;
+          var now = Math.floor(st.introT * INTRO_RATE);
+          if (now > before && now < introTotal() && now % 2 === 0) au.type();
+          /* Geräusche, wenn ein Absatz fertig erscheint */
+          var acc = 0;
+          for (var i = 0; i < STORY.length; i++) {
+            acc += STORY[i].t.length;
+            if (before < acc && now >= acc && STORY[i].sfx) { if (STORY[i].sfx === 'buzz') au.buzz('wespe', 0, 1); else au.weapon(); }
+            acc += INTRO_PAUSE;
+          }
+        }
       }
       function draw() {
         if (!cssW) return;
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         if (st.phase === 'play' || st.phase === 'dead') { drawPlay(); if (st.menuOpen) drawPauseOverlay(); }
         else if (st.phase === 'tally') drawTally();
+        else if (st.phase === 'intro') drawIntro();
         else drawMenu();
       }
       function frame(now) {
@@ -2109,6 +2188,7 @@
           if (hit) { var items = menuItems(), it = items[hit.i]; activate(hit.i, it && it.adj ? (p.x < hit.x + hit.w / 2 ? -1 : 1) : 0); }
           return;
         }
+        if (st.phase === 'intro') { introSkipOrGo(); return; }
         if (st.phase === 'tally') { if (st.tallyT > 2.9) endRound(); else st.tallyT = 3; return; }
         if (st.phase === 'dead') { if (P.deadT > 1.2) endRound(); return; }
         if (touchMode) {
@@ -2182,6 +2262,7 @@
           if (k === 'Backspace') { back(); return true; }
           return false;
         }
+        if (st.phase === 'intro') { if ((k === 'Enter' || c === 'Space' || k === 'Escape') && !e.repeat) introSkipOrGo(); return true; }
         if (st.phase === 'tally') { if ((k === 'Enter' || c === 'Space') && !e.repeat) { if (st.tallyT > 2.9) endRound(); else st.tallyT = 3; } return true; }
         if (st.phase === 'dead') { if ((k === 'Enter' || c === 'Space') && P.deadT > 1.2) endRound(); return true; }
         if (st.phase !== 'play') return false;
@@ -2230,7 +2311,7 @@
         key: key,
         _debug: function () {
           return {
-            st: st, P: function () { return P; }, L: function () { return L; }, startGame: startGame, fire: fire, useAction: useAction, finishLevel: finishLevel, set: set, unlocked: unlocked,
+            st: st, P: function () { return P; }, L: function () { return L; }, startGame: beginLevel, intro: startGame, fire: fire, useAction: useAction, finishLevel: finishLevel, set: set, unlocked: unlocked,
             tp: function (x, y, a) { P.x = x; P.y = y; if (a !== undefined) P.a = a; }, hold: held,
             give: function () { P.has = [true, true, true]; P.ammo.sta = 200; P.ammo.pol = 50; P.keys.red = true; P.lamp = true; },
             god: function () { P.hp = 999999; }, drawFace: drawFace

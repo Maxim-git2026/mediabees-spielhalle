@@ -359,6 +359,48 @@
           g.fillText(ctx.touch() ? 'Antippen: weiter zur Rangliste' : 'Enter oder Klick: weiter zur Rangliste', cssW / 2, cssH - 24 * u);
         }
       }
+      /* Intro: Schreibmaschine vor dunklem Hintergrund */
+      function drawIntro() {
+        fireStep();
+        g.fillStyle = '#050404'; g.fillRect(0, 0, cssW, cssH);
+        g.imageSmoothingEnabled = false; g.globalAlpha = 0.22; g.drawImage(fc, 0, cssH * 0.7, cssW, cssH * 0.3); g.globalAlpha = 1;
+        /* flackerndes Grubenlicht und Staub */
+        var fl = Math.sin(st.t * 23) > 0.92 ? 0.02 : 0.07, lg2 = g.createRadialGradient(cssW / 2, 0, 10, cssW / 2, 0, cssH * 0.9);
+        lg2.addColorStop(0, 'rgba(255,240,200,' + fl + ')'); lg2.addColorStop(1, 'rgba(255,240,200,0)'); g.fillStyle = lg2; g.fillRect(0, 0, cssW, cssH);
+        g.fillStyle = 'rgba(220,210,190,0.25)';
+        for (var d = 0; d < 40; d++) { var dx = (d * 97.3 + st.t * (8 + d % 5)) % cssW, dy = (d * 53.1 + st.t * (14 + d % 7)) % cssH; g.fillRect(dx, dy, 1.5, 1.5); }
+        var u = clamp(Math.min(cssW / 760, cssH / 520), 0.55, 1.2), maxW = Math.min(cssW - 40, 720 * u);
+        var shown = Math.floor(st.introT * INTRO_RATE), acc = 0, blocks = [];
+        STORY.forEach(function (p) {
+          var n = clamp(shown - acc, 0, p.t.length); acc += p.t.length + INTRO_PAUSE;
+          if (n <= 0) return;
+          var size = p.s === 'big' ? 34 : p.s === 'em' ? 19 : p.s === 'head' ? 15 : 16.5;
+          g.font = (p.s ? '800 ' : '500 ') + Math.round(size * u) + 'px Poppins, sans-serif';
+          var words = p.t.slice(0, n).split(' '), lines = [], cur = '';
+          words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; });
+          lines.push(cur);
+          blocks.push({ p: p, lines: lines, size: size * u, lh: size * u * 1.42, typing: n < p.t.length });
+        });
+        var total = blocks.reduce(function (a, b) { return a + b.lines.length * b.lh + 14 * u; }, 0), y = Math.max(24 * u, (cssH - total) / 2);
+        g.textAlign = 'center'; g.textBaseline = 'top';
+        blocks.forEach(function (b) {
+          var p = b.p;
+          g.font = (p.s ? '800 ' : '500 ') + Math.round(b.size) + 'px Poppins, sans-serif';
+          b.lines.forEach(function (ln, i) {
+            var last = i === b.lines.length - 1, txt = ln + (last && b.typing && Math.floor(st.t * 4) % 2 ? '▌' : '');
+            if (p.s === 'big') { g.lineWidth = 7; g.strokeStyle = '#120806'; g.strokeText(txt, cssW / 2, y); g.shadowColor = 'rgba(253,197,6,0.6)'; g.shadowBlur = 18; }
+            g.fillStyle = p.s === 'head' ? '#E5322D' : p.s ? '#FDC506' : '#E9DFC8';
+            g.fillText(txt, cssW / 2, y);
+            g.shadowBlur = 0;
+            y += b.lh;
+          });
+          y += 14 * u;
+        });
+        var done = shown >= introTotal();
+        g.font = '700 ' + Math.round(13 * u) + 'px Poppins, sans-serif'; g.textBaseline = 'middle';
+        g.fillStyle = done ? (Math.floor(st.t * 2.5) % 2 ? '#FDC506' : '#E9DFC8') : 'rgba(233,223,200,0.5)';
+        g.fillText(done ? (touchMode ? 'Antippen: einfahren!' : 'Klick oder Enter: einfahren!') : (touchMode ? 'Antippen: überspringen' : 'Klick oder Enter: überspringen'), cssW / 2, cssH - 20 * u);
+      }
       function fmtT(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
       function drawDeadText() {
         var vh = cssH - hudH, u = clamp(cssH / 560, 0.62, 1.15);

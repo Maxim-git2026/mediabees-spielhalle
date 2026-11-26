@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.30.3
+Stable tag: 2.30.4
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.30.4 – 26.11.2026 =
+* BOOM 2026: Neues Intro nach „Neues Spiel“: Die Geschichte vom letzten Steiger und der Gelb-Schwarz AG läuft wie auf einer Schreibmaschine ab, mit ruhiger Musik, Tippgeräuschen und einem Summen an der richtigen Stelle. Klick oder Enter überspringt.
 
 = 2.30.3 – 26.11.2026 =
 * BOOM 2026: Esc öffnet jetzt ein eigenes Pausenmenü halb durchsichtig über dem Spiel: Weiter, Maus-Tempo, Maus umkehren, Musik, Effekte, Handy-Knöpfe, Hautfarbe und zurück ins Hauptmenü. Am Handy gibt es dafür oben rechts einen Pause-Knopf.

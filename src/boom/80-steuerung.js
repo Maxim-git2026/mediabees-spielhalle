@@ -1,6 +1,17 @@
 
-      /* ---------------------------------------------------------------- Spiel starten */
+      /* ---------------------------------------------------------------- Spiel starten: erst das Intro, dann die Sohle */
       function startGame(diff) {
+        st.diff = diff; st.phase = 'intro'; st.introT = 0; st.introDone = -1;
+        showCodeInput(false);
+        au.select(); au.music('level'); au.setIntensity(0);
+      }
+      function introTotal() { return STORY.reduce(function (a, p) { return a + p.t.length + INTRO_PAUSE; }, 0); }
+      var INTRO_RATE = 38, INTRO_PAUSE = 26;
+      function introSkipOrGo() {
+        if (st.introT * INTRO_RATE < introTotal()) { st.introT = introTotal() / INTRO_RATE + 0.01; au.menu(); }
+        else beginLevel(st.diff);
+      }
+      function beginLevel(diff) {
         st.diff = diff; st.score = 0; st.ended = false; st.msg = []; st.t = 0; st.lockMsgT = 0; st.killWin = 0; st.killWinT = 0; st.lightFlash = 0; st.exitT = 0;
         ctx.setScore(0);
         loadLevel(0);
@@ -37,12 +48,26 @@
         if (st.phase === 'play' && !st.menuOpen) updatePlay(dt);
         else if (st.phase === 'dead') { P.deadT += dt; updatePlay(dt); if (P.deadT > 3.4) endRound(); }
         else if (st.phase === 'tally') { st.tallyT += dt; st.t += dt; }
+        else if (st.phase === 'intro') {
+          var before = Math.floor(st.introT * INTRO_RATE);
+          st.introT += dt; st.t += dt;
+          var now = Math.floor(st.introT * INTRO_RATE);
+          if (now > before && now < introTotal() && now % 2 === 0) au.type();
+          /* Geräusche, wenn ein Absatz fertig erscheint */
+          var acc = 0;
+          for (var i = 0; i < STORY.length; i++) {
+            acc += STORY[i].t.length;
+            if (before < acc && now >= acc && STORY[i].sfx) { if (STORY[i].sfx === 'buzz') au.buzz('wespe', 0, 1); else au.weapon(); }
+            acc += INTRO_PAUSE;
+          }
+        }
       }
       function draw() {
         if (!cssW) return;
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         if (st.phase === 'play' || st.phase === 'dead') { drawPlay(); if (st.menuOpen) drawPauseOverlay(); }
         else if (st.phase === 'tally') drawTally();
+        else if (st.phase === 'intro') drawIntro();
         else drawMenu();
       }
       function frame(now) {
@@ -77,6 +102,7 @@
           if (hit) { var items = menuItems(), it = items[hit.i]; activate(hit.i, it && it.adj ? (p.x < hit.x + hit.w / 2 ? -1 : 1) : 0); }
           return;
         }
+        if (st.phase === 'intro') { introSkipOrGo(); return; }
         if (st.phase === 'tally') { if (st.tallyT > 2.9) endRound(); else st.tallyT = 3; return; }
         if (st.phase === 'dead') { if (P.deadT > 1.2) endRound(); return; }
         if (touchMode) {
@@ -150,6 +176,7 @@
           if (k === 'Backspace') { back(); return true; }
           return false;
         }
+        if (st.phase === 'intro') { if ((k === 'Enter' || c === 'Space' || k === 'Escape') && !e.repeat) introSkipOrGo(); return true; }
         if (st.phase === 'tally') { if ((k === 'Enter' || c === 'Space') && !e.repeat) { if (st.tallyT > 2.9) endRound(); else st.tallyT = 3; } return true; }
         if (st.phase === 'dead') { if ((k === 'Enter' || c === 'Space') && P.deadT > 1.2) endRound(); return true; }
         if (st.phase !== 'play') return false;
@@ -198,7 +225,7 @@
         key: key,
         _debug: function () {
           return {
-            st: st, P: function () { return P; }, L: function () { return L; }, startGame: startGame, fire: fire, useAction: useAction, finishLevel: finishLevel, set: set, unlocked: unlocked,
+            st: st, P: function () { return P; }, L: function () { return L; }, startGame: beginLevel, intro: startGame, fire: fire, useAction: useAction, finishLevel: finishLevel, set: set, unlocked: unlocked,
             tp: function (x, y, a) { P.x = x; P.y = y; if (a !== undefined) P.a = a; }, hold: held,
             give: function () { P.has = [true, true, true]; P.ammo.sta = 200; P.ammo.pol = 50; P.keys.red = true; P.lamp = true; },
             god: function () { P.hp = 999999; }, drawFace: drawFace

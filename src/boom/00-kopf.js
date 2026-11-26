@@ -150,6 +150,17 @@
   };
   var LEVELS = [LEVEL1];
 
+  /* Intro (Story vom Nutzer, überarbeitet): s = Stil (head, em, big), sfx = Geräusch beim Erscheinen */
+  var STORY = [
+    { t: 'Ruhrgebiet, 2026.', s: 'head' },
+    { t: 'Die letzte Zeche im Revier soll dichtmachen. Ein Konzern hat sie für ’n Appel und ’n Ei gekauft: die Gelb-Schwarz AG. Feine Anzüge, große Versprechen, alle haben unterschrieben.' },
+    { t: 'Nur einer nicht. Du bist der letzte Steiger im Revier. Du hast von Anfang an gerochen, dass da was faul ist. Die wollen das Revier nicht retten. Die wollen die Kohle. Alles. Für sich.' },
+    { t: 'Nach der Spätschicht nickst du im Förderkorb kurz ein. Als du aufwachst, steht der Korb tief unten auf Sohle 1. Das Licht flackert. Es ist still. Zu still.' },
+    { t: 'Dann hörst du es: ein Summen.', s: 'em', sfx: 'buzz' },
+    { t: 'Die Gelb-Schwarz AG war nie ein Konzern.', s: 'em' },
+    { t: 'Glück auf, Kumpel.', s: 'big', sfx: 'riff' }
+  ];
+
   /* Pixel-Schrift 3×5 für die Statusleiste (wie früher) */
   var FONT = {
     '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001',
