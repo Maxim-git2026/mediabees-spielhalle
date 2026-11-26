@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.28.1
+ * Version: 2.28.2
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.28.1' );
+define( 'MBBJ_VERSION', '2.28.2' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -790,10 +790,21 @@ function mbbj_admin_page() {
 	<?php
 }
 
-/* Elementor-Widget „Spielhallen-Knopf“ (nur wenn Elementor aktiv ist) */
+/* Elementor-Widget „Spielhallen-Knopf“ (nur wenn Elementor aktiv ist), in einer eigenen Gruppe „MediaBees“ ganz oben */
+add_action( 'elementor/elements/categories_registered', function ( $elements_manager ) {
+	$elements_manager->add_category( 'mediabees', array( 'title' => 'MediaBees', 'icon' => 'eicon-gamepad' ) );
+} );
 add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 	require_once __DIR__ . '/includes/elementor-knopf.php';
 	$widgets_manager->register( new MBBJ_Elementor_Knopf() );
+} );
+// Ältere Elementor-Versionen (vor 3.5) kennen nur diesen Weg
+add_action( 'elementor/widgets/widgets_registered', function ( $widgets_manager ) {
+	if ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) {
+		return;
+	}
+	require_once __DIR__ . '/includes/elementor-knopf.php';
+	$widgets_manager->register_widget_type( new MBBJ_Elementor_Knopf() );
 } );
 
 /* ------------------------------------------------------------------ *
@@ -814,8 +825,12 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	if ( 'settings_page_mbbj-settings' !== $hook ) {
 		return;
 	}
-	wp_enqueue_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
 	wp_enqueue_style( 'mbbj-admin', plugins_url( 'assets/admin.css', MBBJ_FILE ), array(), MBBJ_VERSION );
+	// Das Knopf-CSS direkt in die Seite schreiben statt als eigene Datei: auf der Live-Seite kam teaser.css im Backend nicht an (Vorschau leer).
+	$knopf_css = file_get_contents( __DIR__ . '/assets/teaser.css' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	if ( $knopf_css ) {
+		wp_add_inline_style( 'mbbj-admin', $knopf_css );
+	}
 	wp_enqueue_script( 'mbbj-teaser', plugins_url( 'assets/teaser.js', MBBJ_FILE ), array(), MBBJ_VERSION, true );
 	wp_enqueue_script( 'mbbj-admin', plugins_url( 'assets/admin.js', MBBJ_FILE ), array( 'mbbj-teaser' ), MBBJ_VERSION, true );
 } );
@@ -995,7 +1010,12 @@ function mbbj_settings_page() {
 					<p class="mbbj-help">Nur für den schwebenden Knopf. Tipp: Den Abstand nach unten erhöhen, wenn er ein Chat-Fenster oder einen Cookie-Hinweis verdeckt.</p>
 				</div>
 				<div class="mbbj-elementor-hint">
-					<strong>Ganz frei platzieren?</strong> In Elementor gibt es das Widget <b>„Spielhallen-Knopf“</b> (Widget-Suche: „Knopf“ oder „Spielhalle“). Dort stellst du Look, Text, Farben und Größe nur für diesen einen Knopf ein. Unter <b>Erweitert → Positionierung</b> kannst du ihn mit px oder % frei verschieben, für PC, Tablet und Handy getrennt.
+					<?php if ( defined( 'ELEMENTOR_VERSION' ) ) : ?>
+						<span class="mbbj-status is-ok">Elementor <?php echo esc_html( ELEMENTOR_VERSION ); ?> erkannt, Widget ist aktiv</span>
+					<?php else : ?>
+						<span class="mbbj-status is-bad">Elementor nicht gefunden, das Widget gibt es nur mit Elementor</span>
+					<?php endif; ?>
+					<strong>Ganz frei platzieren?</strong> In Elementor gibt es das Widget <b>„Spielhallen-Knopf“</b>: in der Widget-Liste ganz oben in der Gruppe <b>„MediaBees“</b> oder über die Suche („Knopf“, „Spielhalle“). Vorher die Elementor-Seite einmal neu laden. Dort stellst du Look, Text, Farben und Größe nur für diesen einen Knopf ein. Unter <b>Erweitert → Positionierung</b> kannst du ihn mit px oder % frei verschieben, für PC, Tablet und Handy getrennt.
 				</div>
 			</section>
 

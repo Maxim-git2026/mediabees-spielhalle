@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.28.1**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.28.2**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -154,6 +154,7 @@ Die alte Option `intro` wird ignoriert.
 - **Biene**: gezeichnetes SVG (Verlauf, Streifen, flatternde Flügel), ist ein `<div role="button">`, KEIN `<button>`: Theme/Elementor-Kit stylt Buttons gelb mit Polster (Nutzer sah nur einen gelben Knopf). CSS mit doppelten Klassen + `!important` gegen Theme-Styles; getestet mit feindlichem Test-CSS (`site/t/footer.html` im Scratchpad).
 - **Anpassbar (2.27)**: `k_text_mode` std|custom|none, `k_text` (max. 28), `k_size` s|m|l (0,8/1/1,25 über `--mbbj-size`), `k_colors` + `k_cap`/`k_tagbg`/`k_tagfg`/`k_accent`. PHP setzt CSS-Variablen per `style` (`mbbj_knopf_vars`, Schattierungen des Knopfs per `mbbj_hex_mix`, gleiche Rechnung in `admin.js` für die Live-Vorschau). CSS nutzt `var(--…, Standard je Look)`. Farbsets: MediaBees, Feuerwehr, Giftgrün, Eisblau, Pink, Schwarz-Weiß. Vorschau auf dunklem/hellem Footer umschaltbar.
 - **Elementor-Widget „Spielhallen-Knopf“ (2.28)**: eigene Werte je Widget für Look, Text, Größe, Farben (leer = „Wie in den Einstellungen“), Ausrichtung responsiv; Position/Abstände/Geräte über Elementors „Erweitert“-Reiter (bewusst kein eigenes px-System im Backend, Elementor-Editor ist die bessere Vorschau). `mbbj_knopf_html($style, $class, $over)` nimmt Überschreibungen. Hauptschalter und „Nicht auf diesen Seiten“ gelten auch fürs Widget, im Editor wird es immer gezeigt (`mbbj_in_builder()`: ?elementor-preview, AJAX `elementor_ajax` beim Neuzeichnen, Edit-/Preview-Mode; teaser.css immer über `elementor/preview/enqueue_styles`).
+- Live-Seite 2.27/2.28: `teaser.css` kam im Backend nicht an (Vorschau-Kacheln nur gelber Link), Ursache unbekannt. Seit 2.28.2 wird das Knopf-CSS auf der Einstellungsseite per `wp_add_inline_style` an `mbbj-admin` gehängt. Widget-Gruppe „MediaBees“ (`elementor/elements/categories_registered`) + „basic“, Fallback-Hook `elementor/widgets/widgets_registered` für Elementor < 3.5, Statuszeile „Elementor x erkannt“.
 - Schwebend: `float_x`/`float_y` (px, 0–400), `float_hide_mobile`.
 - Einstellungsseite hell/dunkel: `admin_theme` auto|light|dark (Umschalter oben rechts im Kopf, `form="mbbj-form"`), Klasse `mbbj-dark` am `<body>` per JS, Regeln am Ende von `admin.css`.
 - Klick → Vollbild „STRENG GEHEIM!“ (kurzer Alarm) → Weiterleitung zur Spielhalle. Strg/Cmd-Klick öffnet normal.

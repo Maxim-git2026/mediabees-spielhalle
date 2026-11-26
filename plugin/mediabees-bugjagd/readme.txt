@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.28.1
+Stable tag: 2.28.2
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,11 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.28.2 – 26.11.2026 =
+* Einstellungen → Spielhalle: Die Knopf-Vorschauen bei „Aussehen“ waren leer (nur ein gelber Link). Jetzt werden die Knöpfe dort wieder richtig gezeigt.
+* Elementor: Das Widget „Spielhallen-Knopf“ steht jetzt in einer eigenen Gruppe „MediaBees“ ganz oben in der Widget-Liste (und zusätzlich bei „Basis“). Funktioniert auch mit älteren Elementor-Versionen.
+* Die Einstellungsseite zeigt an, ob Elementor erkannt wurde.
 
 = 2.28.1 – 26.11.2026 =
 * Elementor: Der Spielhallen-Knopf (Widget und Shortcode) wird im Editor jetzt immer angezeigt, auch direkt nach dem Einfügen und nach jeder Änderung. Vorher blieb die Vorschau dort leer.

@@ -24,7 +24,7 @@ class MBBJ_Elementor_Knopf extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return array( 'general' );
+		return array( 'mediabees', 'basic' );
 	}
 
 	public function get_keywords() {
