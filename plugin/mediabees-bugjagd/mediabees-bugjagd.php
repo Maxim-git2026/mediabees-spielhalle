@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MediaBees Spielhalle
  * Description: Einbinden per Shortcode [mediabees_arcade], optional spiel="flitzer". Gibt es keine Elementor-404-Vorlage, zeigt die 404-Seite automatisch die Spielhalle.
- * Version: 2.23.4
+ * Version: 2.24.0
  * Author: MediaBees
  * Author URI: https://mediabees.de
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBBJ_VERSION', '2.23.4' );
+define( 'MBBJ_VERSION', '2.24.0' );
 define( 'MBBJ_FILE', __FILE__ );
 define( 'MBBJ_TOP', 10 ); // Wie am Automaten: Nur die Top 10 werden gespeichert.
 
@@ -78,6 +78,76 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_script( 'mbbj' );
 	}
 } );
+
+/* ------------------------------------------------------------------ *
+ * Köder auf der ganzen Website: roter Knopf „Nicht drücken!“ und fliegende Biene
+ * ------------------------------------------------------------------ */
+
+function mbbj_teaser_settings() {
+	$s = get_option( 'mbbj_teaser', array() );
+	return wp_parse_args( is_array( $s ) ? $s : array(), array(
+		'button'  => 1,
+		'bee'     => 1,
+		'url'     => '/spielhalle/',
+		'side'    => 'left',
+		'exclude' => '',
+	) );
+}
+
+/* Pfad ohne Domain und ohne Schrägstrich am Ende, z. B. "/kontakt" */
+function mbbj_teaser_path( $url ) {
+	$path = (string) wp_parse_url( (string) $url, PHP_URL_PATH );
+	$path = '/' . trim( $path, '/' );
+	return strtolower( $path );
+}
+
+function mbbj_teaser_active() {
+	if ( is_admin() || is_404() || is_feed() || is_customize_preview() || wp_doing_ajax() ) {
+		return false;
+	}
+	if ( isset( $_GET['elementor-preview'] ) || isset( $_GET['preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		return false;
+	}
+	$s = mbbj_teaser_settings();
+	if ( ! $s['button'] && ! $s['bee'] ) {
+		return false;
+	}
+	$here = mbbj_teaser_path( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	if ( mbbj_teaser_path( $s['url'] ) === $here ) {
+		return false;
+	}
+	foreach ( preg_split( '/\r\n|\r|\n/', (string) $s['exclude'] ) as $line ) {
+		$line = trim( $line );
+		if ( '' === $line ) {
+			continue;
+		}
+		$ex = mbbj_teaser_path( $line );
+		if ( '/' === $ex ? '/' === $here : ( $here === $ex || 0 === strpos( $here, $ex . '/' ) ) ) {
+			return false;
+		}
+	}
+	return true;
+}
+
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! mbbj_teaser_active() ) {
+		return;
+	}
+	$s   = mbbj_teaser_settings();
+	$url = (string) $s['url'];
+	if ( ! preg_match( '#^https?://#i', $url ) ) {
+		$url = home_url( '/' . ltrim( $url, '/' ) );
+	}
+	wp_enqueue_style( 'mbbj-teaser', plugins_url( 'assets/teaser.css', MBBJ_FILE ), array(), MBBJ_VERSION );
+	wp_enqueue_script( 'mbbj-teaser', plugins_url( 'assets/teaser.js', MBBJ_FILE ), array(), MBBJ_VERSION, true );
+	wp_add_inline_script( 'mbbj-teaser', 'window.MBBJ_TEASER=' . wp_json_encode( array(
+		'url'    => esc_url_raw( $url ),
+		'button' => (bool) $s['button'],
+		'bee'    => (bool) $s['bee'],
+		'side'   => 'right' === $s['side'] ? 'right' : 'left',
+		'test'   => isset( $_GET['mbbj_biene'] ), // phpcs:ignore WordPress.Security.NonceVerification -- nur zum Ausprobieren: Biene kommt sofort
+	) ) . ';', 'before' );
+}, 20 );
 
 add_shortcode( 'mediabees_arcade', 'mbbj_render' );
 add_shortcode( 'mediabees_bugjagd', 'mbbj_render' ); // alter Name aus Version 1
@@ -463,6 +533,19 @@ add_action( 'admin_init', function () {
 	}
 	check_admin_referer( 'mbbj_admin' );
 	$action = sanitize_key( wp_unslash( $_POST['mbbj_action'] ) );
+	if ( 'teaser' === $action ) {
+		$side = isset( $_POST['mbbj_side'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_side'] ) ) : 'left';
+		$url  = isset( $_POST['mbbj_url'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['mbbj_url'] ) ) ) : '';
+		update_option( 'mbbj_teaser', array(
+			'button'  => empty( $_POST['mbbj_button'] ) ? 0 : 1,
+			'bee'     => empty( $_POST['mbbj_bee'] ) ? 0 : 1,
+			'url'     => '' === $url ? '/spielhalle/' : $url,
+			'side'    => 'right' === $side ? 'right' : 'left',
+			'exclude' => isset( $_POST['mbbj_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['mbbj_exclude'] ) ) : '',
+		), true );
+		wp_safe_redirect( admin_url( 'tools.php?page=mbbj&done=1' ) );
+		exit;
+	}
 	$game   = isset( $_POST['mbbj_game'] ) ? sanitize_key( wp_unslash( $_POST['mbbj_game'] ) ) : '';
 	$games  = mbbj_games();
 	if ( isset( $games[ $game ] ) ) {
@@ -488,6 +571,22 @@ function mbbj_admin_page() {
 		<?php if ( isset( $_GET['done'] ) ) : // phpcs:ignore ?>
 			<div class="notice notice-success is-dismissible"><p>Erledigt.</p></div>
 		<?php endif; ?>
+		<?php $mbbj_t = mbbj_teaser_settings(); ?>
+		<h2 style="margin-top:28px">Knopf und Biene auf der Website</h2>
+		<p>Ein kleiner roter Knopf „Nicht drücken!“ und eine Biene, die ab und zu durchs Bild fliegt, führen zur Spielhalle. Auf der Spielhallen-Seite selbst und auf der 404 erscheinen sie nicht. Es werden keine Cookies gesetzt.</p>
+		<form method="post" style="max-width:720px">
+			<?php wp_nonce_field( 'mbbj_admin' ); ?>
+			<input type="hidden" name="mbbj_action" value="teaser">
+			<table class="form-table" role="presentation">
+				<tr><th scope="row">Roter Knopf</th><td><label><input type="checkbox" name="mbbj_button" value="1" <?php checked( $mbbj_t['button'] ); ?>> „Nicht drücken!“-Knopf zeigen</label></td></tr>
+				<tr><th scope="row">Biene</th><td><label><input type="checkbox" name="mbbj_bee" value="1" <?php checked( $mbbj_t['bee'] ); ?>> Biene fliegt ab und zu durchs Bild (zuerst nach 30–60 Sekunden, höchstens 3-mal pro Seite)</label></td></tr>
+				<tr><th scope="row"><label for="mbbj_url">Adresse der Spielhalle</label></th><td><input type="text" class="regular-text" id="mbbj_url" name="mbbj_url" value="<?php echo esc_attr( $mbbj_t['url'] ); ?>"><p class="description">Zum Beispiel <code>/spielhalle/</code>. Auf diese Seite kommt das Shortcode-Widget <code>[mediabees_arcade]</code>.</p></td></tr>
+				<tr><th scope="row">Knopf-Position</th><td><label><input type="radio" name="mbbj_side" value="left" <?php checked( 'left', $mbbj_t['side'] ); ?>> unten links</label> &nbsp; <label><input type="radio" name="mbbj_side" value="right" <?php checked( 'right', $mbbj_t['side'] ); ?>> unten rechts</label></td></tr>
+				<tr><th scope="row"><label for="mbbj_exclude">Nicht auf diesen Seiten</label></th><td><textarea class="large-text" rows="4" id="mbbj_exclude" name="mbbj_exclude" placeholder="/kontakt/"><?php echo esc_textarea( $mbbj_t['exclude'] ); ?></textarea><p class="description">Eine Adresse pro Zeile, z. B. <code>/kontakt/</code>. Unterseiten zählen mit. <code>/</code> allein steht nur für die Startseite.</p></td></tr>
+			</table>
+			<p><button class="button button-primary" type="submit">Speichern</button> &nbsp; <a href="<?php echo esc_url( add_query_arg( 'mbbj_biene', '1', home_url( '/' ) ) ); ?>" target="_blank" rel="noopener">Biene sofort ansehen (Startseite)</a></p>
+		</form>
+		<h2 style="margin-top:28px">Ranglisten</h2>
 		<?php foreach ( mbbj_games() as $gid => $conf ) : ?>
 			<?php $list = mbbj_sort( mbbj_get_top( $gid ) ); ?>
 			<h2 style="margin-top:28px"><?php echo esc_html( $conf['title'] ); ?></h2>

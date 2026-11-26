@@ -1,0 +1,45 @@
+/* MediaBees Spielhalle – Knopf „Nicht drücken!“ und fliegende Biene (auf allen Seiten) */
+.mbbj-t-btnwrap{position:fixed;bottom:18px;z-index:99990;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(12px);transition:opacity .4s ease,transform .4s ease;font-family:Poppins,system-ui,sans-serif;pointer-events:none}
+.mbbj-t-btnwrap.is-on{opacity:1;transform:none}
+.mbbj-t-left{left:18px}
+.mbbj-t-right{right:18px;flex-direction:row-reverse}
+.mbbj-t-btn{pointer-events:auto;position:relative;width:46px;height:46px;padding:0;border:0;border-radius:50%;cursor:pointer;background:#2b2b2b;box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 -3px 0 rgba(0,0,0,.4);-webkit-tap-highlight-color:transparent}
+.mbbj-t-cap{position:absolute;left:6px;top:4px;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a7a 0,#e5322d 45%,#9e1b17 100%);box-shadow:0 4px 0 #6d0f0c,0 0 0 2px rgba(0,0,0,.25);transition:transform .08s ease,box-shadow .08s ease}
+.mbbj-t-btn:hover .mbbj-t-cap{box-shadow:0 4px 0 #6d0f0c,0 0 0 2px rgba(0,0,0,.25),0 0 16px rgba(229,50,45,.7)}
+.mbbj-t-btn:active .mbbj-t-cap,.mbbj-t-btn.is-pressed .mbbj-t-cap{transform:translateY(3px);box-shadow:0 1px 0 #6d0f0c,0 0 0 2px rgba(0,0,0,.25)}
+.mbbj-t-btn:focus-visible{outline:3px solid #FDC506;outline-offset:3px}
+.mbbj-t-tag{background:#1a1a1a;color:#FDC506;font-size:12px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;padding:5px 9px;border-radius:999px;border:2px solid #FDC506;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.3);transition:transform .2s ease}
+.mbbj-t-btnwrap:hover .mbbj-t-tag{transform:scale(1.06)}
+.mbbj-t-btnwrap.is-wobble .mbbj-t-btn{animation:mbbj-t-wob .7s ease}
+.mbbj-t-btnwrap.is-wobble .mbbj-t-tag{animation:mbbj-t-pop .7s ease}
+@keyframes mbbj-t-wob{0%,100%{transform:none}20%{transform:rotate(-14deg) scale(1.08)}40%{transform:rotate(12deg) scale(1.08)}60%{transform:rotate(-8deg)}80%{transform:rotate(5deg)}}
+@keyframes mbbj-t-pop{0%,100%{transform:none}30%{transform:scale(1.15)}}
+@media (max-width:640px){.mbbj-t-btnwrap{bottom:12px}.mbbj-t-left{left:12px}.mbbj-t-right{right:12px}.mbbj-t-btn{width:40px;height:40px}.mbbj-t-cap{left:5px;top:4px;width:30px;height:30px}.mbbj-t-tag{font-size:10.5px;padding:4px 8px}}
+
+/* Biene */
+.mbbj-t-bee{position:fixed;left:0;top:0;z-index:99991;padding:0;margin:0;border:0;background:none;cursor:pointer;will-change:transform;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+.mbbj-t-bee svg{width:100%;height:100%;display:block;overflow:visible}
+.mbbj-t-bee.is-left svg{transform:scaleX(-1)}
+.mbbj-t-wings ellipse{fill:rgba(220,240,255,.75);stroke:#111;stroke-width:1.6}
+.mbbj-t-wings{transform-origin:4px -6px;animation:mbbj-t-flap .09s linear infinite alternate}
+@keyframes mbbj-t-flap{from{transform:scaleY(1)}to{transform:scaleY(.35)}}
+.mbbj-t-bee:focus-visible{outline:3px solid #FDC506;outline-offset:4px;border-radius:12px}
+.mbbj-t-bubble{position:absolute;left:50%;bottom:100%;margin-bottom:6px;transform:translateX(-50%) scale(.6);opacity:0;background:#fff;color:#111;font:700 13px/1.25 Poppins,system-ui,sans-serif;padding:7px 11px;border-radius:12px;border:2px solid #111;white-space:nowrap;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+.mbbj-t-bubble::after{content:"";position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top-color:#111}
+.mbbj-t-bee.is-talk .mbbj-t-bubble{opacity:1;transform:translateX(-50%) scale(1)}
+.mbbj-t-bee.is-caught{transition:transform .3s ease,opacity .3s ease;opacity:0}
+
+/* STRENG GEHEIM! */
+.mbbj-t-secret~.mbbj-t-bee{display:none}
+.mbbj-t-secret{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:16px;background:rgba(20,8,8,.92);opacity:0;transition:opacity .2s ease;cursor:pointer;font-family:Poppins,system-ui,sans-serif;text-align:center}
+.mbbj-t-secret.is-on{opacity:1;animation:mbbj-t-alarm .28s steps(1) 3}
+@keyframes mbbj-t-alarm{0%{background:rgba(150,10,10,.95)}50%{background:rgba(20,8,8,.92)}}
+.mbbj-t-stamp{color:#e5322d;border:6px solid #e5322d;border-radius:10px;padding:8px 20px;font-weight:900;font-size:clamp(30px,8vw,72px);letter-spacing:.04em;line-height:1.1;transform:rotate(-8deg) scale(2.4);opacity:0;text-shadow:0 0 18px rgba(229,50,45,.5)}
+.mbbj-t-secret.is-on .mbbj-t-stamp{animation:mbbj-t-stamp .35s cubic-bezier(.2,1.6,.4,1) .1s forwards}
+@keyframes mbbj-t-stamp{to{transform:rotate(-8deg) scale(1);opacity:1}}
+.mbbj-t-line{color:#fff;font-weight:700;font-size:clamp(18px,4.4vw,30px);min-height:1.3em;transition:color .2s ease}
+.mbbj-t-line.is-ok{color:#FDC506}
+.mbbj-t-secret.is-calm,.mbbj-t-secret.is-calm .mbbj-t-stamp{animation:none}
+.mbbj-t-secret.is-calm .mbbj-t-stamp{transform:rotate(-8deg);opacity:1}
+@media (prefers-reduced-motion:reduce){.mbbj-t-btnwrap,.mbbj-t-btnwrap.is-wobble .mbbj-t-btn,.mbbj-t-btnwrap.is-wobble .mbbj-t-tag{animation:none;transition:none}}
+@media print{.mbbj-t-btnwrap,.mbbj-t-bee{display:none!important}}

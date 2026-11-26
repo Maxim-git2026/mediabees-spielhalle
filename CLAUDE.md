@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.23.4**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.24.0**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -18,6 +18,7 @@ und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **
 src/core.js          Kern der Spielhalle (Kacheln, Overlay, Rangliste, Sound, Juice, Lazy-Load)
 src/tiles/NN-<id>.js Kachel je Spiel (zweistellig nummeriert, das ist die Reihenfolge): MBArcade.tile({id, title, thumb})  -> landet in arcade.js
 src/games/<id>.js    Das Spiel selbst: MBArcade.register({...})          -> wird erst beim Antippen geladen
+src/teaser.js        Knopf „Nicht drücken!“ + fliegende Biene auf allen Seiten -> assets/teaser.js (CSS: assets/teaser.css)
 plugin/mediabees-bugjagd/   Das WordPress-Plugin (Ordnername bleibt so, sonst verliert WP die Zuordnung)
   mediabees-bugjagd.php     Hauptdatei: MBBJ_VERSION, mbbj_games(), REST-API, Shortcode, Admin
   templates/404.php         404-Template (Filter template_include, Elementor-Header/-Footer bleiben)
@@ -142,6 +143,12 @@ Das Plugin liefert **nur die Spielhalle**, keinen eigenen 404-Text (seit 2.7.0).
 Theme Builder → Einzelbeitrag/Single → Vorlage „404-Seite“ mit eigenem Text + Shortcode-Widget `[mediabees_arcade]`.
 Gibt es keine Elementor-404-Vorlage, zeigt die 404 als Rückfall nur die Spielhalle (Filter `template_include`).
 Die alte Option `intro` wird ignoriert.
+
+## Köder auf der Website (seit 2.24.0)
+- Roter Knopf „Nicht drücken!“ unten links/rechts und eine Biene, die nach 30–60 s durchs Bild fliegt, mittendrin kurz stehen bleibt und spricht (max. 3-mal pro Seite). Klick → Vollbild „STRENG GEHEIM!“ (kurzer Alarm) → Weiterleitung zur Spielhalle.
+- Einstellungen: Option `mbbj_teaser` (button, bee, url = `/spielhalle/`, side, exclude = Pfade je Zeile, Unterseiten zählen mit, `/` = nur Startseite), Formular oben auf Werkzeuge → Arcade-Rangliste.
+- Nicht auf: 404, der Spielhallen-Adresse, Seiten mit `#mb404`, Elementor-Vorschau, ausgeschlossenen Pfaden. „Weniger Bewegung“ = keine Biene. `?mbbj_biene=1` lässt die Biene sofort fliegen (zum Ansehen).
+- Die eigene Seite heißt „Spielhalle“ (`/spielhalle/`), der Nutzer legt sie in Elementor an (Shortcode-Widget). Die 404 bleibt zusätzlich.
 
 ## Hinweise zur Live-Seite
 - Auf mediabees.de läuft das Chat-Widget „Thor“ (`.thor-chat-host`). Die Spielhalle blendet es aus, solange das Spiel im Bild ist

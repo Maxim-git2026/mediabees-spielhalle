@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.23.4
+Stable tag: 2.24.0
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -19,6 +19,12 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.24.0 – 26.11.2026 =
+* Neu: Auf allen Seiten der Website gibt es jetzt einen kleinen roten Knopf „Nicht drücken!“. Wer ihn drückt, sieht kurz „STRENG GEHEIM!“ und landet in der Spielhalle.
+* Neu: Ab und zu fliegt eine Biene durchs Bild, bleibt kurz stehen und lädt zum Spielen ein. Antippen führt zur Spielhalle.
+* Einstellungen unter Werkzeuge → Arcade-Rangliste: Knopf und Biene einzeln an/aus, Adresse der Spielhalle (Standard /spielhalle/), Knopf links oder rechts, Seiten ohne Knopf und Biene (z. B. /kontakt/).
+* Auf der Spielhallen-Seite und auf der 404 erscheinen Knopf und Biene nicht. Keine Cookies, nichts wird gespeichert.
 
 = 2.23.4 – 26.11.2026 =
 * Bienen-Blitz: Am Spielende steht über der umgekippten Biene jetzt abwechselnd „DU HAST VERLOREN! (peinlich)“, „Manchmal muss man loslassen, um festzuhalten, was wirklich zählt.“ oder ein Goethe-Zitat.
