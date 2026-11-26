@@ -2,7 +2,7 @@
 Contributors: mediabees
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 2.30.5
+Stable tag: 2.30.6
 License: proprietär, nur für mediabees.de
 
 Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-10-Rangliste pro Spiel.
@@ -20,6 +20,9 @@ Spielhalle für die 404-Seite und für eine eigene Seite per Shortcode, mit Top-
 == Versionen ==
 
 Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, reine Fehlerbehebung = PATCH.
+
+= 2.30.6 – 26.11.2026 =
+* BOOM 2026: Das Gesicht der Biene ist kinderfreundlicher: entschlossen statt gruselig. Beim Dauerfeuer gibt es jetzt einen Comic-Kampfschrei statt gefletschter Zähne, und das Vorschaubild zeigt ein cooles, schiefes Grinsen.
 
 = 2.30.5 – 26.11.2026 =
 * BOOM 2026: Du rennst jetzt deutlich schneller, wie bei den Klassikern. Shift = langsam gehen. Wer lieber normal läuft und mit Shift sprintet, stellt das im Menü um („Shift: Sprinten“).

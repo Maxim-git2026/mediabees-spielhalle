@@ -36,12 +36,12 @@
       g.fillStyle = '#FFF6C0'; g.beginPath(); g.arc(0, -16.5, 3, 0, TAU); g.fill();
       [-6, 6].forEach(function (ex, k) {
         var sd = k ? -1 : 1;
-        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 2.6, 0, 0, TAU); g.fill();
+        g.fillStyle = '#FFF'; g.beginPath(); g.ellipse(ex, 3.4, 4.2, 3.6, 0, 0, TAU); g.fill();
         g.fillStyle = '#111'; g.beginPath(); g.arc(ex, 3.8, 1.8, 0, TAU); g.fill();
-        g.strokeStyle = '#111'; g.lineWidth = 3; g.beginPath(); g.moveTo(ex - 5 * sd, -4.5); g.lineTo(ex + 4 * sd, 1.6); g.stroke();
+        g.strokeStyle = '#111'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(ex - 5 * sd, -2.6); g.lineTo(ex + 4 * sd, -0.6); g.stroke();
       });
-      g.fillStyle = '#3A0A08'; g.beginPath(); g.moveTo(-9, 9.5); g.lineTo(9, 9.5); g.lineTo(7, 15.5); g.lineTo(-7, 15.5); g.closePath(); g.fill();
-      g.fillStyle = '#FFF'; for (var t = -8; t < 8; t += 2.8) { g.fillRect(t, 9.8, 2, 2.4); g.fillRect(t + 0.6, 13, 2, 2.3); }
+      /* entschlossenes, schiefes Grinsen */
+      g.strokeStyle = '#F7B500'; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(-5, 11.5); g.lineTo(2, 11.5); g.quadraticCurveTo(5, 11.2, 6.5, 8.8); g.stroke();
       g.restore();
       /* Logo */
       var fs = Math.round(h * 0.27);

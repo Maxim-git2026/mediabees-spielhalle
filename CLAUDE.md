@@ -2,7 +2,7 @@
 
 WordPress-Plugin „MediaBees Spielhalle“ (früher „MediaBees Arcade (404)“, Ordner und IDs unverändert) für mediabees.de (WordPress + Elementor Pro).
 Es ersetzt die 404-Seite durch eine kleine Spielhalle mit Top-10-Ranglisten wie am Automaten
-und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.30.5**.
+und kann per Shortcode auch auf jeder anderen Seite stehen. Aktuelle Version: **2.30.6**.
 
 ## Regeln für die Zusammenarbeit (wichtig)
 - **Immer auf Deutsch antworten**, auch Zwischenmeldungen.
@@ -104,6 +104,7 @@ Gestrichen: Bubble Ball, Schach.
 - **Pausenmenü (2.30.3):** Spiel setzt `ownPause: true` → der Kern reicht Esc an `key()` weiter (statt eigener Pause). Esc im Spiel bzw. Verlust des Pointer-Locks (Browser schluckt Esc dabei) → `openPause()`: halb durchsichtig über dem Spiel (`drawPauseOverlay`, `st.menuOpen`, Liste über `drawItems`), Einstellungen (`settingRows`), Hautfarbe (`skinRow`), „Hauptmenü (Runde abbrechen)“ (`toTitle`, ohne Wertung). Handy: Pause-Knopf oben rechts. Fenster verlassen/Tab wechseln pausiert weiter über den Kern.
 - **Story/Intro (2.30.4):** Idee vom Nutzer (letzter Steiger, wacht nach Nickerchen auf, Geräusch). Regierung/Gewerkschaften als Bösewichte bewusst NICHT (heikel auf Firmenseite im Revier) → erfundener Konzern „Gelb-Schwarz AG“, der in Wahrheit aus Wespen besteht. Text in `STORY` (`00-kopf.js`), Phase `intro` (`startGame` → Intro, `beginLevel` = Sohle starten), Schreibmaschine `INTRO_RATE` 38 Zeichen/s, Pause je Absatz, Geräusche per `sfx`. `_debug().startGame` überspringt das Intro, `_debug().intro(diff)` zeigt es.
 - **Feinschliff (2.30.5):** Nutzer: „ICH LIEBS“, Sohle 1 genau richtig schwer für den Anfang. Rennen 5,8 Felder/s (vorher 3,9), Shift = gehen 2,8; Option `set.sprint` (Shift = Sprinten, normal 3,4). Kopfwippen der Kamera aus (Übelkeit), Option `set.bob`, Waffe wippt weiter. Intro schneller (`INTRO_RATE` 70). Am Handy heißt es „Wisch-Tempo“ (gleiche `set.sens`). Hände/Waffen-Grafik könnte schöner werden, Nutzer weiß aber nicht, wie er dazu Feedback gibt → später Vorschläge zeigen.
+- **Kindgerecht (2.30.6):** Nutzer fand das grimmige Gesicht zu gruselig (auch Kinder spielen) → Gesicht entschlossen statt furchteinflößend: weniger steile Brauen, Augen offener, Dauerfeuer = Comic-Kampfschrei (offener Mund, eine Zahnreihe) statt gefletschter Zähne, Kachel = schiefes Grinsen. Künftig alles in BOOM kindgerecht halten (kein Blut, keine Horror-Fratzen).
 - **Sohle 2:** nächste Woche (Nutzer). Vorher wieder Brainstorming.
 - **Schwierigkeit:** Nutzer: „Steiger ist richtig schön schwer“ → so lassen.
 - **Maus:** Spielerin fand sie zu schnell → Grund-Tempo 0,0012 rad/px (vorher 0,0022), Pitch 0,18, Touch-Drehen 0,0065. Im Spiel + / − ändert `set.sens` (0,2–3).
