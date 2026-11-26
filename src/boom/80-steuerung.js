@@ -105,8 +105,8 @@
         }
         if (st.paused || st.phase !== 'play') return;
         if (locked && e.pointerType === 'mouse') {
-          P.a += (e.movementX || 0) * 0.0022 * set.sens;
-          P.pitch = clamp(P.pitch - (e.movementY || 0) * 0.32 * set.sens * (set.invert ? -1 : 1) * (Hv / 200), -Hv * 0.42, Hv * 0.42);
+          P.a += (e.movementX || 0) * 0.0012 * set.sens;
+          P.pitch = clamp(P.pitch - (e.movementY || 0) * 0.18 * set.sens * (set.invert ? -1 : 1) * (Hv / 200), -Hv * 0.42, Hv * 0.42);
           return;
         }
         var kind = touches[e.pointerId], p = local(e);
@@ -115,7 +115,7 @@
           if (l > 1) { dx /= l; dy /= l; }
           joy.dx = Math.abs(dx) < 0.12 ? 0 : dx; joy.dy = Math.abs(dy) < 0.12 ? 0 : dy;
         } else if (kind === 'look' && look) {
-          P.a += (p.x - look.x) * 0.0085 * set.sens; look.x = p.x;
+          P.a += (p.x - look.x) * 0.0065 * set.sens; look.x = p.x;
         }
       });
       function pUp(e) {
@@ -157,6 +157,9 @@
         if (c === 'KeyQ') { cycleWeapon(1); return true; }
         if ((c === 'KeyE' || c === 'Space') && !e.repeat) { useAction(); return true; }
         if (c === 'KeyF') { held.KeyF = true; return true; }
+        /* Maus-Tempo direkt im Spiel: + schneller, − langsamer */
+        if (c === 'Equal' || c === 'NumpadAdd' || c === 'BracketRight' || k === '+') { set.sens = clamp(Math.round((set.sens + 0.1) * 10) / 10, 0.2, 3); msg('Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ',')); return true; }
+        if (c === 'Minus' || c === 'NumpadSubtract' || c === 'Slash' || k === '-') { set.sens = clamp(Math.round((set.sens - 0.1) * 10) / 10, 0.2, 3); msg('Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ',')); return true; }
         return false;
       }
 

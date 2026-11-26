@@ -866,6 +866,7 @@
         { icons: ['kbd:E', 'kbd:Leertaste'], text: 'Benutzen: Türen, Schalter, verdächtige Wände', kb: true },
         { icons: ['kbd:1', 'kbd:3'], text: 'Waffe wählen (auch Mausrad oder Q)', kb: true },
         { icons: ['tap'], text: 'Handy quer halten. Links Daumen-Stick zum Laufen, rechts wischen zum Umsehen, roter Knopf schießt, Hand-Knopf benutzt', touch: true },
+        { icons: ['kbd:+', 'kbd:−'], text: 'Maus zu schnell oder zu langsam? Im Spiel einfach anpassen', kb: true },
         { icons: ['kbd:Esc'], text: 'Pause', kb: true }
       ],
       legend: [
@@ -1817,7 +1818,7 @@
           return l;
         }
         if (m === 'settings') return [
-          { t: 'Maus-Empfindlichkeit: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.3, 3); } },
+          { t: 'Maus-Empfindlichkeit: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
           { t: 'Maus umkehren: ' + (set.invert ? 'An' : 'Aus'), go: function () { set.invert = !set.invert; }, adj: function () { set.invert = !set.invert; } },
           { t: 'Musik: ' + bar(set.music), adj: function (d) { set.music = clamp(Math.round((set.music + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
           { t: 'Effekte: ' + bar(set.sfx), adj: function (d) { set.sfx = clamp(Math.round((set.sfx + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
@@ -1835,7 +1836,7 @@
       function bar(v) { var n = Math.round(v * 10), s = ''; for (var i = 0; i < 10; i++) s += i < n ? '▮' : '▯'; return s; }
       function back() { showCodeInput(false); st.menu = 'main'; st.sel = 0; au.menu(); }
       var PAGES = {
-        controls: [['PC', 'W A S D laufen · Maus umsehen und zielen (ins Bild klicken)', 'Klick oder Strg schießen · E oder Leertaste benutzen', '1 2 3, Q oder Mausrad: Waffe wechseln · Shift: langsam', 'Ohne Maus: Pfeiltasten drehen · Esc: Pause'], ['Handy (quer halten!)', 'Linker Daumen: Stick zum Laufen', 'Rechts wischen: umsehen (nach oben/unten zielt das Spiel selbst)', 'FEUER halten: schießen · ✋ benutzen · ⇄ Waffe wechseln'], ['Tipp', 'Verdächtige Wände mit Riss? Benutzen! Dahinter liegen Geheimnisse.']],
+        controls: [['PC', 'W A S D laufen · Maus umsehen und zielen (ins Bild klicken)', 'Klick oder Strg schießen · E oder Leertaste benutzen', '1 2 3, Q oder Mausrad: Waffe wechseln · Shift: langsam', 'Ohne Maus: Pfeiltasten drehen · + und − : Maus-Tempo · Esc: Pause'], ['Handy (quer halten!)', 'Linker Daumen: Stick zum Laufen', 'Rechts wischen: umsehen (nach oben/unten zielt das Spiel selbst)', 'FEUER halten: schießen · ✋ benutzen · ⇄ Waffe wechseln'], ['Tipp', 'Verdächtige Wände mit Riss? Benutzen! Dahinter liegen Geheimnisse.']],
         credits: [['BOOM 2026', 'Eine MediaBees-Produktion. Glück auf!'], ['Crew', 'Sprücheklopfer · Die Maschine · Allesmacher', 'und der Rest vom Bienenstock'], ['Sound', 'Alle Riffs selbst gebaut, live im Browser erzeugt'], ['Danke', 'an alle Kumpel, die sich in die Zeche trauen']]
       };
       function drawMenu() {
@@ -2092,8 +2093,8 @@
         }
         if (st.paused || st.phase !== 'play') return;
         if (locked && e.pointerType === 'mouse') {
-          P.a += (e.movementX || 0) * 0.0022 * set.sens;
-          P.pitch = clamp(P.pitch - (e.movementY || 0) * 0.32 * set.sens * (set.invert ? -1 : 1) * (Hv / 200), -Hv * 0.42, Hv * 0.42);
+          P.a += (e.movementX || 0) * 0.0012 * set.sens;
+          P.pitch = clamp(P.pitch - (e.movementY || 0) * 0.18 * set.sens * (set.invert ? -1 : 1) * (Hv / 200), -Hv * 0.42, Hv * 0.42);
           return;
         }
         var kind = touches[e.pointerId], p = local(e);
@@ -2102,7 +2103,7 @@
           if (l > 1) { dx /= l; dy /= l; }
           joy.dx = Math.abs(dx) < 0.12 ? 0 : dx; joy.dy = Math.abs(dy) < 0.12 ? 0 : dy;
         } else if (kind === 'look' && look) {
-          P.a += (p.x - look.x) * 0.0085 * set.sens; look.x = p.x;
+          P.a += (p.x - look.x) * 0.0065 * set.sens; look.x = p.x;
         }
       });
       function pUp(e) {
@@ -2144,6 +2145,9 @@
         if (c === 'KeyQ') { cycleWeapon(1); return true; }
         if ((c === 'KeyE' || c === 'Space') && !e.repeat) { useAction(); return true; }
         if (c === 'KeyF') { held.KeyF = true; return true; }
+        /* Maus-Tempo direkt im Spiel: + schneller, − langsamer */
+        if (c === 'Equal' || c === 'NumpadAdd' || c === 'BracketRight' || k === '+') { set.sens = clamp(Math.round((set.sens + 0.1) * 10) / 10, 0.2, 3); msg('Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ',')); return true; }
+        if (c === 'Minus' || c === 'NumpadSubtract' || c === 'Slash' || k === '-') { set.sens = clamp(Math.round((set.sens - 0.1) * 10) / 10, 0.2, 3); msg('Maus-Tempo: ' + set.sens.toFixed(1).replace('.', ',')); return true; }
         return false;
       }
 

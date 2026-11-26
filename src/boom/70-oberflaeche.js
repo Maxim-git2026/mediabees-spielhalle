@@ -175,7 +175,7 @@
           return l;
         }
         if (m === 'settings') return [
-          { t: 'Maus-Empfindlichkeit: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.3, 3); } },
+          { t: 'Maus-Empfindlichkeit: ' + set.sens.toFixed(1).replace('.', ','), adj: function (d) { set.sens = clamp(Math.round((set.sens + d * 0.1) * 10) / 10, 0.2, 3); } },
           { t: 'Maus umkehren: ' + (set.invert ? 'An' : 'Aus'), go: function () { set.invert = !set.invert; }, adj: function () { set.invert = !set.invert; } },
           { t: 'Musik: ' + bar(set.music), adj: function (d) { set.music = clamp(Math.round((set.music + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
           { t: 'Effekte: ' + bar(set.sfx), adj: function (d) { set.sfx = clamp(Math.round((set.sfx + d * 0.1) * 10) / 10, 0, 1); au.settings(); } },
@@ -193,7 +193,7 @@
       function bar(v) { var n = Math.round(v * 10), s = ''; for (var i = 0; i < 10; i++) s += i < n ? '▮' : '▯'; return s; }
       function back() { showCodeInput(false); st.menu = 'main'; st.sel = 0; au.menu(); }
       var PAGES = {
-        controls: [['PC', 'W A S D laufen · Maus umsehen und zielen (ins Bild klicken)', 'Klick oder Strg schießen · E oder Leertaste benutzen', '1 2 3, Q oder Mausrad: Waffe wechseln · Shift: langsam', 'Ohne Maus: Pfeiltasten drehen · Esc: Pause'], ['Handy (quer halten!)', 'Linker Daumen: Stick zum Laufen', 'Rechts wischen: umsehen (nach oben/unten zielt das Spiel selbst)', 'FEUER halten: schießen · ✋ benutzen · ⇄ Waffe wechseln'], ['Tipp', 'Verdächtige Wände mit Riss? Benutzen! Dahinter liegen Geheimnisse.']],
+        controls: [['PC', 'W A S D laufen · Maus umsehen und zielen (ins Bild klicken)', 'Klick oder Strg schießen · E oder Leertaste benutzen', '1 2 3, Q oder Mausrad: Waffe wechseln · Shift: langsam', 'Ohne Maus: Pfeiltasten drehen · + und − : Maus-Tempo · Esc: Pause'], ['Handy (quer halten!)', 'Linker Daumen: Stick zum Laufen', 'Rechts wischen: umsehen (nach oben/unten zielt das Spiel selbst)', 'FEUER halten: schießen · ✋ benutzen · ⇄ Waffe wechseln'], ['Tipp', 'Verdächtige Wände mit Riss? Benutzen! Dahinter liegen Geheimnisse.']],
         credits: [['BOOM 2026', 'Eine MediaBees-Produktion. Glück auf!'], ['Crew', 'Sprücheklopfer · Die Maschine · Allesmacher', 'und der Rest vom Bienenstock'], ['Sound', 'Alle Riffs selbst gebaut, live im Browser erzeugt'], ['Danke', 'an alle Kumpel, die sich in die Zeche trauen']]
       };
       function drawMenu() {

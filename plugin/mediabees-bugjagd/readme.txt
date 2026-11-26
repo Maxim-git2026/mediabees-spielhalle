@@ -25,6 +25,7 @@ Versionsnummern: MAJOR.MINOR.PATCH. Neues Spiel oder neue Funktion = MINOR, rein
 * BOOM 2026: Schrift auf Postern und Schildern ist nicht mehr gespiegelt.
 * BOOM 2026: Neue ruhige Musik, die immer läuft (cleane Gitarre mit Echo, warme Flächen). Sobald Wespen dich bemerken, blendet sie in den Metal über.
 * BOOM 2026: Die Biene schaut jetzt grimmig und entschlossen statt dauernd zu lächeln. Ab und zu ein schiefes Grinsen, bei neuen Waffen das fiese Grinsen, bei wenig Leben zusammengebissene Zähne.
+* BOOM 2026: Die Maus dreht jetzt deutlich ruhiger (etwa halb so schnell). Im Spiel lässt sich das Tempo mit + und − anpassen, im Menü unter Einstellungen.
 * BOOM 2026: Neuer Menüpunkt „Kumpel-Look“: Hautfarbe der Biene wählen (Braun, Honig, Hell) mit großer Vorschau.
 
 = 2.30.0 – 26.11.2026 =
