@@ -87,6 +87,8 @@ Feedback bisher abgeschlossen: Hummelhopser (passt), A40-Flitzer, Pollenpfad, Wa
 ### Nächste Spiele (in dieser Reihenfolge)
 Offen, Nutzer entscheidet. Alternative zum Wimmelbild wäre „Finde die Unterschiede“ (auf dem Handy eng).
 Ideenliste: Doodle-Jump-Prinzip.
+**Großes Projekt in Planung: Ich-Shooter (Prinzip der 90er-Raycaster, KEIN Name/keine Grafik des Vorbilds).** Arbeitstitel „Zeche Zollstock“: Biene kämpft sich mit Honigkanone durch eine Zeche voller Wespen, Ebene für Ebene bis zum Förderkorb, Wespenkönigin als Boss. Waffen: Stachel-Pistole, Pollen-Schrotflinte, Honigkanone, Wespen-Staubsauger. Handy: Joystick links + Wischen rechts. Technik: Raycaster mit Pixel-Wänden + flachen Figuren (läuft auch auf alten Handys). Nutzer liefert noch eigene Ideen („Hirnsaft“). **Noch nicht bauen**, erst alle anderen offenen Sachen fixen; Start dann mit einer spielbaren Ebene.
+Grundsatz (Nutzer, 2.24): lieber wenige richtig gute Spiele als viele, die keiner spielt. Lieblinge des Nutzers: Bienen-Solitär, Bienen-Blitz, Bienenboom, Pollenrausch.
 Gestrichen: Bubble Ball, Schach.
 
 ## Texte
